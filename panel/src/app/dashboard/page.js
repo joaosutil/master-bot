@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { getSession } from "../../lib/session.js";
 import { fetchDiscord, hasManageGuild } from "../../lib/discord.js";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const session = await getSession();
   if (!session) {

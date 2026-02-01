@@ -5,6 +5,8 @@ import { env } from "../../../../../../lib/env.js";
 import { getSession } from "../../../../../../lib/session.js";
 import MemoryCapsuleEntry from "../../../../../../models/MemoryCapsuleEntry.js";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(request, { params }) {
   const session = await getSession();
   if (!session) {
@@ -51,4 +53,3 @@ export async function POST(request, { params }) {
 
   return NextResponse.redirect(`${env.baseUrl}/guild/${guildId}/memories?saved=1`);
 }
-

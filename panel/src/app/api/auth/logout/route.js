@@ -6,6 +6,8 @@ import {
   getSessionIdFromCookies
 } from "../../../../lib/session.js";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const sessionId = getSessionIdFromCookies();
   await destroySessionById(sessionId);

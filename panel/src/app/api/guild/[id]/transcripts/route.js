@@ -4,6 +4,8 @@ import { fetchDiscord, hasManageGuild } from "../../../../../lib/discord.js";
 import { getSession } from "../../../../../lib/session.js";
 import TicketTranscript from "../../../../../models/TicketTranscript.js";
 
+export const dynamic = "force-dynamic";
+
 function escapeRegex(value) {
   return String(value ?? "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -56,4 +58,3 @@ export async function GET(request, { params }) {
 
   return NextResponse.json({ transcripts });
 }
-

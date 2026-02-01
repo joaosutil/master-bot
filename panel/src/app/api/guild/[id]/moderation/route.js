@@ -5,6 +5,8 @@ import { env } from "../../../../../lib/env.js";
 import { getSession } from "../../../../../lib/session.js";
 import { getOrCreateGuildConfig } from "../../../../../lib/guildConfig.js";
 
+export const dynamic = "force-dynamic";
+
 function toOptionalString(value) {
   const trimmed = String(value ?? "").trim();
   return trimmed.length ? trimmed : undefined;

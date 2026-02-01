@@ -4,6 +4,8 @@ import BackBarClient from "./_components/BackBarClient.js";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { getSession } from "../lib/session.js";
 
+export const dynamic = "force-dynamic";
+
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-sans" });
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], display: "swap", variable: "--font-display" });
 

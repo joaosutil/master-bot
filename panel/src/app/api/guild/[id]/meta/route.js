@@ -3,6 +3,8 @@ import { fetchDiscord, fetchDiscordBot, hasManageGuild } from "../../../../../li
 import { assertEnv, env } from "../../../../../lib/env.js";
 import { getSession } from "../../../../../lib/session.js";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request, { params }) {
   assertEnv(["discordBotToken"]);
 

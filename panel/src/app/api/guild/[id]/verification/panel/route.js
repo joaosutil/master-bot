@@ -5,6 +5,8 @@ import { env, assertEnv } from "../../../../../../lib/env.js";
 import { getSession } from "../../../../../../lib/session.js";
 import { getOrCreateGuildConfig } from "../../../../../../lib/guildConfig.js";
 
+export const dynamic = "force-dynamic";
+
 function normalizeHex(value) {
   const raw = String(value ?? "").trim().replace("#", "");
   if (!/^[0-9a-fA-F]{6}$/.test(raw)) return null;

@@ -5,6 +5,8 @@ import { env } from "../../../../../lib/env.js";
 import { getSession } from "../../../../../lib/session.js";
 import { getOrCreateGuildConfig } from "../../../../../lib/guildConfig.js";
 
+export const dynamic = "force-dynamic";
+
 function toOptionalString(value) {
   const trimmed = String(value ?? "").trim();
   return trimmed.length ? trimmed : undefined;
@@ -87,4 +89,3 @@ export async function POST(request, { params }) {
 
   return NextResponse.redirect(`${env.baseUrl}/guild/${guildId}/vibe?saved=1`);
 }
-

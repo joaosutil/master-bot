@@ -3,6 +3,8 @@ import { fetchDiscordBot } from "../../../../lib/discord.js";
 import { assertEnv, env } from "../../../../lib/env.js";
 import { getSession } from "../../../../lib/session.js";
 
+export const dynamic = "force-dynamic";
+
 function normalizeIdsParam(value) {
   const ids = String(value ?? "")
     .split(",")
@@ -46,4 +48,3 @@ export async function GET(request) {
     return NextResponse.json({ error: "discord_fetch_failed" }, { status: 500 });
   }
 }
-

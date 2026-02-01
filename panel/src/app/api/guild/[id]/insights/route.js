@@ -3,6 +3,8 @@ import { fetchDiscord, hasManageGuild } from "../../../../../lib/discord.js";
 import { getSession } from "../../../../../lib/session.js";
 import { getGuildInsights } from "../../../../../lib/insights.js";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request, { params }) {
   const session = await getSession();
   if (!session) {
@@ -43,4 +45,3 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: "insights_failed" }, { status: 500 });
   }
 }
-

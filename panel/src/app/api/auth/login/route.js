@@ -2,6 +2,8 @@ import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { assertEnv, env } from "../../../../lib/env.js";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   assertEnv(["discordClientId", "discordClientSecret", "discordRedirectUri"]);
 

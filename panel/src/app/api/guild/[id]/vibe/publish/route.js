@@ -6,6 +6,8 @@ import { getSession } from "../../../../../../lib/session.js";
 import { getOrCreateGuildConfig } from "../../../../../../lib/guildConfig.js";
 import VibeCheckDay from "../../../../../../models/VibeCheckDay.js";
 
+export const dynamic = "force-dynamic";
+
 const DEFAULT_OPTIONS = [
   { id: "top", emoji: "😄", label: "Tô no 220v" },
   { id: "deboa", emoji: "🙂", label: "De boa" },
@@ -146,4 +148,3 @@ export async function POST(request, { params }) {
 
   return NextResponse.redirect(`${env.baseUrl}/guild/${guildId}/vibe?published=1`);
 }
-

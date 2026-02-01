@@ -5,6 +5,8 @@ import { env, assertEnv } from "../../../../../../lib/env.js";
 import { getSession } from "../../../../../../lib/session.js";
 import { getOrCreateGuildConfig } from "../../../../../../lib/guildConfig.js";
 
+export const dynamic = "force-dynamic";
+
 const DEFAULT_CATEGORY = {
   label: "Geral",
   description: "Suporte geral"

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { assertEnv, env } from "../../../../lib/env.js";
 import { attachSessionCookie, createSession } from "../../../../lib/session.js";
 
+export const dynamic = "force-dynamic";
+
 async function exchangeCode(code) {
   const body = new URLSearchParams({
     client_id: env.discordClientId,
