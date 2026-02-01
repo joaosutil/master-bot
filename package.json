@@ -1,0 +1,21 @@
+{
+  "name": "master-bot",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Master Bot - Discord all-in-one bot with cooperative expeditions",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "deploy:commands": "node src/deploy-commands.js",
+    "sync:cards": "node scripts/sync-cards.mjs"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.88",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
+    "i18n-iso-countries": "^7.14.0",
+    "markdown-it": "^14.1.0",
+    "mongoose": "^8.7.0"
+  }
+}

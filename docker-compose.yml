@@ -1,0 +1,19 @@
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  panel:
+    build:
+      context: ./panel
+      dockerfile: Dockerfile
+    env_file:
+      - ./panel/.env
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+

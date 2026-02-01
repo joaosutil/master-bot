@@ -1,0 +1,446 @@
+{
+  "players": {
+    "34146527": {
+      "name": "Alan Kardec",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/tp1lxy1767190346.png"
+    },
+    "34146582": {
+      "name": "Danilo",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6hr4w81750454528.png"
+    },
+    "34146585": {
+      "name": "Alex Sandro",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/e24f0a1750920769.png"
+    },
+    "34146625": {
+      "name": "André Carrillo",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1z2j2f1767276930.png"
+    },
+    "34152858": {
+      "name": "Carlos Eduardo",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/qfi65x1767455734.png"
+    },
+    "34155038": {
+      "name": "Fagner",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/63czr61767454160.png"
+    },
+    "34156777": {
+      "name": "Alex Telles",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ub4njs1749549235.png"
+    },
+    "34160665": {
+      "name": "André Ramalho",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5bieee1767273459.png"
+    },
+    "34160930": {
+      "name": "Allan",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jchz9u1750920704.png"
+    },
+    "34160950": {
+      "name": "Carlos de Pena",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/g7l4701767350743.png"
+    },
+    "34163204": {
+      "name": "Bastos",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/854ic51749545852.png"
+    },
+    "34163207": {
+      "name": "Agustín Rossi",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/um7xb01750919100.png"
+    },
+    "34163616": {
+      "name": "Allan",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/td53fh1749561434.png"
+    },
+    "34167639": {
+      "name": "Cássio",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/cta4jv1767453871.png"
+    },
+    "34168978": {
+      "name": "Bernard",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/oa1yu81763755150.png"
+    },
+    "34169268": {
+      "name": "Cauly",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xels4k1763831505.png"
+    },
+    "34169456": {
+      "name": "Gabriel Barbosa",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/yfna9l1767455650.png"
+    },
+    "34171633": {
+      "name": "Jorginho",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/thumb/uslajw1595627870.jpg"
+    },
+    "34172533": {
+      "name": "Emerson Royal",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/psmom11767467613.png"
+    },
+    "34173912": {
+      "name": "Gilberto",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/smbgwb1763831584.png"
+    },
+    "34174235": {
+      "name": "Gabriel Menino",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/839k9a1763755317.png"
+    },
+    "34175840": {
+      "name": "Fabrizio Angileri",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1rb0b01767276539.png"
+    },
+    "34178804": {
+      "name": "Giuliano de Paula",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9mbsfw1767778571.png"
+    },
+    "34180236": {
+      "name": "Foguinho",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9ykasz1767208261.png"
+    },
+    "34181058": {
+      "name": "Caio Alexandre",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/x7knrg1763831462.png"
+    },
+    "34182531": {
+      "name": "Alan Franco",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/d4dtcf1763755226.png"
+    },
+    "34183063": {
+      "name": "Ángel Romero",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/mg48sv1767278273.png"
+    },
+    "34191954": {
+      "name": "Léo ",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6hutaj1767209812.png"
+    },
+    "34192750": {
+      "name": "Everson",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/yyjl7p1763755210.png"
+    },
+    "34193027": {
+      "name": "Erick",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fq0eb01763831558.png"
+    },
+    "34193030": {
+      "name": "Dudu",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/11l0pt1763755196.png"
+    },
+    "34194853": {
+      "name": "Bruno Henrique",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/a0znu71750455127.png"
+    },
+    "34194910": {
+      "name": "Ayrton Lucas",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/43k8ej1750919435.png"
+    },
+    "34196080": {
+      "name": "Arthur Cabral",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/n1ijv61758350130.png"
+    },
+    "34196393": {
+      "name": "Cris Silva",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ptsbc71767209024.png"
+    },
+    "34200043": {
+      "name": "Charles",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/tg2wvp1767277073.png"
+    },
+    "34200169": {
+      "name": "Caio Paulista",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/nvbpim1763755367.png"
+    },
+    "34200553": {
+      "name": "Dorival Júnior",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4idnxq1663167478.png"
+    },
+    "34200733": {
+      "name": "Éverton Ribeiro",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8p52tw1763831878.png"
+    },
+    "34202409": {
+      "name": "Giovanni Augusto",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ygwavm1767206995.png"
+    },
+    "34202458": {
+      "name": "Cleiton",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/v8yjio1766834849.png"
+    },
+    "34202463": {
+      "name": "Bruno Praxedes",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/pvk7kq1767204831.png"
+    },
+    "34202464": {
+      "name": "Artur",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/p19mhv1749555051.png"
+    },
+    "34202780": {
+      "name": "Adenor Leonardo Bacchi",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/thumb/heb1gr1668792652.jpg"
+    },
+    "34216482": {
+      "name": "Chris Ramos",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/phcgj41763566828.png"
+    },
+    "34216563": {
+      "name": "Carlos Terán",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/29ph571767188981.png"
+    },
+    "34218644": {
+      "name": "Gastón Benavídez",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/j4f8nv1767189099.png"
+    },
+    "34218660": {
+      "name": "Bruno Zapelli",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6avjuv1767189518.png"
+    },
+    "34219068": {
+      "name": "Fausto Vera",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ewddst1763755534.png"
+    },
+    "34219078": {
+      "name": "Fabrício Bruno",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/cdnj3m1767454196.png"
+    },
+    "34219131": {
+      "name": "Eduardo Santos",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ojakce1766834070.png"
+    },
+    "34219136": {
+      "name": "Eduardo Sasha",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ifjyhc1766835102.png"
+    },
+    "34219158": {
+      "name": "Bruno Melo",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/q6qkm61767314965.png"
+    },
+    "34219166": {
+      "name": "Gabriel Xavier",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ut7rhi1763831925.png"
+    },
+    "34219167": {
+      "name": "David Duarte",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jplkyn1763831544.png"
+    },
+    "34219170": {
+      "name": "Ademir",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1bn4911763831448.png"
+    },
+    "34219632": {
+      "name": "Agustín Sant'Anna",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xfcw871767205616.png"
+    },
+    "34219661": {
+      "name": "Christian",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xy4wxv1767454255.png"
+    },
+    "34219674": {
+      "name": "Alexsander",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6e8bcw1763755089.png"
+    },
+    "34222523": {
+      "name": "Fabinho",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/v48acd1767690886.png"
+    },
+    "34222585": {
+      "name": "Iury Castilho",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xouodd1767350869.png"
+    },
+    "34225993": {
+      "name": "Eric Ramires",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/p6wrg71767202912.png"
+    },
+    "34232886": {
+      "name": "Cuiabano",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/se6bno1749561015.png"
+    },
+    "34232893": {
+      "name": "Alix Vinicius",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bfvptz1767202341.png"
+    },
+    "34232901": {
+      "name": "Alexander Barboza",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ykgjr01749546025.png"
+    },
+    "34233222": {
+      "name": "Bruno Leonardo",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/abopie1767207381.png"
+    },
+    "34233223": {
+      "name": "Eduardo Doma",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4lypsi1767207979.png"
+    },
+    "34233224": {
+      "name": "Mancha",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/rejvx21767208350.png"
+    },
+    "34233227": {
+      "name": "Marcinho",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jhut6v1767208098.png"
+    },
+    "34233228": {
+      "name": "Pedro Perotti",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7q5ety1767208654.png"
+    },
+    "34233274": {
+      "name": "Erick Pulga",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/gy61h01763831845.png"
+    },
+    "34235436": {
+      "name": "Breno Bidon",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/u9o9021767276978.png"
+    },
+    "34235448": {
+      "name": "Felipinho",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ftbhl91767189213.png"
+    },
+    "34238311": {
+      "name": "Álvaro Montoro",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/zfoima1766833089.png"
+    },
+    "34242569": {
+      "name": "Cristhian Loor",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/hvfchk1766833233.png"
+    },
+    "34245123": {
+      "name": "Fernando",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/kdsy5y1767188428.png"
+    },
+    "34245220": {
+      "name": "Danilo Fernandes",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xfzjf71763831571.png"
+    },
+    "34248195": {
+      "name": "Isaac",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/lztxuw1767539533.png"
+    },
+    "34271062": {
+      "name": "Dellatorre",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/954m601767350924.png"
+    },
+    "34282847": {
+      "name": "Gabriel Leite",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/q6cb1g1767285640.png"
+    },
+    "34285327": {
+      "name": "Jacy",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jgq9nd1767349615.png"
+    },
+    "34286411": {
+      "name": "Cacá",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/dalg8z1767275836.png"
+    },
+    "34287520": {
+      "name": "João Marcelo",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ikmdiw1767456485.png"
+    },
+    "34290712": {
+      "name": "Gabriel Delfim",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/o56p3i1763755179.png"
+    },
+    "34292310": {
+      "name": "Benassi",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/d3omig1767285597.png"
+    },
+    "34293418": {
+      "name": "Dyogo Alves",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9l3nad1751002902.png"
+    },
+    "34294819": {
+      "name": "Daniel Sales",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/i1xk6q1767467735.png"
+    },
+    "34295081": {
+      "name": "Japa",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/mk0geu1767455237.png"
+    },
+    "34298913": {
+      "name": "Arthur Dias",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/h82z6z1767189174.png"
+    },
+    "34300134": {
+      "name": "Felipe Guimarães",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/2cl3pf1767286292.png"
+    },
+    "34337133": {
+      "name": "Janderson",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/j92cy11767456002.png"
+    },
+    "34346322": {
+      "name": "Alan Franco",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/dh65cv1767800223.png"
+    },
+    "34347900": {
+      "name": "Cleiton",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ehdhp01751002270.png"
+    },
+    "34419615": {
+      "name": "Felipe Longo",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/pz3zon1767272804.png"
+    },
+    "34421319": {
+      "name": "Da Silva",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fnl0821767626110.png"
+    },
+    "34433566": {
+      "name": "Dudu Kogitzki",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ye08y21767190629.png"
+    },
+    "34433571": {
+      "name": "Gilmar Dal Pozzo",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/x0gudr1767215725.png"
+    },
+    "34433610": {
+      "name": "Alex Silva",
+      "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fhf0ve1767350233.png"
+    }
+  },
+  "teams": {
+    "134284": {
+      "teamName": "Corinthians",
+      "badgeUrl": "https://r2.thesportsdb.com/images/media/team/badge/vvuvps1473538042.png"
+    },
+    "134285": {
+      "teamName": "Botafogo",
+      "badgeUrl": "https://r2.thesportsdb.com/images/media/team/badge/bs5mbw1733004596.png"
+    },
+    "134287": {
+      "teamName": "Flamengo",
+      "badgeUrl": "https://r2.thesportsdb.com/images/media/team/badge/syptwx1473538074.png"
+    },
+    "134293": {
+      "teamName": "Bahia",
+      "badgeUrl": "https://r2.thesportsdb.com/images/media/team/badge/xuvtsv1473539308.png"
+    },
+    "134294": {
+      "teamName": "Cruzeiro",
+      "badgeUrl": "https://r2.thesportsdb.com/images/media/team/badge/upsvvu1473538059.png"
+    },
+    "134297": {
+      "teamName": "Athletico Paranaense",
+      "badgeUrl": "https://r2.thesportsdb.com/images/media/team/badge/irzu1u1554237406.png"
+    },
+    "134298": {
+      "teamName": "Coritiba",
+      "badgeUrl": "https://r2.thesportsdb.com/images/media/team/badge/ywwsyu1473538050.png"
+    },
+    "134299": {
+      "teamName": "Atlético Mineiro",
+      "badgeUrl": "https://r2.thesportsdb.com/images/media/team/badge/x5lixs1743742872.png"
+    },
+    "134464": {
+      "teamName": "Chapecoense",
+      "badgeUrl": "https://r2.thesportsdb.com/images/media/team/badge/wy0e1i1765900601.png"
+    },
+    "134736": {
+      "teamName": "Bragantino",
+      "badgeUrl": "https://r2.thesportsdb.com/images/media/team/badge/2p7tl41701423595.png"
+    }
+  },
+  "flags": {
+    "br": "https://flagcdn.com/w80/br.png",
+    "it": "https://flagcdn.com/w80/it.png",
+    "co": "https://flagcdn.com/w80/co.png",
+    "ar": "https://flagcdn.com/w80/ar.png",
+    "es": "https://flagcdn.com/w80/es.png",
+    "uy": "https://flagcdn.com/w80/uy.png"
+  }
+}

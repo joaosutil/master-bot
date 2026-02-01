@@ -1,0 +1,9 @@
+{
+  "apiKey": "123",
+  "sport": "Soccer",
+  "leagues": [
+    "Brazilian_Serie_A"
+  ],
+  "maxTeamsPerLeague": 30,
+  "maxPlayersPerTeam": 25
+}
