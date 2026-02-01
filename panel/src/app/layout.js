@@ -1,17 +1,13 @@
 import "./globals.css";
 import SiteHeaderClient from "./_components/SiteHeaderClient.js";
 import BackBarClient from "./_components/BackBarClient.js";
-import { Inter, Space_Grotesk } from "next/font/google";
 import { getSession } from "../lib/session.js";
 
 export const dynamic = "force-dynamic";
 
-const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-sans" });
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], display: "swap", variable: "--font-display" });
-
 export const metadata = {
   title: "Master Bot Panel",
-  description: "Painel de configuração do Master Bot"
+  description: "Painel de configuraÃ§Ã£o do Master Bot"
 };
 
 export default async function RootLayout({ children }) {
@@ -26,7 +22,7 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <body>
         <div className="backdrop">
           <span className="orb orb-blue" />
           <span className="orb orb-amber" />
@@ -41,3 +37,4 @@ export default async function RootLayout({ children }) {
     </html>
   );
 }
+

@@ -8,6 +8,8 @@
   --text: #f1f5ff;
   --muted: #a2acd3;
   --metal: #ffffff;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --cyan: #2fffe0;
   --accent-rgb: 130, 87, 255;
   --accent-2-rgb: 255, 61, 154;
