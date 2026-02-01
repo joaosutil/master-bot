@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDb } from "../../../../../lib/db.js";
 import { fetchDiscord, hasManageGuild } from "../../../../../lib/discord.js";
 import { env } from "../../../../../lib/env.js";
+import { getBaseUrlFromRequest } from "../../../../../lib/runtimeUrl.js";
 import { getSession } from "../../../../../lib/session.js";
 import { getOrCreateGuildConfig } from "../../../../../lib/guildConfig.js";
 
@@ -40,9 +41,10 @@ function readOptions(form) {
 }
 
 export async function POST(request, { params }) {
+  const baseUrl = getBaseUrlFromRequest(request);
   const session = await getSession();
   if (!session) {
-    return NextResponse.redirect(`${env.baseUrl}/login`);
+    return NextResponse.redirect(`${baseUrl}/login`);
   }
 
   const guildId = params.id;
@@ -60,7 +62,7 @@ export async function POST(request, { params }) {
     (guild) => guild.id === guildId && hasManageGuild(guild.permissions)
   );
   if (!allowed) {
-    return NextResponse.redirect(`${env.baseUrl}/dashboard`);
+    return NextResponse.redirect(`${baseUrl}/dashboard`);
   }
 
   const form = await request.formData();
@@ -71,7 +73,7 @@ export async function POST(request, { params }) {
   const options = readOptions(form);
 
   if (enabled && !channelId) {
-    return NextResponse.redirect(`${env.baseUrl}/guild/${guildId}/vibe?error=missing_channel`);
+    return NextResponse.redirect(`${baseUrl}/guild/${guildId}/vibe?error=missing_channel`);
   }
 
   await connectDb();
@@ -87,5 +89,5 @@ export async function POST(request, { params }) {
   config.markModified("vibeCheck");
   await config.save();
 
-  return NextResponse.redirect(`${env.baseUrl}/guild/${guildId}/vibe?saved=1`);
+  return NextResponse.redirect(`${baseUrl}/guild/${guildId}/vibe?saved=1`);
 }

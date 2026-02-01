@@ -101,6 +101,9 @@ export default function HomeClient() {
             <a className="button button--lg" href="/api/auth/login">
               Entrar com Discord
             </a>
+            <a className="button button--lg button--secondary" href="/api/discord/invite">
+              Adicionar bot
+            </a>
             <a className="button button--lg button--secondary" href="/dashboard">
               Ir para dashboard
             </a>
@@ -193,6 +196,9 @@ export default function HomeClient() {
           <div className="cta-strip__actions">
             <a className="button button--lg" href="/api/auth/login">
               Conectar agora
+            </a>
+            <a className="button button--lg button--secondary" href="/api/discord/invite">
+              Adicionar bot
             </a>
             <a className="button button--lg button--secondary" href="/login">
               Ver login

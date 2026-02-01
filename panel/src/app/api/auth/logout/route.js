@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { env } from "../../../../lib/env.js";
+import { getBaseUrlFromRequest } from "../../../../lib/runtimeUrl.js";
 import {
   clearSessionCookie,
   destroySessionById,
@@ -8,10 +8,11 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request) {
+  const baseUrl = getBaseUrlFromRequest(request);
   const sessionId = getSessionIdFromCookies();
   await destroySessionById(sessionId);
-  const response = NextResponse.redirect(`${env.baseUrl}/login`);
+  const response = NextResponse.redirect(`${baseUrl}/login`);
   clearSessionCookie(response);
   return response;
 }

@@ -1,16 +1,17 @@
 import { NextResponse } from "next/server";
 import { assertEnv, env } from "../../../../lib/env.js";
 import { attachSessionCookie, createSession } from "../../../../lib/session.js";
+import { getBaseUrlFromRequest, getDiscordRedirectUri } from "../../../../lib/runtimeUrl.js";
 
 export const dynamic = "force-dynamic";
 
-async function exchangeCode(code) {
+async function exchangeCode(code, { redirectUri }) {
   const body = new URLSearchParams({
     client_id: env.discordClientId,
     client_secret: env.discordClientSecret,
     grant_type: "authorization_code",
     code,
-    redirect_uri: env.discordRedirectUri
+    redirect_uri: redirectUri
   });
 
   const response = await fetch("https://discord.com/api/oauth2/token", {
@@ -45,7 +46,10 @@ async function fetchUser(accessToken) {
 }
 
 export async function GET(request) {
-  assertEnv(["discordClientId", "discordClientSecret", "discordRedirectUri"]);
+  assertEnv(["discordClientId", "discordClientSecret", "sessionSecret", "mongoUri"]);
+
+  const baseUrl = getBaseUrlFromRequest(request);
+  const redirectUri = getDiscordRedirectUri({ baseUrl });
 
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
@@ -53,11 +57,11 @@ export async function GET(request) {
 
   const cookieState = request.cookies.get("oauth_state")?.value;
   if (!code || !state || !cookieState || state !== cookieState) {
-    return NextResponse.redirect(`${env.baseUrl}/login?error=state`);
+    return NextResponse.redirect(`${baseUrl}/login?error=state`);
   }
 
   try {
-    const token = await exchangeCode(code);
+    const token = await exchangeCode(code, { redirectUri });
     const user = await fetchUser(token.access_token);
 
     const sessionData = await createSession({
@@ -67,12 +71,12 @@ export async function GET(request) {
       user
     });
 
-    const response = NextResponse.redirect(`${env.baseUrl}/dashboard`);
+    const response = NextResponse.redirect(`${baseUrl}/dashboard`);
     attachSessionCookie(response, sessionData.sessionId, sessionData.expiresAt);
     response.cookies.delete("oauth_state");
     return response;
   } catch (error) {
     console.error(error);
-    return NextResponse.redirect(`${env.baseUrl}/login?error=oauth`);
+    return NextResponse.redirect(`${baseUrl}/login?error=oauth`);
   }
 }

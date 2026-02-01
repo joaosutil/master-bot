@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDb } from "../../../../../../lib/db.js";
 import { fetchDiscord, hasManageGuild, fetchDiscordBot } from "../../../../../../lib/discord.js";
 import { env, assertEnv } from "../../../../../../lib/env.js";
+import { getBaseUrlFromRequest } from "../../../../../../lib/runtimeUrl.js";
 import { getSession } from "../../../../../../lib/session.js";
 import { getOrCreateGuildConfig } from "../../../../../../lib/guildConfig.js";
 
@@ -81,10 +82,11 @@ function buildEmbeds(payload) {
 
 export async function POST(request, { params }) {
   assertEnv(["discordBotToken"]);
+  const baseUrl = getBaseUrlFromRequest(request);
 
   const session = await getSession();
   if (!session) {
-    return NextResponse.redirect(`${env.baseUrl}/login`);
+    return NextResponse.redirect(`${baseUrl}/login`);
   }
 
   const guildId = params.id;
@@ -103,7 +105,7 @@ export async function POST(request, { params }) {
   );
 
   if (!allowed) {
-    return NextResponse.redirect(`${env.baseUrl}/dashboard`);
+    return NextResponse.redirect(`${baseUrl}/dashboard`);
   }
 
   const form = await request.formData();
@@ -120,7 +122,7 @@ export async function POST(request, { params }) {
 
   if (!panelChannelId) {
     return NextResponse.redirect(
-      `${env.baseUrl}/guild/${guildId}/tickets?error=panel_channel`
+      `${baseUrl}/guild/${guildId}/tickets?error=panel_channel`
     );
   }
 
@@ -194,9 +196,7 @@ export async function POST(request, { params }) {
     }
   } catch (error) {
     console.error(error);
-    return NextResponse.redirect(
-      `${env.baseUrl}/guild/${guildId}/tickets?error=panel_publish`
-    );
+    return NextResponse.redirect(`${baseUrl}/guild/${guildId}/tickets?error=panel_publish`);
   }
 
   config.tickets.panel.panelChannelId = panelChannelId;
@@ -213,5 +213,5 @@ export async function POST(request, { params }) {
 
   await config.save();
 
-  return NextResponse.redirect(`${env.baseUrl}/guild/${guildId}/tickets?panel=1`);
+  return NextResponse.redirect(`${baseUrl}/guild/${guildId}/tickets?panel=1`);
 }

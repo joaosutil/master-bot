@@ -16,9 +16,14 @@ export default async function LoginPage() {
         <p className="helper">
           Entre com sua conta para gerenciar tickets, eventos e modulos do Master Bot.
         </p>
-        <a className="button" href="/api/auth/login">
-          Entrar com Discord
-        </a>
+        <div className="hero-actions">
+          <a className="button" href="/api/auth/login">
+            Entrar com Discord
+          </a>
+          <a className="button button--secondary" href="/api/discord/invite">
+            Adicionar bot
+          </a>
+        </div>
       </div>
       <div className="badge">OAuth2 Seguro</div>
     </div>

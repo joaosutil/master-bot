@@ -19,6 +19,8 @@ Painel web para configurar o bot (tickets, categorias e painel público).
   - `DISCORD_REDIRECT_URI=https://SEU-DOMINIO/api/auth/callback`
 - No Discord Developer Portal, adicione o mesmo `DISCORD_REDIRECT_URI` em OAuth2 Redirects
 
+> Nota: `BASE_URL` e `DISCORD_REDIRECT_URI` precisam bater com o endereço final (IP/domínio) que você vai usar no navegador. Sem isso o login do Discord não completa.
+
 ## Troubleshooting
 - Se aparecer erro tipo `Cannot find module './682.js'` dentro de `panel/.next`, rode `npm run clean` e reinicie o dev server.
 - Se quiser iniciar sem limpar `.next` (mais rápido), use `npm run dev:fast`.
@@ -32,4 +34,3 @@ Painel web para configurar o bot (tickets, categorias e painel público).
 - http://localhost:3000/guild/<id>/tickets/queue
 - http://localhost:3000/guild/<id>/memories
 - http://localhost:3000/guild/<id>/verification
-

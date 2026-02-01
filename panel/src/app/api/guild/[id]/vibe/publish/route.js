@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDb } from "../../../../../../lib/db.js";
 import { fetchDiscord, fetchDiscordBot, hasManageGuild } from "../../../../../../lib/discord.js";
 import { env, assertEnv } from "../../../../../../lib/env.js";
+import { getBaseUrlFromRequest } from "../../../../../../lib/runtimeUrl.js";
 import { getSession } from "../../../../../../lib/session.js";
 import { getOrCreateGuildConfig } from "../../../../../../lib/guildConfig.js";
 import VibeCheckDay from "../../../../../../models/VibeCheckDay.js";
@@ -57,10 +58,11 @@ function buildPayload({ guildId, dateKey, question, options }) {
 
 export async function POST(request, { params }) {
   assertEnv(["discordBotToken"]);
+  const baseUrl = getBaseUrlFromRequest(request);
 
   const session = await getSession();
   if (!session) {
-    return NextResponse.redirect(`${env.baseUrl}/login`);
+    return NextResponse.redirect(`${baseUrl}/login`);
   }
 
   const guildId = params.id;
@@ -78,7 +80,7 @@ export async function POST(request, { params }) {
     (guild) => guild.id === guildId && hasManageGuild(guild.permissions)
   );
   if (!allowed) {
-    return NextResponse.redirect(`${env.baseUrl}/dashboard`);
+    return NextResponse.redirect(`${baseUrl}/dashboard`);
   }
 
   const form = await request.formData();
@@ -86,7 +88,7 @@ export async function POST(request, { params }) {
   const pinned = String(form.get("pinned") ?? "false") === "true";
 
   if (!channelId) {
-    return NextResponse.redirect(`${env.baseUrl}/guild/${guildId}/vibe?error=channel_required`);
+    return NextResponse.redirect(`${baseUrl}/guild/${guildId}/vibe?error=channel_required`);
   }
 
   await connectDb();
@@ -117,7 +119,7 @@ export async function POST(request, { params }) {
     }
   } catch (error) {
     console.error(error);
-    return NextResponse.redirect(`${env.baseUrl}/guild/${guildId}/vibe?error=publish_failed`);
+    return NextResponse.redirect(`${baseUrl}/guild/${guildId}/vibe?error=publish_failed`);
   }
 
   if (!config.vibeCheck) config.vibeCheck = {};
@@ -146,5 +148,5 @@ export async function POST(request, { params }) {
     { upsert: true }
   );
 
-  return NextResponse.redirect(`${env.baseUrl}/guild/${guildId}/vibe?published=1`);
+  return NextResponse.redirect(`${baseUrl}/guild/${guildId}/vibe?published=1`);
 }

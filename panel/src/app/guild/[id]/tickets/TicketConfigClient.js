@@ -715,6 +715,7 @@ export default function TicketConfigClient({
 
       <div className="card">
         <h2>Painel público</h2>
+        <div className="config-2col">
         <form
           ref={panelFormRef}
           className="form"
@@ -855,9 +856,10 @@ export default function TicketConfigClient({
             Publicar / Atualizar painel
           </button>
         </form>
-        <div className="preview">
-          <div className="preview-label">Preview do embed</div>
-          <div className="embed-preview" style={{ borderLeftColor: panelColor }}>
+        <aside className="config-aside">
+          <div className="preview preview--sticky">
+            <div className="preview-label">Preview do embed</div>
+            <div className="embed-preview" style={{ borderLeftColor: panelColor }}>
             {panelAuthorName ? (
               <div className="embed-author">
                 {panelAuthorIconUrl ? (
@@ -894,11 +896,13 @@ export default function TicketConfigClient({
                 dangerouslySetInnerHTML={{ __html: formatMarkdown(panelFooterText) }}
               />
             ) : null}
+            </div>
           </div>
+          <p className="helper">
+            O painel usa o token do bot para enviar ou editar a mensagem no canal.
+          </p>
+        </aside>
         </div>
-        <p className="helper">
-          O painel usa o token do bot para enviar ou editar a mensagem no canal.
-        </p>
       </div>
     </div>
   );

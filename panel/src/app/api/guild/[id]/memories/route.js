@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDb } from "../../../../../lib/db.js";
 import { fetchDiscord, hasManageGuild } from "../../../../../lib/discord.js";
 import { env } from "../../../../../lib/env.js";
+import { getBaseUrlFromRequest } from "../../../../../lib/runtimeUrl.js";
 import { getSession } from "../../../../../lib/session.js";
 import { getOrCreateGuildConfig } from "../../../../../lib/guildConfig.js";
 
@@ -26,9 +27,10 @@ function clampInt(value, fallback, min, max) {
 }
 
 export async function POST(request, { params }) {
+  const baseUrl = getBaseUrlFromRequest(request);
   const session = await getSession();
   if (!session) {
-    return NextResponse.redirect(`${env.baseUrl}/login`);
+    return NextResponse.redirect(`${baseUrl}/login`);
   }
 
   const guildId = params.id;
@@ -47,7 +49,7 @@ export async function POST(request, { params }) {
   );
 
   if (!allowed) {
-    return NextResponse.redirect(`${env.baseUrl}/dashboard`);
+    return NextResponse.redirect(`${baseUrl}/dashboard`);
   }
 
   const form = await request.formData();
@@ -71,6 +73,6 @@ export async function POST(request, { params }) {
   const paramsOut = new URLSearchParams();
   paramsOut.set("saved", "1");
   return NextResponse.redirect(
-    `${env.baseUrl}/guild/${guildId}/memories?${paramsOut.toString()}`
+    `${baseUrl}/guild/${guildId}/memories?${paramsOut.toString()}`
   );
 }

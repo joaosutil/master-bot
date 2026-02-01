@@ -5,7 +5,7 @@ export const env = {
   discordBotToken: process.env.DISCORD_BOT_TOKEN,
   sessionSecret: process.env.SESSION_SECRET,
   mongoUri: process.env.MONGO_URI,
-  baseUrl: process.env.BASE_URL || "http://localhost:3000"
+  baseUrl: process.env.BASE_URL
 };
 
 export function assertEnv(keys = []) {

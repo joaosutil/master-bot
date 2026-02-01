@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import { getSession } from "../../lib/session.js";
 import { fetchDiscord, hasManageGuild } from "../../lib/discord.js";
 
@@ -43,9 +44,12 @@ export default async function DashboardPage() {
               <div className="guild-info">
                 <div className="guild-icon">
                   {guild.icon ? (
-                    <img
+                    <Image
                       src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=96`}
                       alt={guild.name}
+                      width={48}
+                      height={48}
+                      sizes="48px"
                     />
                   ) : (
                     guild.name.slice(0, 1).toUpperCase()

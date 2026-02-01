@@ -241,6 +241,7 @@ export default function WelcomeConfigClient({
       {metaError ? <div className="notice error">{metaError}</div> : null}
 
       <div className="card">
+        <div className="config-2col">
         <form
           className="form"
           method="post"
@@ -484,9 +485,10 @@ export default function WelcomeConfigClient({
           </button>
         </form>
 
-        <div className="preview">
-          <div className="preview-label">Preview do embed</div>
-          <div className="embed-preview" style={{ borderLeftColor: color }}>
+        <aside className="config-aside">
+          <div className="preview preview--sticky">
+            <div className="preview-label">Preview do embed</div>
+            <div className="embed-preview" style={{ borderLeftColor: color }}>
             {authorName ? (
               <div className="embed-author">
                 {authorIconUrl ? (
@@ -523,7 +525,9 @@ export default function WelcomeConfigClient({
                 dangerouslySetInnerHTML={{ __html: formatMarkdown(footerText) }}
               />
             ) : null}
+            </div>
           </div>
+        </aside>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -70,12 +71,12 @@ export default function SiteHeaderClient({ user }) {
               <span className="user-chip" title={user.id || undefined}>
                 <span className="user-chip__avatar" aria-hidden="true">
                   {user.avatar ? (
-                    <img
+                    <Image
                       src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64`}
                       alt=""
                       width={24}
                       height={24}
-                      loading="lazy"
+                      sizes="24px"
                     />
                   ) : (
                     (user.name || "U").slice(0, 1).toUpperCase()
@@ -85,6 +86,13 @@ export default function SiteHeaderClient({ user }) {
               </span>
               <a
                 className="button button--sm button--secondary"
+                href="/api/discord/invite"
+                onClick={() => setOpen(false)}
+              >
+                Adicionar bot
+              </a>
+              <a
+                className="button button--sm button--secondary"
                 href="/api/auth/logout"
                 onClick={() => setOpen(false)}
               >
@@ -92,9 +100,22 @@ export default function SiteHeaderClient({ user }) {
               </a>
             </>
           ) : (
-            <a className="button button--sm" href="/api/auth/login" onClick={() => setOpen(false)}>
-              Entrar com Discord
-            </a>
+            <>
+              <a
+                className="button button--sm"
+                href="/api/auth/login"
+                onClick={() => setOpen(false)}
+              >
+                Entrar com Discord
+              </a>
+              <a
+                className="button button--sm button--secondary"
+                href="/api/discord/invite"
+                onClick={() => setOpen(false)}
+              >
+                Adicionar bot
+              </a>
+            </>
           )}
         </nav>
 

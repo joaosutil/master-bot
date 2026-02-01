@@ -604,6 +604,26 @@ textarea:focus-visible {
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 }
 
+.config-2col {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.config-aside {
+  display: grid;
+  gap: 12px;
+}
+
+.preview--sticky {
+  position: sticky;
+  top: 96px;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
 .kpi-grid {
   margin-top: 14px;
   display: grid;
@@ -1886,6 +1906,14 @@ button:disabled {
 
   .ms__toolbar {
     grid-template-columns: 1fr;
+  }
+
+  .config-2col {
+    grid-template-columns: 1fr;
+  }
+
+  .preview--sticky {
+    position: static;
   }
 
   .table__head {
