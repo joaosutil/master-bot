@@ -9,11 +9,11 @@ import {
 
 const data = new SlashCommandBuilder()
   .setName("expedicao")
-  .setDescription("Expedicoes cooperativas")
+  .setDescription("Expedicoes cooperativas em thread")
   .addSubcommand((subcommand) =>
     subcommand
       .setName("iniciar")
-      .setDescription("Inicia uma nova expedicao")
+      .setDescription("Cria um lobby e inicia a expedicao")
   );
 
 export default {

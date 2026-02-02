@@ -1,5 +1,6 @@
 import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { renderCardPng } from "./renderCard.js";
+import { applyNoise } from "./noise.js";
 
 const FONT = `system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
 
@@ -66,15 +67,7 @@ function background(ctx, W, H, accent) {
   ctx.fillStyle = v;
   ctx.fillRect(0, 0, W, H);
 
-  const img = ctx.getImageData(0, 0, W, H);
-  const d = img.data;
-  for (let i = 0; i < d.length; i += 4) {
-    const n = (Math.random() - 0.5) * 14;
-    d[i] = clamp(d[i] + n, 0, 255);
-    d[i + 1] = clamp(d[i + 1] + n, 0, 255);
-    d[i + 2] = clamp(d[i + 2] + n, 0, 255);
-  }
-  ctx.putImageData(img, 0, 0);
+  applyNoise(ctx, W, H, 0.05);
 }
 
 function drawHeader(ctx, W, title) {

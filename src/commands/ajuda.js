@@ -31,7 +31,7 @@ function renderCommandList() {
     },
     {
       title: "Eventos",
-      items: ["/sorteio", "/expedicao iniciar", "/memoria adicionar"]
+      items: ["/sorteio", "/expedicao iniciar (coop)", "/memoria adicionar"]
     },
     {
       title: "Comunidade",

@@ -1,5 +1,6 @@
 import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { renderPackArtPng } from "./renderPackArt.js";
+import { applyNoise } from "./noise.js";
 
 const FONT = `system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
 
@@ -18,17 +19,7 @@ function drawRoundedRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-function drawNoise(ctx, w, h, strength = 0.02) {
-  const img = ctx.getImageData(0, 0, w, h);
-  const d = img.data;
-  for (let i = 0; i < d.length; i += 4) {
-    const n = (Math.random() - 0.5) * 255 * strength;
-    d[i] = clamp(d[i] + n, 0, 255);
-    d[i + 1] = clamp(d[i + 1] + n, 0, 255);
-    d[i + 2] = clamp(d[i + 2] + n, 0, 255);
-  }
-  ctx.putImageData(img, 0, 0);
-}
+// Noise moved to src/ui/noise.js (pattern-based, much faster on low CPU)
 
 function asRgb(accent) {
   if (!accent) return { r: 180, g: 120, b: 255 };
@@ -141,6 +132,6 @@ export async function renderPackOpeningPng({ packId = "", name, emoji = "🎁", 
   ctx.fillText("MASTER BOT • PACK OPENING", W / 2, H - 70);
   ctx.restore();
 
-  drawNoise(ctx, W, H, 0.022);
+  applyNoise(ctx, W, H, 0.06);
   return canvas.toBuffer("image/png");
 }

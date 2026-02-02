@@ -2,12 +2,19 @@ import { createCanvas, loadImage } from "@napi-rs/canvas";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { formatCoins, rarityColor, rarityLabel } from "./embeds.js";
+import { applyNoise } from "./noise.js";
 
 const W = 768;
 const H = 1080;
 const FONT = `system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
 
 const cache = new Map(); // key -> Image|null
+
+const renderedCache = new Map(); // key -> Buffer
+const maxRenderedCache = Math.max(
+  0,
+  Number.parseInt(process.env.CARD_RENDER_CACHE ?? "50", 10) || 50
+);
 
 function clamp(n, a, b) {
   return Math.max(a, Math.min(b, n));
@@ -57,16 +64,36 @@ function fitText(ctx, text, maxW, start, min, weight = 900) {
   return min;
 }
 
-function drawNoise(ctx, strength = 0.022) {
-  const img = ctx.getImageData(0, 0, W, H);
-  const d = img.data;
-  for (let i = 0; i < d.length; i += 4) {
-    const n = (Math.random() - 0.5) * 255 * strength;
-    d[i] = clamp(d[i] + n, 0, 255);
-    d[i + 1] = clamp(d[i + 1] + n, 0, 255);
-    d[i + 2] = clamp(d[i + 2] + n, 0, 255);
+function cacheSet(map, key, value, maxSize) {
+  if (maxSize <= 0) return;
+  map.set(key, value);
+  while (map.size > maxSize) {
+    const oldest = map.keys().next().value;
+    if (oldest == null) break;
+    map.delete(oldest);
   }
-  ctx.putImageData(img, 0, 0);
+}
+
+function stableCardKey(card) {
+  const stats = card?.stats ?? {};
+  const orderedStats = ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"].map((k) => [
+    k,
+    stats?.[k] ?? null
+  ]);
+
+  return JSON.stringify({
+    id: card?.id ?? null,
+    name: card?.name ?? null,
+    pos: card?.pos ?? null,
+    ovr: card?.ovr ?? null,
+    rarity: card?.rarity ?? null,
+    value: card?.value ?? null,
+    portraitFile: card?.portraitFile ?? null,
+    clubBadgeFile: card?.clubBadgeFile ?? null,
+    clubName: card?.clubName ?? null,
+    countryCode: card?.countryCode ?? null,
+    stats: orderedStats
+  });
 }
 
 async function loadLocalImage(relParts) {
@@ -276,6 +303,12 @@ function drawBadgeFallback(ctx, cx, cy, r, accent, text) {
 }
 
 export async function renderCardPng(card) {
+  const key = stableCardKey(card);
+  if (maxRenderedCache > 0) {
+    const hit = renderedCache.get(key);
+    if (hit) return hit;
+  }
+
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
 
@@ -487,6 +520,8 @@ export async function renderCardPng(card) {
   ctx.fillText("MASTER BOT • FUT STYLE", innerX + innerW, H - 56);
   ctx.restore();
 
-  drawNoise(ctx, 0.020);
-  return canvas.toBuffer("image/png");
+  applyNoise(ctx, W, H, 0.08);
+  const out = canvas.toBuffer("image/png");
+  cacheSet(renderedCache, key, out, maxRenderedCache);
+  return out;
 }

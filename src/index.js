@@ -7,6 +7,7 @@ import { connectMongo } from "./db/mongo.js";
 import { loadCommands } from "./loaders/commands.js";
 
 import { handleExpedicaoJoin } from "./game/expedicaoLobby.js";
+import { handleExpedicaoAction } from "./game/expedicaoGame.js";
 
 import {
   handleTicketButton,
@@ -25,13 +26,14 @@ import {
   handleModerationMemberJoin
 } from "./moderation/moderationService.js";
 
-// ✅ PACK UI (novo)
+// âœ… PACK UI (novo)
 import { handlePackButton, handlePackSelect } from "./game/packs/packUi.js";
 import { handleGiveawayButton, startGiveawayScheduler } from "./giveaway/giveawayService.js";
 import { handleMemoryAddModalSubmit, startMemoryCapsuleScheduler } from "./services/memoryCapsuleService.js";
 import { handleVerifyAnswer, handleVerifyStart } from "./services/verificationService.js";
 import { handleVibeVote, startVibeCheckScheduler } from "./services/vibeCheckService.js";
 import { startHealthServer } from "./services/healthServer.js";
+import { startPresenceRotator } from "./services/presenceRotator.js";
 
 assertConfig(["token"]);
 startHealthServer();
@@ -49,14 +51,11 @@ const client = new Client({
 const { commands } = await loadCommands();
 client.commands = commands;
 
+let stopPresenceRotator = null;
+
 client.once(Events.ClientReady, (readyClient) => {
   console.log(`Master Bot online as ${readyClient.user.tag}`);
-  try {
-    readyClient.user.setPresence({
-      activities: [{ name: "/ajuda • tickets • packs", type: 0 }],
-      status: "online"
-    });
-  } catch {}
+  stopPresenceRotator = startPresenceRotator(readyClient);
   startGiveawayScheduler(client);
   startTicketAutoCloseScheduler(client);
   startMemoryCapsuleScheduler(client);
@@ -117,7 +116,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   // ===== Buttons =====
   if (interaction.isButton()) {
-    // ✅ PACK buttons (precisa vir antes pra não “cair” no resto)
+    // âœ… PACK buttons (precisa vir antes pra nÃ£o â€œcairâ€ no resto)
     if (interaction.customId.startsWith("pack_")) {
       return await handlePackButton(interaction);
     }
@@ -134,6 +133,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
       return await handleExpedicaoJoin(interaction);
     }
 
+    if (
+      interaction.customId.startsWith("expedicao_route:") ||
+      interaction.customId.startsWith("expedicao_choice:") ||
+      interaction.customId.startsWith("expedicao_continue:")
+    ) {
+      return await handleExpedicaoAction(interaction);
+    }
+
     if (interaction.customId.startsWith("ticket_")) {
       return await handleTicketButton(interaction);
     }
@@ -146,7 +153,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   // ===== String Select Menus =====
   if (interaction.isStringSelectMenu()) {
-    // ✅ PACK select menu
+    // âœ… PACK select menu
     if (interaction.customId.startsWith("pack_select:")) {
       return await handlePackSelect(interaction);
     }
@@ -214,6 +221,9 @@ await client.login(config.token);
 
 async function shutdown(signal) {
   console.log(`Shutting down (${signal})...`);
+  try {
+    stopPresenceRotator?.();
+  } catch {}
   try {
     await client.destroy();
   } catch {}

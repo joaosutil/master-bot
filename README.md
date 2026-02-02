@@ -35,6 +35,11 @@ Local com MongoDB em container:
 3. Bot (Koyeb): faça deploy do repo e configure as envs do `.env.example`; garanta que `PORT` esteja definido (o bot expõe `/health`)
 4. Discord Developer Portal: adicione o redirect do painel (ex: `https://SEU-DOMINIO/api/auth/callback`) e atualize `PANEL_BASE_URL`/`BASE_URL`
 
+### Performance (VPS fraca)
+- `RENDER_FAST=1` desliga efeitos de ruído (mais rápido)
+- `RENDER_NOISE=0` desliga ruído
+- `CARD_RENDER_CACHE=50` cache de cards renderizados (aumente se tiver RAM)
+
 ## Comandos iniciais
 - /ping
 - /ajuda
@@ -57,4 +62,3 @@ Local com MongoDB em container:
 - O comando /expedicao iniciar cria uma thread com lobby por 60s e botão "Entrar".
 - Boas-vindas: no painel, você pode configurar cargos automáticos (auto-role) para novos membros.
 - Cápsula do tempo: use `/memoria adicionar` para salvar mensagens engraçadas/fofas e configure a postagem automática no painel.
-

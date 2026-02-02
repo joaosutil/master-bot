@@ -1,4 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+import { startExpeditionFromLobby } from "./expedicaoGame.js";
 
 export const LOBBY_DURATION_MS = 60_000;
 
@@ -37,7 +38,7 @@ export function buildLobbySummary(lobby) {
   return [
     "Expedicao pronta!",
     `Participantes (${lobby.participants.size}): ${formatParticipants(lobby)}`,
-    "Proximo passo: gerar a cena inicial."
+    "A expedicao vai comecar agora - o lider vai escolher a rota."
   ].join("\n");
 }
 
@@ -75,6 +76,12 @@ export function scheduleLobbyClose(thread, message) {
       await thread.send({ content: buildLobbySummary(lobby) });
     } catch (error) {
       console.error("Failed to send lobby summary:", error);
+    }
+
+    try {
+      await startExpeditionFromLobby(thread, lobby);
+    } catch (error) {
+      console.error("Failed to start expedition:", error);
     }
 
     lobbies.delete(thread.id);
