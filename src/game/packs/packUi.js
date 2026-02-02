@@ -23,6 +23,7 @@ import { renderPackRevealPng } from "../../ui/renderPackReveal.js";
 import { renderCardPng } from "../../ui/renderCard.js";
 import { renderPackOpeningPng } from "../../ui/renderPackOpening.js";
 import { renderPackArtPng } from "../../ui/renderPackArt.js";
+import { renderPackStashBannerPng } from "../../ui/renderPackStashBanner.js";
 import { formatCoins } from "../../ui/embeds.js";
 
 async function getBalance({ guildId, userId }) {
@@ -97,17 +98,37 @@ function formatOdds(odds = {}) {
 
 function shopEmbed({ balance, counts }) {
   return new EmbedBuilder()
-    .setTitle("🛒 Loja de Packs")
+    .setTitle("🎴 Mochila de Packs")
     .setColor("#7c3aed")
-    .setDescription("Compre packs e guarde no estoque. Abra quando quiser.")
+    .setDescription("Compre packs, guarde no estoque e abra quando quiser.")
     .addFields(
-      ...PACK_LIST.map((p) => ({
-        name: `${p.emoji} ${p.name} • ${formatCoins(p.price)} 🪙`,
-        value: `${p.description}\n**No seu estoque:** **${counts?.[p.id] ?? 0}x**`,
-        inline: false
-      }))
+      ...PACK_LIST.map((p) => {
+        const owned = counts?.[p.id] ?? 0;
+        return {
+          name: `${p.emoji} ${p.name}`,
+          value: `**${owned}x** no estoque\n${formatCoins(p.price)} 🪙`,
+          inline: true
+        };
+      })
     )
     .setFooter({ text: `Seu saldo: ${formatCoins(balance)} 🪙` });
+}
+
+async function stashBannerFile({ userTag, counts }) {
+  const fileName = `packs-${Date.now()}.png`;
+  const buf = await renderPackStashBannerPng({
+    title: "Mochila de Packs",
+    subtitle: userTag ? String(userTag).split("#")[0] : "",
+    packs: PACK_LIST.map((p) => ({
+      id: p.id,
+      name: p.name,
+      emoji: p.emoji,
+      accent: packAccent(p.id)
+    })),
+    counts,
+    accent: "#7c3aed"
+  });
+  return { fileName, attachment: new AttachmentBuilder(buf, { name: fileName }) };
 }
 
 function packEmbed({ pack, balance, owned }) {
@@ -202,10 +223,14 @@ function openButtons({ userId, packId, owned }) {
 export async function showPackShop(interaction) {
   const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
   const counts = await getPackCounts(interaction.guildId, interaction.user.id);
+  const banner = await stashBannerFile({ userTag: interaction.user?.tag, counts });
+  const embed = shopEmbed({ balance, counts });
+  embed.setImage(`attachment://${banner.fileName}`);
 
   await interaction.reply({
     ephemeral: true,
-    embeds: [shopEmbed({ balance, counts })],
+    embeds: [embed],
+    files: [banner.attachment],
     components: [selectMenu({ userId: interaction.user.id })]
   });
 }
@@ -251,8 +276,12 @@ export async function handlePackButton(interaction) {
     if (action === "pack_back") {
       const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
       const counts = await getPackCounts(interaction.guildId, interaction.user.id);
+      const banner = await stashBannerFile({ userTag: interaction.user?.tag, counts });
+      const embed = shopEmbed({ balance, counts });
+      embed.setImage(`attachment://${banner.fileName}`);
       return interaction.update({
-        embeds: [shopEmbed({ balance, counts })],
+        embeds: [embed],
+        files: [banner.attachment],
         components: [selectMenu({ userId: ownerId })]
       });
     }

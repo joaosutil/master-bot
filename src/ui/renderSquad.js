@@ -13,6 +13,16 @@ function lerp(a, b, t) {
   return a + (b - a) * t;
 }
 
+function fitText(ctx, text, maxW, start, min, weight = 900) {
+  let size = start;
+  while (size >= min) {
+    ctx.font = `${weight} ${size}px ${FONT}`;
+    if (ctx.measureText(text).width <= maxW) return size;
+    size -= 1;
+  }
+  return min;
+}
+
 function drawRoundedRect(ctx, x, y, w, h, r) {
   const radius = Math.min(r, w / 2, h / 2);
   ctx.beginPath();
@@ -180,10 +190,10 @@ function mapToPitch(pitch, nx, ny) {
 function snapRowY(posLabel, fallbackNy) {
   const p = String(posLabel ?? "").toUpperCase();
   // normalized rows inside the pitch (more vertical spacing + easier alignment)
-  if (["PE", "PD", "ATA", "CA"].includes(p)) return 0.12;
-  if (["MEI", "MC", "VOL", "MA", "MD", "ME"].includes(p)) return 0.48;
-  if (["LE", "LD", "ZAG"].includes(p)) return 0.82;
-  if (["GOL"].includes(p)) return 0.955;
+  if (["PE", "PD", "ATA", "CA"].includes(p)) return 0.13;
+  if (["MEI", "MC", "VOL", "MA", "MD", "ME"].includes(p)) return 0.44;
+  if (["LE", "LD", "ZAG"].includes(p)) return 0.77;
+  if (["GOL"].includes(p)) return 0.94;
   return clamp(fallbackNy, 0, 1);
 }
 
@@ -272,8 +282,8 @@ function adjustVerticalSpacing(placed, { pitch, H }) {
   if (!rows.length) return;
 
   // label sits below the card; keep a consistent reserve so rows don't collide
-  const labelReserve = 110; // includes label height + padding
-  const minGap = 64;
+  const labelReserve = 170; // includes label height + padding
+  const minGap = 120;
 
   // push down to avoid overlaps (top -> bottom)
   for (let i = 1; i < rows.length; i++) {
@@ -315,18 +325,18 @@ export async function renderSquadPng({
   title = process.env.SQUAD_BRAND ?? "MASTER BOT",
   subtitle = ""
 } = {}) {
-  const W = 2048;
-  const H = 2600;
+  const W = 2560;
+  const H = 3200;
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
 
   drawShardedBg(ctx, W, H);
 
   const pitch = {
-    topLeft: { x: 360, y: 320 },
-    topRight: { x: W - 360, y: 320 },
-    bottomRight: { x: W - 80, y: H - 90 },
-    bottomLeft: { x: 80, y: H - 90 }
+    topLeft: { x: 240, y: 420 },
+    topRight: { x: W - 240, y: 420 },
+    bottomRight: { x: W - 180, y: H - 140 },
+    bottomLeft: { x: 180, y: H - 140 }
   };
 
   drawPitch(ctx, pitch, { line: "#ff4da6" });
@@ -334,32 +344,32 @@ export async function renderSquadPng({
   // header
   ctx.save();
   ctx.textBaseline = "top";
-  ctx.font = `900 68px ${FONT}`;
+  ctx.font = `900 76px ${FONT}`;
   ctx.textAlign = "center";
   textStroke(ctx, String(title).toUpperCase(), W / 2, 26, "rgba(255,255,255,0.96)", "rgba(0,0,0,0.75)", 14);
 
   if (subtitle) {
-    ctx.font = `900 26px ${FONT}`;
+    ctx.font = `900 28px ${FONT}`;
     textStroke(
       ctx,
       String(subtitle).toUpperCase(),
       W / 2,
-      96,
+      108,
       "rgba(255,255,255,0.85)",
       "rgba(0,0,0,0.70)",
       10
     );
   }
 
-  ctx.font = `900 44px ${FONT}`;
+  ctx.font = `900 52px ${FONT}`;
   textStroke(
     ctx,
     `OVR ${overall || "—"}`,
     W / 2,
-    subtitle ? 132 : 104,
+    subtitle ? 152 : 120,
     "rgba(255,255,255,0.88)",
     "rgba(0,0,0,0.75)",
-    14
+    16
   );
 
   ctx.textAlign = "right";
@@ -415,13 +425,13 @@ export async function renderSquadPng({
     const rowMin = entries[0].rowMin;
     const rowMax = entries[0].rowMax;
     const rowW = Math.max(10, rowMax - rowMin);
-    const gap = 54;
+    const gap = 160;
 
     // perspective: near the bottom = larger, but still fit the row width
-    const scale = lerp(0.72, 1.02, ny);
-    const baseW = 360 * scale;
+    const scale = lerp(0.74, 0.92, ny);
+    const baseW = 340 * scale;
     const maxWByRow = (rowW - gap * (entries.length - 1)) / entries.length;
-    const cardWBase = Math.round(Math.max(190, Math.min(baseW, maxWByRow)));
+    const cardWBase = Math.round(Math.max(220, Math.min(baseW, maxWByRow)));
 
     for (const p of entries) {
       const mult = p.posLabel === "GOL" ? 0.86 : 1;
@@ -439,7 +449,7 @@ export async function renderSquadPng({
       });
       // garante espaço pro label embaixo (sem jogar label pra cima da carta)
       const labelH = 60;
-      const labelPad = 34;
+      const labelPad = 44;
       const labelY = cy + p.cardH / 2 + labelPad;
       const overflow = labelY + labelH - (H - 18);
       const cyAdjusted = overflow > 0 ? cy - overflow : cy;
@@ -457,13 +467,15 @@ export async function renderSquadPng({
     const { item, posLabel, nx, ny, cardW, cardH, cx, cy } = p;
     const c = item.card;
 
-    const labelY = cy + cardH / 2 + 26;
+    const labelY = cy + cardH / 2 + 32;
 
     if (c) {
       const img = await getCardImage(c);
       if (img) {
         const tilt = (nx - 0.5) * 0.045;
         ctx.save();
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
         ctx.translate(cx, cy);
         ctx.rotate(tilt);
         ctx.shadowBlur = 40;
@@ -471,10 +483,49 @@ export async function renderSquadPng({
         ctx.shadowOffsetY = 18;
         ctx.drawImage(img, -cardW / 2, -cardH / 2, cardW, cardH);
         ctx.restore();
+
+        // readability overlay (name + ovr) so text remains visible even when scaled
+        const ovr = typeof c?.ovr === "number" ? String(c.ovr) : "??";
+        const name = String(c?.name ?? "Jogador");
+        const tag = `${ovr} • ${name}`;
+        const tagPadX = 14;
+        const tagH = Math.max(38, Math.round(cardW * 0.11));
+        const tagW = Math.min(cardW - 28, Math.max(220, Math.round(cardW * 0.86)));
+        const tagX = cx - tagW / 2;
+        const tagY = cy - cardH / 2 + 14;
+
+        ctx.save();
+        ctx.shadowBlur = 18;
+        ctx.shadowColor = "rgba(0,0,0,0.62)";
+        ctx.shadowOffsetY = 10;
+        ctx.globalAlpha = 0.92;
+        ctx.fillStyle = "rgba(0,0,0,0.56)";
+        drawRoundedRect(ctx, tagX, tagY, tagW, tagH, 14);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "rgba(255,255,255,0.16)";
+        drawRoundedRect(ctx, tagX, tagY, tagW, tagH, 14);
+        ctx.stroke();
+
+        const maxTextW = tagW - tagPadX * 2;
+        const size = fitText(ctx, tag, maxTextW, Math.round(tagH * 0.62), 16, 900);
+        ctx.font = `900 ${size}px ${FONT}`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.lineWidth = 10;
+        ctx.strokeStyle = "rgba(0,0,0,0.70)";
+        ctx.strokeText(tag, cx, tagY + tagH / 2 + 1);
+        ctx.fillStyle = "rgba(255,255,255,0.96)";
+        ctx.fillText(tag, cx, tagY + tagH / 2 + 1);
+        ctx.restore();
       }
     } else {
       // empty placeholder
       ctx.save();
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       ctx.translate(cx, cy);
       ctx.shadowBlur = 26;
       ctx.shadowColor = "rgba(0,0,0,0.65)";
