@@ -180,10 +180,10 @@ function mapToPitch(pitch, nx, ny) {
 function snapRowY(posLabel, fallbackNy) {
   const p = String(posLabel ?? "").toUpperCase();
   // normalized rows inside the pitch (more vertical spacing + easier alignment)
-  if (["PE", "PD", "ATA", "CA"].includes(p)) return 0.14;
-  if (["MEI", "MC", "VOL", "MA", "MD", "ME"].includes(p)) return 0.50;
-  if (["LE", "LD", "ZAG"].includes(p)) return 0.84;
-  if (["GOL"].includes(p)) return 0.965;
+  if (["PE", "PD", "ATA", "CA"].includes(p)) return 0.12;
+  if (["MEI", "MC", "VOL", "MA", "MD", "ME"].includes(p)) return 0.48;
+  if (["LE", "LD", "ZAG"].includes(p)) return 0.82;
+  if (["GOL"].includes(p)) return 0.955;
   return clamp(fallbackNy, 0, 1);
 }
 
@@ -272,8 +272,8 @@ function adjustVerticalSpacing(placed, { pitch, H }) {
   if (!rows.length) return;
 
   // label sits below the card; keep a consistent reserve so rows don't collide
-  const labelReserve = 92; // includes label height + padding
-  const minGap = 44;
+  const labelReserve = 110; // includes label height + padding
+  const minGap = 64;
 
   // push down to avoid overlaps (top -> bottom)
   for (let i = 1; i < rows.length; i++) {
@@ -316,17 +316,17 @@ export async function renderSquadPng({
   subtitle = ""
 } = {}) {
   const W = 2048;
-  const H = 2400;
+  const H = 2600;
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
 
   drawShardedBg(ctx, W, H);
 
   const pitch = {
-    topLeft: { x: 390, y: 360 },
-    topRight: { x: W - 390, y: 360 },
-    bottomRight: { x: W - 90, y: H - 120 },
-    bottomLeft: { x: 90, y: H - 120 }
+    topLeft: { x: 360, y: 320 },
+    topRight: { x: W - 360, y: 320 },
+    bottomRight: { x: W - 80, y: H - 90 },
+    bottomLeft: { x: 80, y: H - 90 }
   };
 
   drawPitch(ctx, pitch, { line: "#ff4da6" });
@@ -418,10 +418,10 @@ export async function renderSquadPng({
     const gap = 54;
 
     // perspective: near the bottom = larger, but still fit the row width
-    const scale = lerp(0.78, 1.14, ny);
-    const baseW = 440 * scale;
+    const scale = lerp(0.72, 1.02, ny);
+    const baseW = 360 * scale;
     const maxWByRow = (rowW - gap * (entries.length - 1)) / entries.length;
-    const cardWBase = Math.round(Math.max(220, Math.min(baseW, maxWByRow)));
+    const cardWBase = Math.round(Math.max(190, Math.min(baseW, maxWByRow)));
 
     for (const p of entries) {
       const mult = p.posLabel === "GOL" ? 0.86 : 1;
@@ -438,7 +438,7 @@ export async function renderSquadPng({
         allowBottomBleed: p.posLabel === "GOL" ? 170 : 95
       });
       // garante espaço pro label embaixo (sem jogar label pra cima da carta)
-      const labelH = 72;
+      const labelH = 60;
       const labelPad = 34;
       const labelY = cy + p.cardH / 2 + labelPad;
       const overflow = labelY + labelH - (H - 18);
@@ -449,8 +449,11 @@ export async function renderSquadPng({
 
   adjustVerticalSpacing(placed, { pitch, H });
 
+  // draw back -> front (perspective)
+  const placedSorted = [...placed].sort((a, b) => a.ny - b.ny);
+
   // draw cards + labels
-  for (const p of placed) {
+  for (const p of placedSorted) {
     const { item, posLabel, nx, ny, cardW, cardH, cx, cy } = p;
     const c = item.card;
 
@@ -499,8 +502,8 @@ export async function renderSquadPng({
     ctx.save();
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    const labelW = clamp(cardW * 0.76, 210, 380);
-    const labelH = 62;
+    const labelW = clamp(cardW * 0.72, 200, 340);
+    const labelH = 56;
     const labelX = cx - labelW / 2;
     ctx.shadowBlur = 18;
     ctx.shadowColor = "rgba(0,0,0,0.62)";
@@ -516,8 +519,8 @@ export async function renderSquadPng({
     drawRoundedRect(ctx, labelX, labelY - 8, labelW, labelH, 16);
     ctx.stroke();
 
-    ctx.font = `900 46px ${FONT}`;
-    textStroke(ctx, posLabel, cx, labelY, "rgba(255,255,255,0.96)", "rgba(0,0,0,0.70)", 12);
+    ctx.font = `900 40px ${FONT}`;
+    textStroke(ctx, posLabel, cx, labelY, "rgba(255,255,255,0.96)", "rgba(0,0,0,0.72)", 12);
     ctx.restore();
   }
 
