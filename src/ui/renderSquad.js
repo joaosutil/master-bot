@@ -180,10 +180,10 @@ function mapToPitch(pitch, nx, ny) {
 function snapRowY(posLabel, fallbackNy) {
   const p = String(posLabel ?? "").toUpperCase();
   // normalized rows inside the pitch (more vertical spacing + easier alignment)
-  if (["PE", "PD", "ATA", "CA"].includes(p)) return 0.18;
-  if (["MEI", "MC", "VOL", "MA", "MD", "ME"].includes(p)) return 0.52;
-  if (["LE", "LD", "ZAG"].includes(p)) return 0.80;
-  if (["GOL"].includes(p)) return 0.95;
+  if (["PE", "PD", "ATA", "CA"].includes(p)) return 0.14;
+  if (["MEI", "MC", "VOL", "MA", "MD", "ME"].includes(p)) return 0.50;
+  if (["LE", "LD", "ZAG"].includes(p)) return 0.84;
+  if (["GOL"].includes(p)) return 0.965;
   return clamp(fallbackNy, 0, 1);
 }
 
@@ -253,6 +253,61 @@ function resolveRowCenters(items, { minX, maxX, gap }) {
   }
 }
 
+function adjustVerticalSpacing(placed, { pitch, H }) {
+  const byRow = new Map(); // ny -> placed[]
+  for (const p of placed) {
+    const key = String(p.ny);
+    if (!byRow.has(key)) byRow.set(key, []);
+    byRow.get(key).push(p);
+  }
+
+  const rows = [...byRow.entries()]
+    .map(([key, entries]) => {
+      const maxCardH = Math.max(...entries.map((e) => e.cardH || 0));
+      const centerY = entries.reduce((acc, e) => acc + e.cy, 0) / Math.max(1, entries.length);
+      return { key, entries, maxCardH, centerY, adjustedY: centerY };
+    })
+    .sort((a, b) => Number(a.key) - Number(b.key));
+
+  if (!rows.length) return;
+
+  // label sits below the card; keep a consistent reserve so rows don't collide
+  const labelReserve = 92; // includes label height + padding
+  const minGap = 44;
+
+  // push down to avoid overlaps (top -> bottom)
+  for (let i = 1; i < rows.length; i++) {
+    const prev = rows[i - 1];
+    const cur = rows[i];
+
+    const prevBottom = prev.adjustedY + prev.maxCardH / 2 + labelReserve;
+    const curTop = cur.adjustedY - cur.maxCardH / 2;
+
+    const overlap = prevBottom + minGap - curTop;
+    if (overlap > 0) cur.adjustedY += overlap;
+  }
+
+  // if we overflow the canvas bottom, shift everything up a bit
+  const last = rows[rows.length - 1];
+  const bottom = last.adjustedY + last.maxCardH / 2 + labelReserve;
+  const maxBottom = H - 18;
+  const overflow = bottom - maxBottom;
+  if (overflow > 0) {
+    for (const r of rows) r.adjustedY -= overflow;
+  }
+
+  // apply per-row offsets + clamp inside pitch top
+  for (const r of rows) {
+    const delta = r.adjustedY - r.centerY;
+    if (!delta) continue;
+    for (const p of r.entries) {
+      p.cy += delta;
+      const minY = pitch.topLeft.y + 18 + p.cardH / 2;
+      if (p.cy < minY) p.cy = minY;
+    }
+  }
+}
+
 export async function renderSquadPng({
   formation,
   lineup,
@@ -260,18 +315,18 @@ export async function renderSquadPng({
   title = process.env.SQUAD_BRAND ?? "MASTER BOT",
   subtitle = ""
 } = {}) {
-  const W = 1920;
-  const H = 2000;
+  const W = 2048;
+  const H = 2400;
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
 
   drawShardedBg(ctx, W, H);
 
   const pitch = {
-    topLeft: { x: 360, y: 440 },
-    topRight: { x: 1560, y: 440 },
-    bottomRight: { x: 1820, y: 1960 },
-    bottomLeft: { x: 100, y: 1960 }
+    topLeft: { x: 390, y: 360 },
+    topRight: { x: W - 390, y: 360 },
+    bottomRight: { x: W - 90, y: H - 120 },
+    bottomLeft: { x: 90, y: H - 120 }
   };
 
   drawPitch(ctx, pitch, { line: "#ff4da6" });
@@ -296,8 +351,16 @@ export async function renderSquadPng({
     );
   }
 
-  ctx.font = `900 28px ${FONT}`;
-  textStroke(ctx, `OVR ${overall || "—"}`, W / 2, subtitle ? 128 : 96, "rgba(255,255,255,0.82)", "rgba(0,0,0,0.70)", 10);
+  ctx.font = `900 44px ${FONT}`;
+  textStroke(
+    ctx,
+    `OVR ${overall || "—"}`,
+    W / 2,
+    subtitle ? 132 : 104,
+    "rgba(255,255,255,0.88)",
+    "rgba(0,0,0,0.75)",
+    14
+  );
 
   ctx.textAlign = "right";
   ctx.font = `900 44px ${FONT}`;
@@ -352,13 +415,13 @@ export async function renderSquadPng({
     const rowMin = entries[0].rowMin;
     const rowMax = entries[0].rowMax;
     const rowW = Math.max(10, rowMax - rowMin);
-    const gap = 42;
+    const gap = 54;
 
     // perspective: near the bottom = larger, but still fit the row width
-    const scale = lerp(0.70, 1.06, ny);
-    const baseW = 380 * scale;
+    const scale = lerp(0.78, 1.14, ny);
+    const baseW = 440 * scale;
     const maxWByRow = (rowW - gap * (entries.length - 1)) / entries.length;
-    const cardWBase = Math.round(Math.max(190, Math.min(baseW, maxWByRow)));
+    const cardWBase = Math.round(Math.max(220, Math.min(baseW, maxWByRow)));
 
     for (const p of entries) {
       const mult = p.posLabel === "GOL" ? 0.86 : 1;
@@ -383,6 +446,8 @@ export async function renderSquadPng({
       p.cy = Math.max(cyAdjusted, pitch.topLeft.y + 18 + p.cardH / 2);
     }
   }
+
+  adjustVerticalSpacing(placed, { pitch, H });
 
   // draw cards + labels
   for (const p of placed) {

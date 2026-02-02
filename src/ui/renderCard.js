@@ -1,5 +1,5 @@
 import { createCanvas, loadImage } from "@napi-rs/canvas";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { formatCoins, rarityColor, rarityLabel } from "./embeds.js";
 import { applyNoise } from "./noise.js";
@@ -18,6 +18,15 @@ const maxRenderedCache = Math.max(
 
 function clamp(n, a, b) {
   return Math.max(a, Math.min(b, n));
+}
+
+function safeName(s) {
+  return String(s || "")
+    .normalize("NFKD")
+    .replace(/[^\w.-]+/g, "_")
+    .replace(/_+/g, "_")
+    .toLowerCase()
+    .slice(0, 120);
 }
 
 function hexToRgb(hex) {
@@ -110,6 +119,46 @@ async function loadLocalImage(relParts) {
     cache.set(key, null);
     return null;
   }
+}
+
+let clubBadgeIndexPromise = null;
+async function getClubBadgeIndex() {
+  if (clubBadgeIndexPromise) return clubBadgeIndexPromise;
+  clubBadgeIndexPromise = (async () => {
+    const dir = path.join(process.cwd(), "assets", "badges", "clubs");
+    try {
+      const files = await readdir(dir);
+      const out = new Map();
+      for (const f of files) {
+        const m = /^(.+)_\d+\.png$/i.exec(f);
+        if (!m) continue;
+        const key = String(m[1] ?? "").toLowerCase();
+        if (!key || out.has(key)) continue;
+        out.set(key, f);
+      }
+      return out;
+    } catch {
+      return new Map();
+    }
+  })();
+  return clubBadgeIndexPromise;
+}
+
+async function loadClubBadge(card) {
+  if (card?.clubBadgeFile) {
+    const byFile = await loadLocalImage(["assets", "badges", "clubs", card.clubBadgeFile]);
+    if (byFile) return byFile;
+  }
+
+  const clubName = card?.clubName ? String(card.clubName) : "";
+  if (!clubName) return null;
+
+  const idx = await getClubBadgeIndex();
+  const key = safeName(clubName);
+  const file = idx.get(key);
+  if (!file) return null;
+
+  return await loadLocalImage(["assets", "badges", "clubs", file]);
 }
 
 function drawCover(ctx, img, x, y, w, h, anchorX = 0.5, anchorY = 0.46) {
@@ -358,9 +407,7 @@ export async function renderCardPng(card) {
   const flag = card?.countryCode
     ? await loadLocalImage(["assets", "badges", "flags", `${String(card.countryCode).toLowerCase()}.png`])
     : null;
-  const clubBadge = card?.clubBadgeFile
-    ? await loadLocalImage(["assets", "badges", "clubs", card.clubBadgeFile])
-    : null;
+  const clubBadge = await loadClubBadge(card);
 
   if (portrait) {
     ctx.save();
