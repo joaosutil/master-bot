@@ -202,14 +202,21 @@ function seededFromId(id) {
 }
 
 function posToPt(posRaw) {
-  const p = (posRaw || "").toLowerCase();
+  const p = String(posRaw || "").toLowerCase().trim();
+  if (!p) return null;
+
+  // Exclui comissão técnica / staff
+  // TheSportsDB costuma usar: "Assistant Coach", "Goalkeeping Coach", "Manager", etc.
+  const staffHints = ["coach", "manager", "trainer", "assistant", "goalkeeping", "keeper coach"];
+  if (staffHints.some((h) => p.includes(h))) return null;
+
   if (p.includes("goal") || p.includes("keeper")) return "GOL";
   if (p.includes("back") || p.includes("def") || p.includes("centre-back") || p.includes("center-back"))
     return "ZAG";
   if (p.includes("mid")) return "MEI";
   if (p.includes("wing") || p.includes("forward") || p.includes("striker") || p.includes("attack"))
     return "ATA";
-  return "MEI";
+  return null;
 }
 
 function genOvrAndStats(playerId, pos) {
@@ -376,6 +383,13 @@ async function main() {
       const playerId = pr?.idPlayer;
       if (!playerId) continue;
 
+      const statusEarly = String(pr?.strStatus || "").trim().toLowerCase();
+      if (statusEarly === "coaching") continue;
+
+      // filtra staff cedo pelo position do pr (evita chamadas extras)
+      const posEarly = posToPt(pr?.strPosition);
+      if (!posEarly) continue;
+
       let p = pr;
       let imgUrl = bestPlayerImage(p);
 
@@ -389,6 +403,9 @@ async function main() {
       }
 
       if (!imgUrl) continue;
+
+      const status = String(p?.strStatus || pr?.strStatus || "").trim().toLowerCase();
+      if (status === "coaching") continue;
 
       const portraitUrl = normalizePortraitUrl(imgUrl);
       const portraitExt = extFromUrl(portraitUrl);
@@ -407,7 +424,9 @@ async function main() {
         await downloadFile(flagUrl, path.join(process.cwd(), flagRel));
       }
 
-      const pos = posToPt(p?.strPosition);
+      const rawPosition = String(p?.strPosition || pr?.strPosition || "");
+      const pos = posToPt(rawPosition) ?? posEarly;
+      if (!pos) continue;
       const { ovr, rarity, stats } = genOvrAndStats(playerId, pos);
 
       const cardId = `p_${playerId}`;
@@ -435,7 +454,11 @@ async function main() {
         flagUrl,
 
         portraitFile: portraitRel,
-        portraitUrl
+        portraitUrl,
+
+        // metadados pra depuração / filtros futuros
+        rawPosition,
+        status: p?.strStatus || pr?.strStatus || null
       });
     }
 

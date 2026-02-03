@@ -18,6 +18,7 @@ import { generatePackCards } from "./packEngine.js";
 
 import { getBalance as getEcoBalance, trySpendBalance } from "../../economy/economyService.js";
 import { addCardsToInventory } from "../../packs/inventoryModel.js";
+import { getInventoryCounts, inventoryTotalCount } from "../../packs/inventoryModel.js";
 
 import { renderPackRevealPng } from "../../ui/renderPackReveal.js";
 import { renderCardPng } from "../../ui/renderCard.js";
@@ -25,6 +26,13 @@ import { renderPackOpeningPng } from "../../ui/renderPackOpening.js";
 import { renderPackArtPng } from "../../ui/renderPackArt.js";
 import { renderPackStashBannerPng } from "../../ui/renderPackStashBanner.js";
 import { formatCoins } from "../../ui/embeds.js";
+
+const DEFAULT_PACK_ID = "bronze";
+const INVENTORY_LIMIT = Math.max(1, Number(process.env.INVENTORY_LIMIT ?? 150) || 150);
+
+function packCardCount(pack) {
+  return (pack?.slots ?? []).reduce((acc, s) => acc + (Number(s?.count ?? 0) || 0), 0);
+}
 
 async function getBalance({ guildId, userId }) {
   return await getEcoBalance(guildId, userId);
@@ -98,9 +106,14 @@ function formatOdds(odds = {}) {
 
 function shopEmbed({ balance, counts }) {
   return new EmbedBuilder()
-    .setTitle("🎴 Mochila de Packs")
+    .setTitle("🎴 Packs • Loja & Estoque")
     .setColor("#7c3aed")
-    .setDescription("Compre packs, guarde no estoque e abra quando quiser.")
+    .setDescription(
+      [
+        "Compre packs, guarde no estoque e abra quando quiser.",
+        "Dica: selecione um pack abaixo para ver detalhes e abrir direto."
+      ].join("\n")
+    )
     .addFields(
       ...PACK_LIST.map((p) => {
         const owned = counts?.[p.id] ?? 0;
@@ -135,7 +148,14 @@ function packEmbed({ pack, balance, owned }) {
   return new EmbedBuilder()
     .setTitle(`${pack.emoji} ${pack.name}`)
     .setColor(packAccent(pack.id))
-    .setDescription(`${pack.description}\n\n**Preço:** ${formatCoins(pack.price)} 🪙\n**No seu estoque:** **${owned}x**`)
+    .setDescription(
+      [
+        pack.description,
+        "",
+        `**Preço:** ${formatCoins(pack.price)} 🪙`,
+        `**No seu estoque:** **${owned}x**`
+      ].join("\n")
+    )
     .addFields({
       name: "📦 Chances (por carta)",
       value: pack.slots
@@ -161,12 +181,20 @@ async function packArtFile(pack) {
   };
 }
 
-async function buildPackView({ pack, balance, owned, descriptionOverride } = {}) {
-  const { fileName, attachment } = await packArtFile(pack);
-  const e = packEmbed({ pack, balance, owned });
-  e.setThumbnail(`attachment://${fileName}`);
-  if (descriptionOverride) e.setDescription(descriptionOverride);
-  return { embed: e, files: [attachment] };
+async function buildHubView({ userTag, pack, balance, counts, descriptionOverride } = {}) {
+  const owned = counts?.[pack.id] ?? 0;
+
+  const banner = await stashBannerFile({ userTag, counts });
+  const shop = shopEmbed({ balance, counts }).setImage(`attachment://${banner.fileName}`);
+
+  const { fileName: packArtName, attachment: packArtAttachment } = await packArtFile(pack);
+  const details = packEmbed({ pack, balance, owned }).setThumbnail(`attachment://${packArtName}`);
+  if (descriptionOverride) details.setDescription(descriptionOverride);
+
+  return {
+    embeds: [shop, details],
+    files: [banner.attachment, packArtAttachment]
+  };
 }
 
 function selectMenu({ userId }) {
@@ -185,7 +213,7 @@ function selectMenu({ userId }) {
   );
 }
 
-function buyButtons({ userId, packId }) {
+function actionButtons({ userId, packId, owned }) {
   return new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId(`pack_buy:${userId}:${packId}:1`)
@@ -200,19 +228,20 @@ function buyButtons({ userId, packId }) {
       .setLabel("Comprar x10")
       .setStyle(ButtonStyle.Secondary),
     new ButtonBuilder()
-      .setCustomId(`pack_back:${userId}`)
-      .setLabel("Voltar")
-      .setStyle(ButtonStyle.Danger)
+      .setCustomId(`pack_open:${userId}:${packId}:1`)
+      .setLabel("Abrir x1")
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(!owned || owned <= 0),
+    new ButtonBuilder()
+      .setCustomId(`pack_open:${userId}:${packId}:5`)
+      .setLabel("Abrir x5")
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(!owned || owned < 5)
   );
 }
 
-function openButtons({ userId, packId, owned }) {
+function utilityButtons({ userId, packId }) {
   return new ActionRowBuilder().addComponents(
-    new ButtonBuilder()
-      .setCustomId(`pack_open:${userId}:${packId}`)
-      .setLabel("Abrir 1 do estoque")
-      .setStyle(ButtonStyle.Success)
-      .setDisabled(!owned || owned <= 0),
     new ButtonBuilder()
       .setCustomId(`pack_refresh:${userId}:${packId}`)
       .setLabel("Atualizar")
@@ -223,15 +252,24 @@ function openButtons({ userId, packId, owned }) {
 export async function showPackShop(interaction) {
   const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
   const counts = await getPackCounts(interaction.guildId, interaction.user.id);
-  const banner = await stashBannerFile({ userTag: interaction.user?.tag, counts });
-  const embed = shopEmbed({ balance, counts });
-  embed.setImage(`attachment://${banner.fileName}`);
+  const pack = PACKS[DEFAULT_PACK_ID] ?? PACK_LIST[0];
+  const view = await buildHubView({
+    userTag: interaction.user?.tag,
+    pack,
+    balance,
+    counts
+  });
+  const owned = counts?.[pack.id] ?? 0;
 
   await interaction.reply({
     ephemeral: true,
-    embeds: [embed],
-    files: [banner.attachment],
-    components: [selectMenu({ userId: interaction.user.id })]
+    embeds: view.embeds,
+    files: view.files,
+    components: [
+      selectMenu({ userId: interaction.user.id }),
+      actionButtons({ userId: interaction.user.id, packId: pack.id, owned }),
+      utilityButtons({ userId: interaction.user.id, packId: pack.id })
+    ]
   });
 }
 
@@ -247,23 +285,28 @@ export async function handlePackSelect(interaction) {
 
   const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
   const counts = await getPackCounts(interaction.guildId, interaction.user.id);
-  const owned = counts?.[packId] ?? 0;
+  const owned = counts?.[pack.id] ?? 0;
 
-  const view = await buildPackView({ pack, balance, owned });
+  const view = await buildHubView({
+    userTag: interaction.user?.tag,
+    pack,
+    balance,
+    counts
+  });
   await interaction.update({
-    embeds: [view.embed],
+    embeds: view.embeds,
     files: view.files,
     components: [
       selectMenu({ userId: ownerId }),
-      buyButtons({ userId: ownerId, packId }),
-      openButtons({ userId: ownerId, packId, owned })
+      actionButtons({ userId: ownerId, packId: pack.id, owned }),
+      utilityButtons({ userId: ownerId, packId: pack.id })
     ]
   });
 }
 
 export async function handlePackButton(interaction) {
   const parts = interaction.customId.split(":");
-  const action = parts[0]; // pack_buy | pack_back | pack_open | pack_refresh
+  const action = parts[0]; // pack_buy | pack_open | pack_refresh
   const ownerId = parts[1];
   const packId = parts[2];
   const qty = Number(parts[3] || "1");
@@ -273,35 +316,27 @@ export async function handlePackButton(interaction) {
   }
 
   try {
-    if (action === "pack_back") {
-      const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
-      const counts = await getPackCounts(interaction.guildId, interaction.user.id);
-      const banner = await stashBannerFile({ userTag: interaction.user?.tag, counts });
-      const embed = shopEmbed({ balance, counts });
-      embed.setImage(`attachment://${banner.fileName}`);
-      return interaction.update({
-        embeds: [embed],
-        files: [banner.attachment],
-        components: [selectMenu({ userId: ownerId })]
-      });
-    }
-
     if (action === "pack_refresh") {
       const pack = PACKS[packId];
       if (!pack) return interaction.reply({ content: "Pack inválido.", ephemeral: true });
 
       const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
       const counts = await getPackCounts(interaction.guildId, interaction.user.id);
-      const owned = counts?.[packId] ?? 0;
+      const owned = counts?.[pack.id] ?? 0;
 
-      const view = await buildPackView({ pack, balance, owned });
+      const view = await buildHubView({
+        userTag: interaction.user?.tag,
+        pack,
+        balance,
+        counts
+      });
       return interaction.update({
-        embeds: [view.embed],
+        embeds: view.embeds,
         files: view.files,
         components: [
           selectMenu({ userId: ownerId }),
-          buyButtons({ userId: ownerId, packId }),
-          openButtons({ userId: ownerId, packId, owned })
+          actionButtons({ userId: ownerId, packId: pack.id, owned }),
+          utilityButtons({ userId: ownerId, packId: pack.id })
         ]
       });
     }
@@ -323,17 +358,23 @@ export async function handlePackButton(interaction) {
           await session.abortTransaction();
 
           const countsBefore = await getPackCounts(interaction.guildId, interaction.user.id);
-          const ownedBefore = countsBefore?.[packId] ?? 0;
+          const ownedBefore = countsBefore?.[pack.id] ?? 0;
 
           const desc = `${pack.description}\n\n❌ Saldo insuficiente para **${qty}x** (custo ${formatCoins(totalCost)} 🪙).`;
-          const view = await buildPackView({ pack, balance: spent.balance, owned: ownedBefore, descriptionOverride: desc });
+          const view = await buildHubView({
+            userTag: interaction.user?.tag,
+            pack,
+            balance: spent.balance,
+            counts: countsBefore,
+            descriptionOverride: desc
+          });
           return interaction.editReply({
-            embeds: [view.embed],
+            embeds: view.embeds,
             files: view.files,
             components: [
               selectMenu({ userId: ownerId }),
-              buyButtons({ userId: ownerId, packId }),
-              openButtons({ userId: ownerId, packId, owned: ownedBefore })
+              actionButtons({ userId: ownerId, packId: pack.id, owned: ownedBefore }),
+              utilityButtons({ userId: ownerId, packId: pack.id })
             ]
           });
         }
@@ -342,18 +383,24 @@ export async function handlePackButton(interaction) {
         await session.commitTransaction();
 
         const countsAfter = await getPackCounts(interaction.guildId, interaction.user.id);
-        const ownedAfter = countsAfter?.[packId] ?? 0;
+        const ownedAfter = countsAfter?.[pack.id] ?? 0;
 
-      const desc = `${pack.description}\n\n✅ Comprado **${qty}x**.\n**Agora no estoque:** **${ownedAfter}x**`;
-      const view = await buildPackView({ pack, balance: spent.balance, owned: ownedAfter, descriptionOverride: desc });
+        const desc = `${pack.description}\n\n✅ Comprado **${qty}x**.\n**Agora no estoque:** **${ownedAfter}x**`;
+        const view = await buildHubView({
+          userTag: interaction.user?.tag,
+          pack,
+          balance: spent.balance,
+          counts: countsAfter,
+          descriptionOverride: desc
+        });
 
         return interaction.editReply({
-          embeds: [view.embed],
+          embeds: view.embeds,
           files: view.files,
           components: [
             selectMenu({ userId: ownerId }),
-            buyButtons({ userId: ownerId, packId }),
-            openButtons({ userId: ownerId, packId, owned: ownedAfter })
+            actionButtons({ userId: ownerId, packId: pack.id, owned: ownedAfter }),
+            utilityButtons({ userId: ownerId, packId: pack.id })
           ]
         });
       } finally {
@@ -365,34 +412,79 @@ export async function handlePackButton(interaction) {
       const pack = PACKS[packId];
       if (!pack) return;
 
+      const openQty = Number.isFinite(qty) && qty > 1 ? Math.floor(qty) : 1;
+      const invCounts = await getInventoryCounts(interaction.guildId, interaction.user.id);
+      const invTotal = inventoryTotalCount(invCounts);
+      const willAdd = packCardCount(pack) * openQty;
+      const after = invTotal + willAdd;
+
+      if (after > INVENTORY_LIMIT) {
+        const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
+        const counts = await getPackCounts(interaction.guildId, interaction.user.id);
+        const owned = counts?.[pack.id] ?? 0;
+
+        const desc =
+          `${pack.description}\n\n` +
+          `❌ **Time Cheio**: seu inventário está com **${invTotal}/${INVENTORY_LIMIT}** cartas.\n` +
+          `Abrir **${openQty}x** adicionaria **${willAdd}** cartas (ficaria **${after}/${INVENTORY_LIMIT}**).\n\n` +
+          `Use **/vender** para liberar espaço (o botão "Selecionar tudo" não marca cartas 90+ automaticamente).`;
+
+        const view = await buildHubView({
+          userTag: interaction.user?.tag,
+          pack,
+          balance,
+          counts,
+          descriptionOverride: desc
+        });
+
+        return interaction.editReply({
+          embeds: view.embeds,
+          files: view.files,
+          components: [
+            selectMenu({ userId: ownerId }),
+            actionButtons({ userId: ownerId, packId: pack.id, owned }),
+            utilityButtons({ userId: ownerId, packId: pack.id })
+          ]
+        });
+      }
+
       const session = await mongoose.startSession();
       session.startTransaction();
 
       let pulled = [];
       try {
-        const consumed = await consumePackFromStash(interaction.guildId, interaction.user.id, packId, 1, { session });
+        const consumed = await consumePackFromStash(interaction.guildId, interaction.user.id, packId, openQty, { session });
         if (!consumed.ok) {
           await session.abortTransaction();
 
           const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
           const counts = await getPackCounts(interaction.guildId, interaction.user.id);
-          const owned = counts?.[packId] ?? 0;
+          const owned = counts?.[pack.id] ?? 0;
 
           const desc = `${pack.description}\n\n❌ Você não tem esse pack no estoque.`;
-          const view = await buildPackView({ pack, balance, owned, descriptionOverride: desc });
+          const view = await buildHubView({
+            userTag: interaction.user?.tag,
+            pack,
+            balance,
+            counts,
+            descriptionOverride: desc
+          });
 
           return interaction.editReply({
-            embeds: [view.embed],
+            embeds: view.embeds,
             files: view.files,
             components: [
               selectMenu({ userId: ownerId }),
-              buyButtons({ userId: ownerId, packId }),
-              openButtons({ userId: ownerId, packId, owned })
+              actionButtons({ userId: ownerId, packId: pack.id, owned }),
+              utilityButtons({ userId: ownerId, packId: pack.id })
             ]
           });
         }
 
-        pulled = await generatePackCards(packId);
+        for (let i = 0; i < openQty; i++) {
+          const cards = await generatePackCards(packId);
+          pulled.push(...cards);
+        }
         await addCardsToInventory(interaction.guildId, interaction.user.id, pulled, { session });
 
         await session.commitTransaction();
@@ -400,7 +492,12 @@ export async function handlePackButton(interaction) {
         session.endSession();
       }
 
-      const opening = await renderPackOpeningPng({ packId, name: pack.name, emoji: pack.emoji, accent: packAccent(packId) });
+      const opening = await renderPackOpeningPng({
+        packId,
+        name: pack.name,
+        emoji: pack.emoji,
+        accent: packAccent(packId)
+      });
       const openingFileName = `opening-${packId}-${Date.now()}.png`;
       const openingAttachment = new AttachmentBuilder(opening, { name: openingFileName });
 
@@ -413,7 +510,8 @@ export async function handlePackButton(interaction) {
       await sleep(850);
 
       const top = bestCard(pulled);
-      if (top && (top.rarity === "epic" || top.rarity === "legendary")) {
+      const topOvr = typeof top?.ovr === "number" ? top.ovr : 0;
+      if (top && (top.rarity === "epic" || top.rarity === "legendary" || topOvr >= 90)) {
         const topPng = await renderCardPng(top);
         const topFileName = `walkout-${top.id}-${Date.now()}.png`;
         const topAttachment = new AttachmentBuilder(topPng, { name: topFileName });
@@ -437,13 +535,12 @@ export async function handlePackButton(interaction) {
       const fileName = `reveal-${packId}-${Date.now()}.png`;
       const attachment = new AttachmentBuilder(banner, { name: fileName });
 
-      const list = pulled
-        .map((c) => {
-          const ovr = typeof c.ovr === "number" ? c.ovr : "??";
-          const val = typeof c.value === "number" ? `${formatCoins(c.value)} 🪙` : "—";
-          return `${rarityEmoji(c.rarity)} **${c.name}** • OVR **${ovr}** • ${val}`;
-        })
-        .join("\n");
+      const listLines = pulled.slice(0, 30).map((c) => {
+        const ovr = typeof c.ovr === "number" ? c.ovr : "??";
+        const val = typeof c.value === "number" ? `${formatCoins(c.value)} 🪙` : "—";
+        return `${rarityEmoji(c.rarity)} **${c.name}** • OVR **${ovr}** • ${val}`;
+      });
+      const list = listLines.join("\n") + (pulled.length > 30 ? `\n… +${pulled.length - 30} cartas` : "");
 
       const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
       const counts = await getPackCounts(interaction.guildId, interaction.user.id);
@@ -456,13 +553,20 @@ export async function handlePackButton(interaction) {
         .setImage(`attachment://${fileName}`)
         .setFooter({ text: `Restam no estoque: ${owned}x • Saldo: ${formatCoins(balance)} 🪙` });
 
+      const view = await buildHubView({
+        userTag: interaction.user?.tag,
+        pack,
+        balance,
+        counts
+      });
+
       return interaction.editReply({
-        embeds: [e],
-        files: [attachment],
+        embeds: [e, ...view.embeds],
+        files: [attachment, ...view.files],
         components: [
           selectMenu({ userId: ownerId }),
-          buyButtons({ userId: ownerId, packId }),
-          openButtons({ userId: ownerId, packId, owned })
+          actionButtons({ userId: ownerId, packId: pack.id, owned }),
+          utilityButtons({ userId: ownerId, packId: pack.id })
         ]
       });
     }

@@ -63,6 +63,16 @@ function normalizePos(pos) {
   return p;
 }
 
+function isStaffLike(rawPosition, status) {
+  const st = String(status ?? "").trim().toLowerCase();
+  if (st === "coaching") return true;
+
+  const rp = String(rawPosition ?? "").trim().toLowerCase();
+  if (!rp) return false;
+  const hints = ["coach", "manager", "trainer", "assistant", "goalkeeping", "keeper coach"];
+  return hints.some((h) => rp.includes(h));
+}
+
 function weightsByPos(pos) {
   const p = normalizePos(pos);
 
@@ -200,6 +210,8 @@ function normalizeCard(c) {
 
   const portraitFile = c?.portraitFile ? path.basename(String(c.portraitFile)) : null;
   const countryCode = c?.countryCode ? String(c.countryCode).toLowerCase() : null;
+  const rawPosition = c?.rawPosition ? String(c.rawPosition) : null;
+  const status = c?.status ? String(c.status) : null;
 
   let clubBadgeFile = c?.clubBadgeFile ? path.basename(String(c.clubBadgeFile)) : null;
   const clubId = c?.clubId ? String(c.clubId) : null;
@@ -221,7 +233,9 @@ function normalizeCard(c) {
     countryCode,
     nationality: c?.nationality ?? null,
     portraitFile,
-    portraitUrl: c?.portraitUrl ?? null
+    portraitUrl: c?.portraitUrl ?? null,
+    rawPosition,
+    status
   };
 
   out.rarity = c?.rarity ?? "common"; // placeholder, ajustado depois por ranking
@@ -243,11 +257,14 @@ async function loadFromDisk() {
   if (!Array.isArray(arr)) throw new Error("cards.json inválido (esperava array).");
 
   const includeCoaches = String(process.env.INCLUDE_COACHES ?? "").trim() === "1";
+  const includeStaff = String(process.env.INCLUDE_STAFF ?? "").trim() === "1";
   let cards = arr
     .map(normalizeCard)
     .filter((c) => c.id && c.name)
     // remove cards that don't belong to the squad game (ex.: técnicos)
     .filter((c) => (includeCoaches ? true : c.pos !== "TEC"))
+    // remove staff (TheSportsDB às vezes mistura comissão técnica)
+    .filter((c) => (includeStaff ? true : !isStaffLike(c.rawPosition, c.status)))
     .filter((c) => ALLOWED_POS.has(c.pos) || (includeCoaches && c.pos === "TEC"));
 
   // escala OVR pra ficar mais “FIFA-like” (range mais gostoso)

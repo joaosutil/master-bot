@@ -51,7 +51,7 @@ export async function getOrCreateSquad(guildId, userId) {
 
   const doc = await Squad.findOneAndUpdate(
     { guildId, userId },
-    { $setOnInsert: { formationId: "4-4-2", slots: {} } },
+    { $setOnInsert: { formationId: "4-3-3", slots: {} } },
     { new: true, upsert: true }
   ).lean();
 
@@ -59,7 +59,7 @@ export async function getOrCreateSquad(guildId, userId) {
 }
 
 export function getFormation(formationId) {
-  return FORMATIONS[formationId] ?? FORMATIONS["4-4-2"];
+  return FORMATIONS[formationId] ?? FORMATIONS["4-3-3"];
 }
 
 export async function setFormation(guildId, userId, formationId) {
@@ -239,4 +239,3 @@ export async function hydrateSquad(guildId, userId) {
 
   return { squad, formation, lineup, overall };
 }
-

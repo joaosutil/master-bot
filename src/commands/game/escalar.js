@@ -9,10 +9,7 @@ import {
 } from "../../game/squad/squadService.js";
 import { renderSquadPng } from "../../ui/renderSquad.js";
 
-const FORMATION_CHOICES = [
-  { name: "4-4-2", value: "4-4-2" },
-  { name: "4-3-3", value: "4-3-3" }
-];
+const FORMATION_CHOICES = [{ name: "4-3-3", value: "4-3-3" }];
 
 const SLOT_CHOICES = [
   { name: "GOL", value: "GK" },
@@ -20,19 +17,12 @@ const SLOT_CHOICES = [
   { name: "ZAG 1", value: "CB1" },
   { name: "ZAG 2", value: "CB2" },
   { name: "LD", value: "RB" },
-
-  { name: "ME (4-4-2)", value: "LM" },
   { name: "MC 1", value: "CM1" },
-  { name: "MC 2", value: "CM2" },
-  { name: "MD (4-4-2)", value: "RM" },
-
-  { name: "ATA 1 (4-4-2)", value: "ST1" },
-  { name: "ATA 2 (4-4-2)", value: "ST2" },
-
-  { name: "MC 3 (4-3-3)", value: "CM3" },
-  { name: "PE (4-3-3)", value: "LW" },
-  { name: "ATA (4-3-3)", value: "ST" },
-  { name: "PD (4-3-3)", value: "RW" }
+  { name: "MEI", value: "CM2" },
+  { name: "MC 2", value: "CM3" },
+  { name: "PE", value: "LW" },
+  { name: "ATA", value: "ST" },
+  { name: "PD", value: "RW" }
 ];
 
 function rarityEmoji(r) {
@@ -176,7 +166,7 @@ export default {
       }
 
       if (sub === "auto") {
-        const formationId = interaction.options.getString("formacao") ?? "4-4-2";
+        const formationId = interaction.options.getString("formacao") ?? "4-3-3";
         await autoSquad(guildId, userId, formationId);
       }
 

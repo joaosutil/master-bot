@@ -190,10 +190,10 @@ function mapToPitch(pitch, nx, ny) {
 function snapRowY(posLabel, fallbackNy) {
   const p = String(posLabel ?? "").toUpperCase();
   // normalized rows inside the pitch (more vertical spacing + easier alignment)
-  if (["PE", "PD", "ATA", "CA"].includes(p)) return 0.13;
-  if (["MEI", "MC", "VOL", "MA", "MD", "ME"].includes(p)) return 0.44;
-  if (["LE", "LD", "ZAG"].includes(p)) return 0.77;
-  if (["GOL"].includes(p)) return 0.94;
+  if (["PE", "PD", "ATA", "CA"].includes(p)) return 0.15;
+  if (["MEI", "MC", "VOL", "MA", "MD", "ME"].includes(p)) return 0.46;
+  if (["LE", "LD", "ZAG"].includes(p)) return 0.79;
+  if (["GOL"].includes(p)) return 0.945;
   return clamp(fallbackNy, 0, 1);
 }
 
@@ -282,8 +282,8 @@ function adjustVerticalSpacing(placed, { pitch, H }) {
   if (!rows.length) return;
 
   // label sits below the card; keep a consistent reserve so rows don't collide
-  const labelReserve = 170; // includes label height + padding
-  const minGap = 120;
+  const labelReserve = 150; // includes label height + padding
+  const minGap = 110;
 
   // push down to avoid overlaps (top -> bottom)
   for (let i = 1; i < rows.length; i++) {
@@ -425,10 +425,10 @@ export async function renderSquadPng({
     const rowMin = entries[0].rowMin;
     const rowMax = entries[0].rowMax;
     const rowW = Math.max(10, rowMax - rowMin);
-    const gap = 160;
+    const gap = 150;
 
     // perspective: near the bottom = larger, but still fit the row width
-    const scale = lerp(0.74, 0.92, ny);
+    const scale = lerp(0.76, 0.95, ny);
     const baseW = 340 * scale;
     const maxWByRow = (rowW - gap * (entries.length - 1)) / entries.length;
     const cardWBase = Math.round(Math.max(220, Math.min(baseW, maxWByRow)));

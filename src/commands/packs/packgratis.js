@@ -1,5 +1,5 @@
 import { AttachmentBuilder, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { addCardsToInventory } from "../../packs/inventoryModel.js";
+import { addCardsToInventory, getInventoryCounts, inventoryTotalCount } from "../../packs/inventoryModel.js";
 import { formatCoins } from "../../ui/embeds.js";
 import { renderCardPng } from "../../ui/renderCard.js";
 import { renderPackOpeningPng } from "../../ui/renderPackOpening.js";
@@ -38,6 +38,12 @@ function rarityRank(r) {
   if (r === "epic") return 3;
   if (r === "rare") return 2;
   return 1;
+}
+
+const INVENTORY_LIMIT = Math.max(1, Number(process.env.INVENTORY_LIMIT ?? 150) || 150);
+
+function packCardCount(pack) {
+  return (pack?.slots ?? []).reduce((acc, s) => acc + (Number(s?.count ?? 0) || 0), 0);
 }
 
 function bestCard(cards) {
@@ -98,12 +104,36 @@ export default {
 
     await sleep(800);
 
+    const packObj = PACKS[packId];
+    const invCounts = await getInventoryCounts(interaction.guildId, interaction.user.id);
+    const invTotal = inventoryTotalCount(invCounts);
+    const willAdd = packCardCount(packObj);
+    const after = invTotal + willAdd;
+
+    if (after > INVENTORY_LIMIT) {
+      await interaction.editReply({
+        embeds: [
+          new EmbedBuilder()
+            .setTitle("❌ Time Cheio")
+            .setDescription(
+              `Seu inventário está com **${invTotal}/${INVENTORY_LIMIT}** cartas.\n` +
+              `Abrir o pack grátis adicionaria **${willAdd}** (ficaria **${after}/${INVENTORY_LIMIT}**).\n\n` +
+              "Use **/vender** para liberar espaço."
+            )
+            .setColor(0xe74c3c)
+        ],
+        files: []
+      });
+      return;
+    }
+
     const pulled = await generatePackCards(packId);
     await addCardsToInventory(interaction.guildId, interaction.user.id, pulled);
 
     const top = bestCard(pulled);
 
-    if (top && (top.rarity === "epic" || top.rarity === "legendary")) {
+    const topOvr = typeof top?.ovr === "number" ? top.ovr : 0;
+    if (top && (top.rarity === "epic" || top.rarity === "legendary" || topOvr >= 90)) {
       const topPng = await renderCardPng(top);
       const topFile = `walkout-free-${top.id}-${Date.now()}.png`;
       const topAttachment = new AttachmentBuilder(topPng, { name: topFile });

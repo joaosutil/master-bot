@@ -1,31 +1,5 @@
 [
   {
-    "id": "p_34433685",
-    "playerId": "34433685",
-    "name": "Albert Stuivenberg",
-    "rarity": "common",
-    "ovr": 62,
-    "pos": "MEI",
-    "stats": {
-      "pac": 49,
-      "sho": 43,
-      "pas": 68,
-      "dri": 61,
-      "def": 42,
-      "phy": 45
-    },
-    "clubId": "133604",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "The Netherlands",
-    "countryCode": "NL",
-    "flagFile": "assets/flags/nl.png",
-    "flagUrl": "https://flagcdn.com/w80/nl.png",
-    "portraitFile": "assets/portraits/34433685.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1aq3m51767708263.png/medium"
-  },
-  {
     "id": "p_34163698",
     "playerId": "34163698",
     "name": "Ben White",
@@ -49,7 +23,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34163698.png",
-    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/78nyo71769331924.png/medium"
+    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/78nyo71769331924.png/medium",
+    "rawPosition": "Right-Back",
+    "status": "Active"
   },
   {
     "id": "p_34169884",
@@ -75,7 +51,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34169884.png",
-    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/xfwok41769331816.png/medium"
+    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/xfwok41769331816.png/medium",
+    "rawPosition": "Right Winger",
+    "status": "Active"
   },
   {
     "id": "p_34164499",
@@ -101,7 +79,9 @@
     "flagFile": "assets/flags/dk.png",
     "flagUrl": "https://flagcdn.com/w80/dk.png",
     "portraitFile": "assets/portraits/34164499.png",
-    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/ia9o8w1769331494.png/medium"
+    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/ia9o8w1769331494.png/medium",
+    "rawPosition": "Defensive Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34194118",
@@ -127,7 +107,9 @@
     "flagFile": "assets/flags/es.png",
     "flagUrl": "https://flagcdn.com/w80/es.png",
     "portraitFile": "assets/portraits/34194118.png",
-    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/mzik4g1769331540.png/medium"
+    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/mzik4g1769331540.png/medium",
+    "rawPosition": "Centre-Back",
+    "status": "Active"
   },
   {
     "id": "p_34148681",
@@ -153,7 +135,9 @@
     "flagFile": "assets/flags/es.png",
     "flagUrl": "https://flagcdn.com/w80/es.png",
     "portraitFile": "assets/portraits/34148681.png",
-    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/21rp2q1769331784.png/medium"
+    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/21rp2q1769331784.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34161584",
@@ -179,7 +163,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161584.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/do2pew1694204464.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/do2pew1694204464.png/medium",
+    "rawPosition": "Defensive Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34172278",
@@ -205,33 +191,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34172278.png",
-    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/jcabmd1769330240.png/medium"
-  },
-  {
-    "id": "p_34195530",
-    "playerId": "34195530",
-    "name": "Gabriel Heinze",
-    "rarity": "common",
-    "ovr": 61,
-    "pos": "MEI",
-    "stats": {
-      "pac": 51,
-      "sho": 36,
-      "pas": 71,
-      "dri": 62,
-      "def": 38,
-      "phy": 42
-    },
-    "clubId": "133604",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "Argentina",
-    "countryCode": "AR",
-    "flagFile": "assets/flags/ar.png",
-    "flagUrl": "https://flagcdn.com/w80/ar.png",
-    "portraitFile": "assets/portraits/34195530.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/x9fe3s1767708544.png/medium"
+    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/jcabmd1769330240.png/medium",
+    "rawPosition": "Attacking Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34160962",
@@ -257,7 +219,9 @@
     "flagFile": "assets/flags/br.png",
     "flagUrl": "https://flagcdn.com/w80/br.png",
     "portraitFile": "assets/portraits/34160962.png",
-    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/rwsqi51769330458.png/medium"
+    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/rwsqi51769330458.png/medium",
+    "rawPosition": "Centre-Forward",
+    "status": "Active"
   },
   {
     "id": "p_34179002",
@@ -283,7 +247,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34179002.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/dbae8m1676893448.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/dbae8m1676893448.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34265056",
@@ -309,7 +275,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34265056.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/82vq1y1766055637.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/82vq1y1766055637.png/medium",
+    "rawPosition": "Midfielder",
+    "status": null
   },
   {
     "id": "p_34215873",
@@ -335,7 +303,9 @@
     "flagFile": "assets/flags/lc.png",
     "flagUrl": "https://flagcdn.com/w80/lc.png",
     "portraitFile": "assets/portraits/34215873.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ql7e141766055768.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ql7e141766055768.png/medium",
+    "rawPosition": "Centre-Back",
+    "status": "Active"
   },
   {
     "id": "p_34147673",
@@ -361,7 +331,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34147673.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/j599gk1766055823.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/j599gk1766055823.png/medium",
+    "rawPosition": "Right-Back",
+    "status": "Active"
   },
   {
     "id": "p_34215874",
@@ -387,7 +359,9 @@
     "flagFile": null,
     "flagUrl": null,
     "portraitFile": "assets/portraits/34215874.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/pibwac1727085329.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/pibwac1727085329.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34173837",
@@ -413,7 +387,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34173837.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/qckulg1766055605.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/qckulg1766055605.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34170463",
@@ -439,7 +415,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34170463.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/2wq7ft1727086006.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/2wq7ft1727086006.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34222724",
@@ -465,7 +443,9 @@
     "flagFile": "assets/flags/nl.png",
     "flagUrl": "https://flagcdn.com/w80/nl.png",
     "portraitFile": "assets/portraits/34222724.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/m3i1hu1766055670.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/m3i1hu1766055670.png/medium",
+    "rawPosition": "Winger",
+    "status": "Active"
   },
   {
     "id": "p_34194681",
@@ -491,7 +471,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34194681.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/z5t12f1727085289.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/z5t12f1727085289.png/medium",
+    "rawPosition": "Central Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34192530",
@@ -517,7 +499,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34192530.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/efecmc1766055954.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/efecmc1766055954.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34222114",
@@ -543,7 +527,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34222114.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/plwx3i1766400894.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/plwx3i1766400894.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34148531",
@@ -569,7 +555,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34148531.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ny0h0b1766400935.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ny0h0b1766400935.png/medium",
+    "rawPosition": "Winger",
+    "status": "Active"
   },
   {
     "id": "p_34196971",
@@ -595,33 +583,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34196971.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ehinno1766400739.png/medium"
-  },
-  {
-    "id": "p_34222344",
-    "playerId": "34222344",
-    "name": "Chris Sze",
-    "rarity": "common",
-    "ovr": 57,
-    "pos": "MEI",
-    "stats": {
-      "pac": 42,
-      "sho": 37,
-      "pas": 65,
-      "dri": 60,
-      "def": 32,
-      "phy": 42
-    },
-    "clubId": "133607",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "England",
-    "countryCode": "GB",
-    "flagFile": "assets/flags/gb.png",
-    "flagUrl": "https://flagcdn.com/w80/gb.png",
-    "portraitFile": "assets/portraits/34222344.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wlyng31766401589.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ehinno1766400739.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34216460",
@@ -647,7 +611,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34216460.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ldxbv11766401368.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ldxbv11766401368.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34200007",
@@ -673,7 +639,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34200007.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fcpi8c1766401496.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fcpi8c1766401496.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34165373",
@@ -699,7 +667,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34165373.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/yefon31766400696.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/yefon31766400696.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34246542",
@@ -725,7 +695,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34246542.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/15xd2q1766401127.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/15xd2q1766401127.png/medium",
+    "rawPosition": "Forward",
+    "status": null
   },
   {
     "id": "p_34278183",
@@ -751,7 +723,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34278183.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wvfw7p1766401910.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wvfw7p1766401910.png/medium",
+    "rawPosition": "Right-Back",
+    "status": "Retired"
   },
   {
     "id": "p_34177867",
@@ -777,7 +751,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34177867.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fulrxv1765975684.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fulrxv1765975684.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34215693",
@@ -803,7 +779,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34215693.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/qcve5r1765975652.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/qcve5r1765975652.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34161028",
@@ -829,7 +807,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161028.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/dgn47g1765975311.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/dgn47g1765975311.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34161526",
@@ -855,7 +835,9 @@
     "flagFile": null,
     "flagUrl": null,
     "portraitFile": "assets/portraits/34161526.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/g7bqdw1765975428.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/g7bqdw1765975428.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34163229",
@@ -881,7 +863,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34163229.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1avbuo1765975585.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1avbuo1765975585.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34216446",
@@ -907,7 +891,9 @@
     "flagFile": null,
     "flagUrl": null,
     "portraitFile": "assets/portraits/34216446.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1qb4aq1765975726.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1qb4aq1765975726.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34247729",
@@ -933,7 +919,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34247729.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ocbp9w1765975265.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ocbp9w1765975265.png/medium",
+    "rawPosition": "Defender",
+    "status": null
   },
   {
     "id": "p_34170544",
@@ -959,7 +947,9 @@
     "flagFile": "assets/flags/se.png",
     "flagUrl": "https://flagcdn.com/w80/se.png",
     "portraitFile": "assets/portraits/34170544.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ky6xqt1765975621.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ky6xqt1765975621.png/medium",
+    "rawPosition": "Winger",
+    "status": "Active"
   },
   {
     "id": "p_34231000",
@@ -985,7 +975,9 @@
     "flagFile": "assets/flags/ar.png",
     "flagUrl": "https://flagcdn.com/w80/ar.png",
     "portraitFile": "assets/portraits/34231000.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/sf4z1j1765975759.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/sf4z1j1765975759.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34176800",
@@ -1011,7 +1003,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34176800.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/c66zgi1765973339.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/c66zgi1765973339.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34157650",
@@ -1037,7 +1031,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34157650.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bd07vy1766056488.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bd07vy1766056488.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34147837",
@@ -1063,7 +1059,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34147837.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/enm8dr1766056727.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/enm8dr1766056727.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34163879",
@@ -1089,7 +1087,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34163879.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5rp1mg1766056446.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5rp1mg1766056446.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34242313",
@@ -1115,7 +1115,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34242313.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6qmwp11766056600.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6qmwp11766056600.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34218340",
@@ -1141,7 +1143,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34218340.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/3ntpg91766056345.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/3ntpg91766056345.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34294147",
@@ -1167,7 +1171,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34294147.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/p1vne01766056841.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/p1vne01766056841.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34203640",
@@ -1193,7 +1199,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34203640.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/2xnml21766056865.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/2xnml21766056865.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34180795",
@@ -1219,33 +1227,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34180795.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/87fy9t1684928047.png/medium"
-  },
-  {
-    "id": "p_34158938",
-    "playerId": "34158938",
-    "name": "Grant McCann",
-    "rarity": "legendary",
-    "ovr": 78,
-    "pos": "MEI",
-    "stats": {
-      "pac": 55,
-      "sho": 52,
-      "pas": 93,
-      "dri": 84,
-      "def": 47,
-      "phy": 60
-    },
-    "clubId": "133620",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "Northern Ireland",
-    "countryCode": null,
-    "flagFile": null,
-    "flagUrl": null,
-    "portraitFile": "assets/portraits/34158938.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/thumb/gk31zg1562601598.jpg/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/87fy9t1684928047.png/medium",
+    "rawPosition": "Winger",
+    "status": "Active"
   },
   {
     "id": "p_34203631",
@@ -1271,7 +1255,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34203631.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/km8zul1766056517.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/km8zul1766056517.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34163549",
@@ -1297,7 +1283,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34163549.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5p4ps11759864120.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5p4ps11759864120.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34220445",
@@ -1323,7 +1311,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34220445.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5lxb531759864220.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5lxb531759864220.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34297150",
@@ -1349,33 +1339,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34297150.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9fs8ur1759863863.png/medium"
-  },
-  {
-    "id": "p_34158617",
-    "playerId": "34158617",
-    "name": "Conor Hourihane",
-    "rarity": "epic",
-    "ovr": 73,
-    "pos": "MEI",
-    "stats": {
-      "pac": 54,
-      "sho": 46,
-      "pas": 84,
-      "dri": 72,
-      "def": 45,
-      "phy": 60
-    },
-    "clubId": "133630",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "Ireland",
-    "countryCode": "IE",
-    "flagFile": "assets/flags/ie.png",
-    "flagUrl": "https://flagcdn.com/w80/ie.png",
-    "portraitFile": "assets/portraits/34158617.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/kmtkfs1565877114.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9fs8ur1759863863.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34176441",
@@ -1401,7 +1367,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34176441.png",
-    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/l4mswp1769270965.png/medium"
+    "portraitUrl": "https://www.thesportsdb.com/images/media/player/cutout/l4mswp1769270965.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34147614",
@@ -1427,7 +1395,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34147614.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/0sr2wk1759864069.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/0sr2wk1759864069.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34217641",
@@ -1453,7 +1423,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34217641.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/f4z3g71759864038.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/f4z3g71759864038.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34147025",
@@ -1479,7 +1451,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34147025.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/26qe7q1723642478.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/26qe7q1723642478.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34228905",
@@ -1505,7 +1479,9 @@
     "flagFile": "assets/flags/pt.png",
     "flagUrl": "https://flagcdn.com/w80/pt.png",
     "portraitFile": "assets/portraits/34228905.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9taeov1759864022.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9taeov1759864022.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34225944",
@@ -1531,7 +1507,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34225944.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/aws31f1759863979.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/aws31f1759863979.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34217687",
@@ -1557,7 +1535,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34217687.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/3uqyuz1766326872.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/3uqyuz1766326872.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34250449",
@@ -1583,7 +1563,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34250449.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/m7oknb1766326402.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/m7oknb1766326402.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34164055",
@@ -1609,7 +1591,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34164055.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bsu4cj1766326472.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bsu4cj1766326472.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34222250",
@@ -1635,7 +1619,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34222250.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/uchy751766326888.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/uchy751766326888.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34225307",
@@ -1661,7 +1647,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34225307.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4hjh781766326640.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4hjh781766326640.png/medium",
+    "rawPosition": "Central Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34195252",
@@ -1687,7 +1675,9 @@
     "flagFile": null,
     "flagUrl": null,
     "portraitFile": "assets/portraits/34195252.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/v5c2bn1766326672.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/v5c2bn1766326672.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34195253",
@@ -1713,7 +1703,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34195253.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5t4trf1766326557.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5t4trf1766326557.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34302655",
@@ -1739,7 +1731,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34302655.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/iumxll1766326952.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/iumxll1766326952.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34219028",
@@ -1765,7 +1759,9 @@
     "flagFile": "assets/flags/ms.png",
     "flagUrl": "https://flagcdn.com/w80/ms.png",
     "portraitFile": "assets/portraits/34219028.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/br0ent1757876705.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/br0ent1757876705.png/medium",
+    "rawPosition": "Centre-Back",
+    "status": "Active"
   },
   {
     "id": "p_34258775",
@@ -1791,7 +1787,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34258775.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/uj9ebc1757877372.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/uj9ebc1757877372.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34161046",
@@ -1817,7 +1815,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161046.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/zwulz31757877503.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/zwulz31757877503.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34258776",
@@ -1843,7 +1843,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34258776.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/doyntf1757876158.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/doyntf1757876158.png/medium",
+    "rawPosition": "Defender",
+    "status": null
   },
   {
     "id": "p_34240827",
@@ -1869,7 +1871,9 @@
     "flagFile": "assets/flags/mt.png",
     "flagUrl": "https://flagcdn.com/w80/mt.png",
     "portraitFile": "assets/portraits/34240827.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/rt2mdm1757877606.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/rt2mdm1757877606.png/medium",
+    "rawPosition": "Attacker",
+    "status": "Active"
   },
   {
     "id": "p_34220442",
@@ -1895,7 +1899,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34220442.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wkma5c1757876383.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wkma5c1757876383.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34215872",
@@ -1921,7 +1927,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34215872.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/j96g1q1757876491.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/j96g1q1757876491.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34292784",
@@ -1947,33 +1955,9 @@
     "flagFile": "assets/flags/de.png",
     "flagUrl": "https://flagcdn.com/w80/de.png",
     "portraitFile": "assets/portraits/34292784.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xedokw1757876542.png/medium"
-  },
-  {
-    "id": "p_34148836",
-    "playerId": "34148836",
-    "name": "Danny Schofield",
-    "rarity": "rare",
-    "ovr": 64,
-    "pos": "MEI",
-    "stats": {
-      "pac": 47,
-      "sho": 39,
-      "pas": 71,
-      "dri": 63,
-      "def": 43,
-      "phy": 50
-    },
-    "clubId": "133633",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "England",
-    "countryCode": "GB",
-    "flagFile": "assets/flags/gb.png",
-    "flagUrl": "https://flagcdn.com/w80/gb.png",
-    "portraitFile": "assets/portraits/34148836.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/125711.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xedokw1757876542.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Retired"
   },
   {
     "id": "p_34159075",
@@ -1999,7 +1983,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34159075.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/gsilqd1757876243.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/gsilqd1757876243.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34219494",
@@ -2025,33 +2011,9 @@
     "flagFile": "assets/flags/au.png",
     "flagUrl": "https://flagcdn.com/w80/au.png",
     "portraitFile": "assets/portraits/34219494.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/n9mi5h1759603713.png/medium"
-  },
-  {
-    "id": "p_34161654",
-    "playerId": "34161654",
-    "name": "Brian Barry-Murphy",
-    "rarity": "common",
-    "ovr": 55,
-    "pos": "MEI",
-    "stats": {
-      "pac": 39,
-      "sho": 39,
-      "pas": 63,
-      "dri": 59,
-      "def": 32,
-      "phy": 41
-    },
-    "clubId": "133637",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "Ireland",
-    "countryCode": "IE",
-    "flagFile": "assets/flags/ie.png",
-    "flagUrl": "https://flagcdn.com/w80/ie.png",
-    "portraitFile": "assets/portraits/34161654.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/thumb/bvf52i1562773797.jpg/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/n9mi5h1759603713.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34145472",
@@ -2077,7 +2039,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34145472.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wz9it61759603655.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wz9it61759603655.png/medium",
+    "rawPosition": "Centre-Forward",
+    "status": "Active"
   },
   {
     "id": "p_34145432",
@@ -2103,7 +2067,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34145432.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/buyozi1759603211.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/buyozi1759603211.png/medium",
+    "rawPosition": "Centre-Back",
+    "status": "Active"
   },
   {
     "id": "p_34162480",
@@ -2129,7 +2095,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34162480.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8yiz2b1759603927.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8yiz2b1759603927.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34234525",
@@ -2155,7 +2123,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34234525.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/18b6oc1759604110.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/18b6oc1759604110.png/medium",
+    "rawPosition": "Midfielder",
+    "status": null
   },
   {
     "id": "p_34299813",
@@ -2181,7 +2151,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34299813.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/x8v8i31759603841.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/x8v8i31759603841.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34173799",
@@ -2207,7 +2179,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34173799.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xwli801759603558.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xwli801759603558.png/medium",
+    "rawPosition": "Central Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34299739",
@@ -2233,7 +2207,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34299739.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/j0aewz1759603382.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/j0aewz1759603382.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34222319",
@@ -2259,7 +2235,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34222319.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/kw0iyu1759603756.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/kw0iyu1759603756.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34348836",
@@ -2285,7 +2263,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34348836.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8r73lw1755674641.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8r73lw1755674641.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34195635",
@@ -2311,7 +2291,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34195635.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bajwdl1755674802.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bajwdl1755674802.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34178576",
@@ -2337,7 +2319,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34178576.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xnyl5q1755674929.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xnyl5q1755674929.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34293759",
@@ -2363,7 +2347,9 @@
     "flagFile": "assets/flags/ca.png",
     "flagUrl": "https://flagcdn.com/w80/ca.png",
     "portraitFile": "assets/portraits/34293759.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/yccg2y1766146971.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/yccg2y1766146971.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34259427",
@@ -2389,7 +2375,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34259427.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/s24sah1766147140.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/s24sah1766147140.png/medium",
+    "rawPosition": "Midfielder",
+    "status": null
   },
   {
     "id": "p_34145853",
@@ -2415,7 +2403,9 @@
     "flagFile": "assets/flags/zw.png",
     "flagUrl": "https://flagcdn.com/w80/zw.png",
     "portraitFile": "assets/portraits/34145853.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/e3r22e1755674898.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/e3r22e1755674898.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34178574",
@@ -2441,7 +2431,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34178574.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ped7j01766147083.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ped7j01766147083.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34228492",
@@ -2467,7 +2459,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34228492.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ughxul1766147327.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ughxul1766147327.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34176803",
@@ -2493,7 +2487,9 @@
     "flagFile": "assets/flags/au.png",
     "flagUrl": "https://flagcdn.com/w80/au.png",
     "portraitFile": "assets/portraits/34176803.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/q9t3761755674827.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/q9t3761755674827.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34173796",
@@ -2519,7 +2515,9 @@
     "flagFile": null,
     "flagUrl": null,
     "portraitFile": "assets/portraits/34173796.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/tuwjyf1766147387.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/tuwjyf1766147387.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34202533",
@@ -2545,7 +2543,9 @@
     "flagFile": "assets/flags/iq.png",
     "flagUrl": "https://flagcdn.com/w80/iq.png",
     "portraitFile": "assets/portraits/34202533.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/c2vni01766070789.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/c2vni01766070789.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34230043",
@@ -2571,7 +2571,9 @@
     "flagFile": "assets/flags/cg.png",
     "flagUrl": "https://flagcdn.com/w80/cg.png",
     "portraitFile": "assets/portraits/34230043.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wza3yh1766071197.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wza3yh1766071197.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34178000",
@@ -2597,7 +2599,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34178000.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wr13xk1766070848.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wr13xk1766070848.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34162226",
@@ -2623,7 +2627,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34162226.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/v2gx9e1766071868.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/v2gx9e1766071868.png/medium",
+    "rawPosition": "Centre-Forward",
+    "status": "Active"
   },
   {
     "id": "p_34148851",
@@ -2649,7 +2655,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34148851.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7jp56p1766071419.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7jp56p1766071419.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34248038",
@@ -2675,7 +2683,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34248038.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/tn4hl11766071114.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/tn4hl11766071114.png/medium",
+    "rawPosition": "Attacker",
+    "status": null
   },
   {
     "id": "p_34259079",
@@ -2701,7 +2711,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34259079.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8bv8tv1766071346.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8bv8tv1766071346.png/medium",
+    "rawPosition": "Defender",
+    "status": null
   },
   {
     "id": "p_34192631",
@@ -2727,7 +2739,9 @@
     "flagFile": "assets/flags/gy.png",
     "flagUrl": "https://flagcdn.com/w80/gy.png",
     "portraitFile": "assets/portraits/34192631.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5azkgd1766071069.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5azkgd1766071069.png/medium",
+    "rawPosition": "Right Winger",
+    "status": "Active"
   },
   {
     "id": "p_34173625",
@@ -2753,7 +2767,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34173625.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/neqgdj1766071657.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/neqgdj1766071657.png/medium",
+    "rawPosition": "Centre-Forward",
+    "status": "Active"
   },
   {
     "id": "p_34258099",
@@ -2779,7 +2795,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34258099.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/36l0vd1766071382.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/36l0vd1766071382.png/medium",
+    "rawPosition": "Midfielder",
+    "status": null
   },
   {
     "id": "p_34161741",
@@ -2805,7 +2823,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161741.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/vvkkj21766144786.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/vvkkj21766144786.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34170124",
@@ -2831,7 +2851,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34170124.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xz5wsb1766145889.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xz5wsb1766145889.png/medium",
+    "rawPosition": "Attacking Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34174073",
@@ -2857,7 +2879,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34174073.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/tj9zux1766145301.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/tj9zux1766145301.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34176231",
@@ -2883,7 +2907,9 @@
     "flagFile": "assets/flags/rs.png",
     "flagUrl": "https://flagcdn.com/w80/rs.png",
     "portraitFile": "assets/portraits/34176231.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/yr3hde1766145146.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/yr3hde1766145146.png/medium",
+    "rawPosition": "Striker",
+    "status": "Active"
   },
   {
     "id": "p_34301920",
@@ -2909,7 +2935,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34301920.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/rzax5n1766145257.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/rzax5n1766145257.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34197625",
@@ -2935,7 +2963,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34197625.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bk8xu41766145083.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bk8xu41766145083.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34147929",
@@ -2961,7 +2991,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34147929.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1q7uqx1766144825.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1q7uqx1766144825.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34163872",
@@ -2987,7 +3019,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34163872.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7w9gp61766145932.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7w9gp61766145932.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34157627",
@@ -3013,7 +3047,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34157627.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jfgb191766145829.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jfgb191766145829.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34234908",
@@ -3039,7 +3075,9 @@
     "flagFile": "assets/flags/au.png",
     "flagUrl": "https://flagcdn.com/w80/au.png",
     "portraitFile": "assets/portraits/34234908.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/pkqo511766145407.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/pkqo511766145407.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34163570",
@@ -3065,7 +3103,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34163570.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9zahue1759577746.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9zahue1759577746.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34164130",
@@ -3091,7 +3131,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34164130.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9gczul1759577947.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9gczul1759577947.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34163960",
@@ -3117,7 +3159,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34163960.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7vnidj1759577779.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7vnidj1759577779.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34161762",
@@ -3143,7 +3187,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161762.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bbhhq61759578045.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bbhhq61759578045.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34222274",
@@ -3169,7 +3215,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34222274.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/qux8hg1759577980.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/qux8hg1759577980.png/medium",
+    "rawPosition": "Attacker",
+    "status": "Active"
   },
   {
     "id": "p_34147717",
@@ -3195,7 +3243,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34147717.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1vmuq01759577798.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1vmuq01759577798.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34217629",
@@ -3221,7 +3271,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34217629.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/tfailb1759577840.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/tfailb1759577840.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34222309",
@@ -3247,7 +3299,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34222309.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/w5tb6d1759577852.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/w5tb6d1759577852.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34161650",
@@ -3273,7 +3327,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161650.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6o0yxp1759578076.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6o0yxp1759578076.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34176447",
@@ -3299,7 +3355,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34176447.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/asezl31759577868.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/asezl31759577868.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34225200",
@@ -3325,7 +3383,9 @@
     "flagFile": "assets/flags/nl.png",
     "flagUrl": "https://flagcdn.com/w80/nl.png",
     "portraitFile": "assets/portraits/34225200.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/q9fomd1766332561.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/q9fomd1766332561.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34234533",
@@ -3351,7 +3411,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34234533.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jeagxm1766341213.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jeagxm1766341213.png/medium",
+    "rawPosition": "Midfielder",
+    "status": null
   },
   {
     "id": "p_34148567",
@@ -3377,7 +3439,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34148567.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/j53wq21766332219.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/j53wq21766332219.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34278770",
@@ -3403,7 +3467,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34278770.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fy0yt71766340962.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fy0yt71766340962.png/medium",
+    "rawPosition": "Central Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34220656",
@@ -3429,7 +3495,9 @@
     "flagFile": "assets/flags/nl.png",
     "flagUrl": "https://flagcdn.com/w80/nl.png",
     "portraitFile": "assets/portraits/34220656.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wjzut61766332715.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wjzut61766332715.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34163954",
@@ -3455,7 +3523,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34163954.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/008rms1766340430.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/008rms1766340430.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34420406",
@@ -3481,7 +3551,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34420406.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/40xrug1766340577.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/40xrug1766340577.png/medium",
+    "rawPosition": "Midfielder",
+    "status": null
   },
   {
     "id": "p_34247647",
@@ -3507,7 +3579,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34247647.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/zok6no1766341183.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/zok6no1766341183.png/medium",
+    "rawPosition": "Attacker",
+    "status": null
   },
   {
     "id": "p_34195133",
@@ -3533,7 +3607,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34195133.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/usxlcc1766340382.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/usxlcc1766340382.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34433336",
@@ -3559,7 +3635,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34433336.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6jwrd51766340796.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6jwrd51766340796.png/medium",
+    "rawPosition": "Attacking Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34217736",
@@ -3585,7 +3663,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34217736.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4rzfbb1759428817.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4rzfbb1759428817.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34220108",
@@ -3611,7 +3691,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34220108.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/faav4w1759421638.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/faav4w1759421638.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34227237",
@@ -3637,7 +3719,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34227237.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/kdz9e51759422379.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/kdz9e51759422379.png/medium",
+    "rawPosition": "Attacker",
+    "status": "Active"
   },
   {
     "id": "p_34291845",
@@ -3663,7 +3747,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34291845.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xhgdn71759421805.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/xhgdn71759421805.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34162386",
@@ -3689,7 +3775,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34162386.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4kmikf1759422114.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4kmikf1759422114.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34203632",
@@ -3715,7 +3803,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34203632.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/i4tb2m1759422285.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/i4tb2m1759422285.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34295421",
@@ -3741,7 +3831,9 @@
     "flagFile": "assets/flags/jm.png",
     "flagUrl": "https://flagcdn.com/w80/jm.png",
     "portraitFile": "assets/portraits/34295421.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/hotsbq1759422158.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/hotsbq1759422158.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34253695",
@@ -3767,7 +3859,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34253695.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/clqxu51759428924.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/clqxu51759428924.png/medium",
+    "rawPosition": "Defender",
+    "status": null
   },
   {
     "id": "p_34218350",
@@ -3793,7 +3887,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34218350.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8e6hcj1759422246.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8e6hcj1759422246.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34159029",
@@ -3819,7 +3915,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34159029.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/skughg1759422337.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/skughg1759422337.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34177245",
@@ -3845,7 +3943,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34177245.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wn3sxz1766350424.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wn3sxz1766350424.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34244897",
@@ -3871,7 +3971,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34244897.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/en9bj11766350240.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/en9bj11766350240.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": null
   },
   {
     "id": "p_34200580",
@@ -3897,7 +3999,9 @@
     "flagFile": "assets/flags/fi.png",
     "flagUrl": "https://flagcdn.com/w80/fi.png",
     "portraitFile": "assets/portraits/34200580.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/szkcua1766350470.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/szkcua1766350470.png/medium",
+    "rawPosition": "Centre-Back",
+    "status": "Active"
   },
   {
     "id": "p_34216347",
@@ -3923,7 +4027,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34216347.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ddbe9y1766350088.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ddbe9y1766350088.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34148797",
@@ -3949,7 +4055,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34148797.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/pys1ds1766350753.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/pys1ds1766350753.png/medium",
+    "rawPosition": "Central Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34235560",
@@ -3975,7 +4083,9 @@
     "flagFile": "assets/flags/is.png",
     "flagUrl": "https://flagcdn.com/w80/is.png",
     "portraitFile": "assets/portraits/34235560.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/w7c4by1766351062.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/w7c4by1766351062.png/medium",
+    "rawPosition": "Attacker",
+    "status": "Active"
   },
   {
     "id": "p_34222249",
@@ -4001,7 +4111,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34222249.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/d7pmqb1766351020.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/d7pmqb1766351020.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34163924",
@@ -4027,7 +4139,9 @@
     "flagFile": null,
     "flagUrl": null,
     "portraitFile": "assets/portraits/34163924.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/da9rlc1766351167.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/da9rlc1766351167.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34161518",
@@ -4053,7 +4167,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161518.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ezs0wx1766350344.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ezs0wx1766350344.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34433338",
@@ -4079,7 +4195,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34433338.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/sowfuk1766352226.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/sowfuk1766352226.png/medium",
+    "rawPosition": "Winger",
+    "status": "Active"
   },
   {
     "id": "p_34432331",
@@ -4105,7 +4223,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34432331.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/oyickc1766143069.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/oyickc1766143069.png/medium",
+    "rawPosition": "Attacker",
+    "status": "Active"
   },
   {
     "id": "p_34227468",
@@ -4131,7 +4251,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34227468.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/weab471766143355.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/weab471766143355.png/medium",
+    "rawPosition": "Attacker",
+    "status": "Active"
   },
   {
     "id": "p_34163693",
@@ -4157,7 +4279,9 @@
     "flagFile": "assets/flags/es.png",
     "flagUrl": "https://flagcdn.com/w80/es.png",
     "portraitFile": "assets/portraits/34163693.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/gw9y4p1766143881.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/gw9y4p1766143881.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34161731",
@@ -4183,7 +4307,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161731.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ubsxsk1766141539.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ubsxsk1766141539.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34217696",
@@ -4209,7 +4335,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34217696.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fg8gs71766143540.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fg8gs71766143540.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34216672",
@@ -4235,7 +4363,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34216672.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/mzwdoo1766142868.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/mzwdoo1766142868.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34294221",
@@ -4261,7 +4391,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34294221.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/il7xpf1766143161.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/il7xpf1766143161.png/medium",
+    "rawPosition": "Defender",
+    "status": "Retired"
   },
   {
     "id": "p_34217686",
@@ -4287,33 +4419,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34217686.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/vz33ga1766141610.png/medium"
-  },
-  {
-    "id": "p_34148509",
-    "playerId": "34148509",
-    "name": "Gary Caldwell",
-    "rarity": "common",
-    "ovr": 56,
-    "pos": "MEI",
-    "stats": {
-      "pac": 43,
-      "sho": 33,
-      "pas": 68,
-      "dri": 61,
-      "def": 36,
-      "phy": 43
-    },
-    "clubId": "134365",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "Scotland",
-    "countryCode": "GB",
-    "flagFile": "assets/flags/gb.png",
-    "flagUrl": "https://flagcdn.com/w80/gb.png",
-    "portraitFile": "assets/portraits/34148509.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/121982.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/vz33ga1766141610.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34168933",
@@ -4339,7 +4447,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34168933.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/m1okt21759843002.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/m1okt21759843002.png/medium",
+    "rawPosition": "Centre-Forward",
+    "status": "Active"
   },
   {
     "id": "p_34248335",
@@ -4365,7 +4475,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34248335.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8mfid41759843267.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8mfid41759843267.png/medium",
+    "rawPosition": "Attacker",
+    "status": null
   },
   {
     "id": "p_34220391",
@@ -4391,7 +4503,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34220391.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/kn58401759842962.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/kn58401759842962.png/medium",
+    "rawPosition": "Defensive Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34289511",
@@ -4417,7 +4531,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34289511.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/51ttwb1759843690.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/51ttwb1759843690.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34220419",
@@ -4443,7 +4559,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34220419.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/480quj1759843790.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/480quj1759843790.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34165512",
@@ -4469,7 +4587,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34165512.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4n3qsb1759843897.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4n3qsb1759843897.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34215883",
@@ -4495,7 +4615,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34215883.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/v7xkpm1766068977.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/v7xkpm1766068977.png/medium",
+    "rawPosition": "Winger",
+    "status": "Active"
   },
   {
     "id": "p_34203472",
@@ -4521,7 +4643,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34203472.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7s16vc1759843531.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7s16vc1759843531.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34217697",
@@ -4547,7 +4671,9 @@
     "flagFile": "assets/flags/fr.png",
     "flagUrl": "https://flagcdn.com/w80/fr.png",
     "portraitFile": "assets/portraits/34217697.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/oss9os1759843584.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/oss9os1759843584.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34296810",
@@ -4573,7 +4699,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34296810.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fpz7d81759843310.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/fpz7d81759843310.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34222254",
@@ -4599,7 +4727,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34222254.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/f40och1766225835.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/f40och1766225835.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34173806",
@@ -4625,7 +4755,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34173806.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jw053j1766224564.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jw053j1766224564.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34161911",
@@ -4651,7 +4783,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161911.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/zhckwj1766225798.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/zhckwj1766225798.png/medium",
+    "rawPosition": "Defensive Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34161802",
@@ -4677,7 +4811,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161802.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/kgehn21766225467.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/kgehn21766225467.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34235433",
@@ -4703,7 +4839,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34235433.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/oepnsf1766225518.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/oepnsf1766225518.png/medium",
+    "rawPosition": "Attacker",
+    "status": "Active"
   },
   {
     "id": "p_34216716",
@@ -4729,7 +4867,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34216716.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/75km8p1766224538.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/75km8p1766224538.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34296396",
@@ -4755,7 +4895,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34296396.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9wrarn1766225314.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9wrarn1766225314.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34179003",
@@ -4781,7 +4923,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34179003.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7141fo1766225603.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7141fo1766225603.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34293986",
@@ -4807,7 +4951,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34293986.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/2jfgsx1766226039.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/2jfgsx1766226039.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34291538",
@@ -4833,7 +4979,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34291538.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/vi80cg1766224820.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/vi80cg1766224820.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34145639",
@@ -4859,7 +5007,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34145639.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5v3vih1766329197.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5v3vih1766329197.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34200111",
@@ -4885,7 +5035,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34200111.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/t2h0h91766330327.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/t2h0h91766330327.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34161563",
@@ -4911,7 +5063,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161563.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/k22u9c1766329451.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/k22u9c1766329451.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34297684",
@@ -4937,7 +5091,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34297684.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/e8g79z1766330114.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/e8g79z1766330114.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34181645",
@@ -4963,7 +5119,9 @@
     "flagFile": "assets/flags/nz.png",
     "flagUrl": "https://flagcdn.com/w80/nz.png",
     "portraitFile": "assets/portraits/34181645.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/vwy9bu1766331018.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/vwy9bu1766331018.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34175741",
@@ -4989,7 +5147,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34175741.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/uxpmoq1766330017.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/uxpmoq1766330017.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34200109",
@@ -5015,7 +5175,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34200109.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/k3vbbu1766329497.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/k3vbbu1766329497.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34235120",
@@ -5041,33 +5203,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34235120.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/r22rym1766330947.png/medium"
-  },
-  {
-    "id": "p_34165567",
-    "playerId": "34165567",
-    "name": "Darren Moore",
-    "rarity": "common",
-    "ovr": 61,
-    "pos": "MEI",
-    "stats": {
-      "pac": 47,
-      "sho": 41,
-      "pas": 69,
-      "dri": 64,
-      "def": 34,
-      "phy": 50
-    },
-    "clubId": "134375",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "Jamaica",
-    "countryCode": "JM",
-    "flagFile": "assets/flags/jm.png",
-    "flagUrl": "https://flagcdn.com/w80/jm.png",
-    "portraitFile": "assets/portraits/34165567.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/thumb/84gw1s1549572999.jpg/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/r22rym1766330947.png/medium",
+    "rawPosition": "Attacker",
+    "status": null
   },
   {
     "id": "p_34145629",
@@ -5093,7 +5231,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34145629.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/g7m4bw1766331164.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/g7m4bw1766331164.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34218275",
@@ -5119,7 +5259,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34218275.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6hm9rb1759591910.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6hm9rb1759591910.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34161434",
@@ -5145,7 +5287,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161434.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/p2a5tp1759591829.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/p2a5tp1759591829.png/medium",
+    "rawPosition": "Goalkeeper",
+    "status": "Active"
   },
   {
     "id": "p_34220705",
@@ -5171,7 +5315,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34220705.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/s6cjz11759592142.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/s6cjz11759592142.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34222093",
@@ -5197,7 +5343,9 @@
     "flagFile": "assets/flags/ie.png",
     "flagUrl": "https://flagcdn.com/w80/ie.png",
     "portraitFile": "assets/portraits/34222093.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1voxsd1759591880.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/1voxsd1759591880.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34193415",
@@ -5223,7 +5371,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34193415.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/hhcbsy1759592155.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/hhcbsy1759592155.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34220477",
@@ -5249,7 +5399,9 @@
     "flagFile": "assets/flags/pt.png",
     "flagUrl": "https://flagcdn.com/w80/pt.png",
     "portraitFile": "assets/portraits/34220477.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/73augy1759592109.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/73augy1759592109.png/medium",
+    "rawPosition": "Centre-Forward",
+    "status": "Active"
   },
   {
     "id": "p_34294025",
@@ -5275,33 +5427,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34294025.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8u4pee1759591843.png/medium"
-  },
-  {
-    "id": "p_34148844",
-    "playerId": "34148844",
-    "name": "Alex Revell",
-    "rarity": "epic",
-    "ovr": 75,
-    "pos": "MEI",
-    "stats": {
-      "pac": 52,
-      "sho": 48,
-      "pas": 85,
-      "dri": 74,
-      "def": 52,
-      "phy": 59
-    },
-    "clubId": "134378",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "England",
-    "countryCode": "GB",
-    "flagFile": "assets/flags/gb.png",
-    "flagUrl": "https://flagcdn.com/w80/gb.png",
-    "portraitFile": "assets/portraits/34148844.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5108314.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8u4pee1759591843.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34222092",
@@ -5327,7 +5455,9 @@
     "flagFile": null,
     "flagUrl": null,
     "portraitFile": "assets/portraits/34222092.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wjig7b1766345044.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wjig7b1766345044.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34167533",
@@ -5353,7 +5483,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34167533.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/dt34n01766343766.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/dt34n01766343766.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34163930",
@@ -5379,7 +5511,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34163930.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/srf0k21766343903.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/srf0k21766343903.png/medium",
+    "rawPosition": "Centre-Back",
+    "status": "Active"
   },
   {
     "id": "p_34200602",
@@ -5405,7 +5539,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34200602.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6qbihu1766344356.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6qbihu1766344356.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34157645",
@@ -5431,7 +5567,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34157645.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/u8m8761766345498.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/u8m8761766345498.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34162191",
@@ -5457,7 +5595,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34162191.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/61tsbg1766343803.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/61tsbg1766343803.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34217705",
@@ -5483,7 +5623,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34217705.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4bcfu01766345811.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/4bcfu01766345811.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34175406",
@@ -5509,7 +5651,9 @@
     "flagFile": "assets/flags/tt.png",
     "flagUrl": "https://flagcdn.com/w80/tt.png",
     "portraitFile": "assets/portraits/34175406.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ten37y1766344399.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ten37y1766344399.png/medium",
+    "rawPosition": "Defensive Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34304064",
@@ -5535,7 +5679,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34304064.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/dz9h9m1766344101.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/dz9h9m1766344101.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34217722",
@@ -5561,7 +5707,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34217722.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wwn1la1766222448.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wwn1la1766222448.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34145366",
@@ -5587,7 +5735,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34145366.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/yv1fuq1766222423.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/yv1fuq1766222423.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34160903",
@@ -5613,33 +5763,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34160903.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6d1ipc1766222313.png/medium"
-  },
-  {
-    "id": "p_34196597",
-    "playerId": "34196597",
-    "name": "Dom Dwyer",
-    "rarity": "common",
-    "ovr": 52,
-    "pos": "MEI",
-    "stats": {
-      "pac": 43,
-      "sho": 34,
-      "pas": 56,
-      "dri": 50,
-      "def": 37,
-      "phy": 39
-    },
-    "clubId": "134381",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "England",
-    "countryCode": "GB",
-    "flagFile": "assets/flags/gb.png",
-    "flagUrl": "https://flagcdn.com/w80/gb.png",
-    "portraitFile": "assets/portraits/34196597.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/hdtwvt1766222672.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/6d1ipc1766222313.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34147620",
@@ -5665,7 +5791,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34147620.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/q4qjjc1766223019.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/q4qjjc1766223019.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34222234",
@@ -5691,7 +5819,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34222234.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/m84oa11766222366.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/m84oa11766222366.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34158623",
@@ -5717,7 +5847,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34158623.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bz4dj91766223091.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bz4dj91766223091.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34281699",
@@ -5743,7 +5875,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34281699.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/y6kfdw1766222763.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/y6kfdw1766222763.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34148819",
@@ -5769,7 +5903,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34148819.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bdihp11766222339.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/bdihp11766222339.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34161986",
@@ -5795,7 +5931,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34161986.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/u6shyg1766222184.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/u6shyg1766222184.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34202417",
@@ -5821,7 +5959,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34202417.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wqy9wh1766405825.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wqy9wh1766405825.png/medium",
+    "rawPosition": "Attacking Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34190576",
@@ -5847,7 +5987,9 @@
     "flagFile": "assets/flags/dk.png",
     "flagUrl": "https://flagcdn.com/w80/dk.png",
     "portraitFile": "assets/portraits/34190576.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/p7mn9g1766405449.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/p7mn9g1766405449.png/medium",
+    "rawPosition": "Centre-Back",
+    "status": "Active"
   },
   {
     "id": "p_34224669",
@@ -5873,7 +6015,9 @@
     "flagFile": "assets/flags/ch.png",
     "flagUrl": "https://flagcdn.com/w80/ch.png",
     "portraitFile": "assets/portraits/34224669.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/o93jmw1766405883.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/o93jmw1766405883.png/medium",
+    "rawPosition": "Attacker",
+    "status": "Active"
   },
   {
     "id": "p_34225857",
@@ -5899,7 +6043,9 @@
     "flagFile": null,
     "flagUrl": null,
     "portraitFile": "assets/portraits/34225857.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wc30to1766405548.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/wc30to1766405548.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34148607",
@@ -5925,7 +6071,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34148607.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/f99k301766405978.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/f99k301766405978.png/medium",
+    "rawPosition": "Centre-Forward",
+    "status": "Active"
   },
   {
     "id": "p_34200236",
@@ -5951,7 +6099,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34200236.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9f7ma81766405360.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/9f7ma81766405360.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34219038",
@@ -5977,7 +6127,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34219038.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/mc17rl1766405155.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/mc17rl1766405155.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34156674",
@@ -6003,7 +6155,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34156674.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/skdhu21766405004.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/skdhu21766405004.png/medium",
+    "rawPosition": "Left-Back",
+    "status": "Active"
   },
   {
     "id": "p_34235097",
@@ -6029,7 +6183,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34235097.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/inb4341766405303.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/inb4341766405303.png/medium",
+    "rawPosition": "Defender",
+    "status": null
   },
   {
     "id": "p_34420387",
@@ -6055,7 +6211,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34420387.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/okwzba1766406002.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/okwzba1766406002.png/medium",
+    "rawPosition": "Attacker",
+    "status": "Active"
   },
   {
     "id": "p_34147689",
@@ -6081,7 +6239,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34147689.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5suoi61766069950.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/5suoi61766069950.png/medium",
+    "rawPosition": "Defender",
+    "status": "Active"
   },
   {
     "id": "p_34147703",
@@ -6107,7 +6267,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34147703.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jjl3rw1766070308.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/jjl3rw1766070308.png/medium",
+    "rawPosition": "Left Midfield",
+    "status": "Active"
   },
   {
     "id": "p_34217620",
@@ -6133,7 +6295,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34217620.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/hog6au1766069877.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/hog6au1766069877.png/medium",
+    "rawPosition": "Forward",
+    "status": "Active"
   },
   {
     "id": "p_34147828",
@@ -6159,7 +6323,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34147828.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7lyln61766070099.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/7lyln61766070099.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34203227",
@@ -6185,7 +6351,9 @@
     "flagFile": "assets/flags/jm.png",
     "flagUrl": "https://flagcdn.com/w80/jm.png",
     "portraitFile": "assets/portraits/34203227.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/hutkzo1766070070.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/hutkzo1766070070.png/medium",
+    "rawPosition": "Right-Back",
+    "status": "Active"
   },
   {
     "id": "p_34216465",
@@ -6211,33 +6379,9 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34216465.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ssx58g1766070050.png/medium"
-  },
-  {
-    "id": "p_34176229",
-    "playerId": "34176229",
-    "name": "Erik Ring",
-    "rarity": "rare",
-    "ovr": 65,
-    "pos": "MEI",
-    "stats": {
-      "pac": 45,
-      "sho": 38,
-      "pas": 74,
-      "dri": 69,
-      "def": 43,
-      "phy": 47
-    },
-    "clubId": "135900",
-    "clubName": "Arsenal",
-    "clubBadgeFile": null,
-    "clubBadgeUrl": null,
-    "nationality": "Sweden",
-    "countryCode": "SE",
-    "flagFile": "assets/flags/se.png",
-    "flagUrl": "https://flagcdn.com/w80/se.png",
-    "portraitFile": "assets/portraits/34176229.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/8rwkh81766070413.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/ssx58g1766070050.png/medium",
+    "rawPosition": "Midfielder",
+    "status": "Active"
   },
   {
     "id": "p_34240992",
@@ -6263,6 +6407,8 @@
     "flagFile": "assets/flags/gb.png",
     "flagUrl": "https://flagcdn.com/w80/gb.png",
     "portraitFile": "assets/portraits/34240992.png",
-    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/x0y4x71766069392.png/medium"
+    "portraitUrl": "https://r2.thesportsdb.com/images/media/player/cutout/x0y4x71766069392.png/medium",
+    "rawPosition": "Midfielder",
+    "status": null
   }
 ]

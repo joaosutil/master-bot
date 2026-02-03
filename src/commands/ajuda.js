@@ -27,7 +27,7 @@ function renderCommandList() {
     },
     {
       title: "Packs & Cards",
-      items: ["/pack", "/packgratis", "/cards", "/card", "/inventory"]
+      items: ["/pack", "/packgratis", "/cards", "/card", "/inventory", "/vender", "/escalar", "/jogar casual", "/jogar rank"]
     },
     {
       title: "Eventos",

@@ -33,6 +33,21 @@ export async function getInventoryCounts(guildId, userId) {
   return {};
 }
 
+export function inventoryTotalCount(counts = {}) {
+  let total = 0;
+  for (const v of Object.values(counts ?? {})) {
+    const n = Number(v ?? 0);
+    if (!Number.isFinite(n) || n <= 0) continue;
+    total += Math.trunc(n);
+  }
+  return total;
+}
+
+export async function getInventoryTotalCount(guildId, userId) {
+  const counts = await getInventoryCounts(guildId, userId);
+  return inventoryTotalCount(counts);
+}
+
 export async function addCardsToInventory(guildId, userId, cards, { session } = {}) {
   const inc = {};
   for (const c of cards ?? []) {
