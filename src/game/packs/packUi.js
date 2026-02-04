@@ -17,8 +17,13 @@ import {
 import { generatePackCards } from "./packEngine.js";
 
 import { getBalance as getEcoBalance, trySpendBalance } from "../../economy/economyService.js";
-import { addCardsToInventory } from "../../packs/inventoryModel.js";
-import { getInventoryCounts, inventoryTotalCount } from "../../packs/inventoryModel.js";
+import {
+  addCardsToInventory,
+  getInventoryCounts,
+  inventoryTotalCount,
+  subtractLockedCounts
+} from "../../packs/inventoryModel.js";
+import { getSquadLockedCounts } from "../squad/squadService.js";
 
 import { renderPackRevealPng } from "../../ui/renderPackReveal.js";
 import { renderPackOpeningPng } from "../../ui/renderPackOpening.js";
@@ -459,7 +464,8 @@ export async function handlePackButton(interaction) {
 
       const openQty = Number.isFinite(qty) && qty > 1 ? Math.floor(qty) : 1;
       const invCounts = await getInventoryCounts(interaction.guildId, interaction.user.id);
-      const invTotal = inventoryTotalCount(invCounts);
+      const lockedCounts = await getSquadLockedCounts(interaction.guildId, interaction.user.id);
+      const invTotal = inventoryTotalCount(subtractLockedCounts(invCounts, lockedCounts));
       const willAdd = packCardCount(pack) * openQty;
       const after = invTotal + willAdd;
 
@@ -470,7 +476,7 @@ export async function handlePackButton(interaction) {
 
         const desc =
           `${pack.description}\n\n` +
-          `❌ **Time Cheio**: seu inventário está com **${invTotal}/${INVENTORY_LIMIT}** cartas.\n` +
+          `❌ **Time Cheio**: seu inventário (sem os escalados) está com **${invTotal}/${INVENTORY_LIMIT}** cartas.\n` +
           `Abrir **${openQty}x** adicionaria **${willAdd}** cartas (ficaria **${after}/${INVENTORY_LIMIT}**).\n\n` +
           `Use **/vender** para liberar espaço (o botão "Selecionar tudo" não marca cartas 90+ automaticamente).`;
 

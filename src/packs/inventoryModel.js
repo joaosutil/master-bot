@@ -43,6 +43,34 @@ export function inventoryTotalCount(counts = {}) {
   return total;
 }
 
+export function subtractLockedCounts(counts = {}, lockedCounts = {}) {
+  const out = {};
+
+  // start with sanitized counts
+  for (const [k, v] of Object.entries(counts ?? {})) {
+    const n = Number(v ?? 0);
+    if (!Number.isFinite(n) || n <= 0) continue;
+    out[String(k)] = Math.trunc(n);
+  }
+
+  for (const [k, v] of Object.entries(lockedCounts ?? {})) {
+    const lock = Number(v ?? 0);
+    if (!Number.isFinite(lock) || lock <= 0) continue;
+    const id = String(k);
+    const cur = Number(out[id] ?? 0);
+    if (!Number.isFinite(cur) || cur <= 0) continue;
+    const next = Math.max(0, Math.trunc(cur) - Math.trunc(lock));
+    if (next > 0) out[id] = next;
+    else delete out[id];
+  }
+
+  return out;
+}
+
+export function inventoryAvailableTotalCount(counts = {}, lockedCounts = {}) {
+  return inventoryTotalCount(subtractLockedCounts(counts, lockedCounts));
+}
+
 export async function getInventoryTotalCount(guildId, userId) {
   const counts = await getInventoryCounts(guildId, userId);
   return inventoryTotalCount(counts);

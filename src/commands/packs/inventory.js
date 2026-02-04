@@ -1,7 +1,8 @@
 import { SlashCommandBuilder } from "discord.js";
-import { getInventoryCounts, inventoryTotalCount } from "../../packs/inventoryModel.js";
+import { getInventoryCounts, inventoryTotalCount, subtractLockedCounts } from "../../packs/inventoryModel.js";
 import { getCardPool } from "../../cards/cardsStore.js";
 import { economyEmbed, rarityColor, emojiByRarity } from "../../ui/embeds.js";
+import { getSquadLockedCounts } from "../../game/squad/squadService.js";
 
 const INVENTORY_LIMIT = Math.max(1, Number(process.env.INVENTORY_LIMIT ?? 150) || 150);
 
@@ -28,9 +29,14 @@ export default {
 
     await interaction.deferReply();
 
+    const lockedCounts = await getSquadLockedCounts(guildId, targetUser.id);
     const counts = await getInventoryCounts(guildId, targetUser.id);
-    const totalCards = inventoryTotalCount(counts);
-    const entries = Object.entries(counts)
+    const availableCounts = subtractLockedCounts(counts, lockedCounts);
+
+    const availableCards = inventoryTotalCount(availableCounts);
+    const lockedCards = inventoryTotalCount(lockedCounts);
+
+    const entries = Object.entries(availableCounts)
       .map(([cardId, count]) => ({ cardId, count }))
       .filter((x) => x.count > 0);
 
@@ -81,7 +87,9 @@ export default {
       embeds: [
         economyEmbed({
           title: `🎒 Inventário de ${targetUser.username}`,
-          description: `Cartas: **${totalCards}/${INVENTORY_LIMIT}** • Stacks: **${detailed.length}**\n\n${lines.join("\n")}`,
+          description:
+            `Inventário: **${availableCards}/${INVENTORY_LIMIT}** • Escalados: **${lockedCards}** • Total: **${availableCards + lockedCards}**\n` +
+            `Stacks (inventário): **${detailed.length}**\n\n${lines.join("\n")}`,
           color: rarityColor(best),
           footer: "Abra mais com /pack"
         })

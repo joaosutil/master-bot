@@ -66,7 +66,7 @@ const data = new SlashCommandBuilder()
 export default {
   data,
   async execute(interaction) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: 64 });
 
     if (!interaction.inGuild()) {
       await interaction.editReply({ content: "❌ Esse comando só funciona em servidores." });
@@ -116,4 +116,3 @@ export default {
     });
   }
 };
-

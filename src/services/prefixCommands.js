@@ -41,6 +41,7 @@ class MessageInteractionAdapter {
     this.channel = message.channel;
     this.user = message.author;
     this.member = message.member ?? null;
+    this.memberPermissions = message.member?.permissions ?? null;
 
     this.deferred = false;
     this.replied = false;
@@ -69,8 +70,27 @@ class MessageInteractionAdapter {
       },
       getUser: (_name) => {
         return message.mentions?.users?.first?.() ?? null;
+      },
+      getChannel: (name) => {
+        const idx = parsedArgs.findIndex((a) => a === `--${name}`);
+        const raw = idx !== -1 ? parsedArgs[idx + 1] : null;
+        if (!raw) return null;
+
+        const m = String(raw).match(/^<#(\d+)>$/);
+        const id = m?.[1] ?? (String(raw).match(/^\d+$/) ? String(raw) : null);
+        if (!id) return null;
+
+        return message.guild?.channels?.cache?.get?.(id) ?? null;
       }
     };
+  }
+
+  inGuild() {
+    return Boolean(this.guildId);
+  }
+
+  inCachedGuild() {
+    return Boolean(this.guildId && this.guild);
   }
 
   async deferReply(_opts = {}) {
@@ -137,6 +157,22 @@ function parseSubcommandFor(commandName, args) {
   return { subcommand: null, rest: args };
 }
 
+function normalizeArgsForCommand(commandName, args) {
+  // Allow ergonomic positional args for common commands.
+  if (commandName === "limpar") {
+    // .limpar 10 => /limpar quantidade:10
+    const out = [...args];
+    const hasQtd = out.includes("--quantidade");
+    if (!hasQtd && out.length && /^\d+$/.test(String(out[0]))) {
+      const qty = out.shift();
+      out.unshift("--quantidade", qty);
+    }
+    return out;
+  }
+
+  return args;
+}
+
 export async function handlePrefixCommands(message) {
   if (!message?.guildId) return;
   if (!message?.content) return;
@@ -159,10 +195,11 @@ export async function handlePrefixCommands(message) {
   if (!command?.execute) return;
 
   const { subcommand, rest } = parseSubcommandFor(commandName, args);
+  const normalizedArgs = normalizeArgsForCommand(commandName, rest);
   const adapter = new MessageInteractionAdapter(message, {
     commandName,
     subcommand,
-    args: rest
+    args: normalizedArgs
   });
 
   try {
@@ -174,4 +211,3 @@ export async function handlePrefixCommands(message) {
     } catch {}
   }
 }
-

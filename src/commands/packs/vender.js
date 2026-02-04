@@ -12,6 +12,8 @@ import { Inventory, getInventoryCounts, inventoryTotalCount } from "../../packs/
 import { getCardPool } from "../../cards/cardsStore.js";
 import { addBalance } from "../../economy/economyService.js";
 import { emojiByRarity, formatCoins, rarityColor } from "../../ui/embeds.js";
+import { getSquadLockedCounts } from "../../game/squad/squadService.js";
+import { subtractLockedCounts } from "../../packs/inventoryModel.js";
 
 const PAGE_SIZE = 25; // select menu limit
 const INVENTORY_LIMIT = Math.max(1, Number(process.env.INVENTORY_LIMIT ?? 150) || 150);
@@ -109,7 +111,7 @@ function buildEmbed({ user, invTotal, items, selected, itemsById, page, totalPag
   }
 
   const desc =
-    `Inventário: **${invTotal}/${INVENTORY_LIMIT}** cartas\n` +
+    `Inventário (sem escalados): **${invTotal}/${INVENTORY_LIMIT}** cartas\n` +
     `Stacks: **${items.length}**\n\n` +
     `**Selecionado:** ${sel.stacks} stacks • ${sel.cards} cartas • **${formatCoins(sel.coins)} 🪙**\n\n` +
     lines.join("\n");
@@ -182,13 +184,16 @@ function buildSellButton(sellId, disabled) {
   );
 }
 
-async function sellSelection({ guildId, userId, selected, itemsById }) {
+async function sellSelection({ guildId, userId, selected, itemsById, lockedCounts }) {
   if (mongoose.connection?.readyState !== 1) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
 
   const toSell = [];
   for (const id of selected) {
+    if (lockedCounts?.[id]) {
+      throw new Error(`Tentou vender carta escalada (bloqueada): ${id}`);
+    }
     const it = itemsById.get(id);
     if (!it) continue;
     toSell.push({ cardId: id, count: it.count, value: Number(it.card?.value ?? 0) || 0 });
@@ -234,10 +239,12 @@ export default {
     const pool = await getCardPool();
     const poolMap = new Map(pool.map((c) => [c.id, c]));
 
+    let lockedCounts = await getSquadLockedCounts(guildId, userId);
     let counts = await getInventoryCounts(guildId, userId);
-    let invTotal = inventoryTotalCount(counts);
+    let availableCounts = subtractLockedCounts(counts, lockedCounts);
+    let invTotal = inventoryTotalCount(availableCounts);
 
-    let items = buildOwnedList(counts, poolMap);
+    let items = buildOwnedList(availableCounts, poolMap);
     if (!items.length) {
       await interaction.editReply({
         embeds: [
@@ -332,12 +339,14 @@ export default {
           }
 
           const before = selectedSummary(selected, itemsById);
-          const sold = await sellSelection({ guildId, userId, selected, itemsById });
+          const sold = await sellSelection({ guildId, userId, selected, itemsById, lockedCounts });
           selected.clear();
 
+          lockedCounts = await getSquadLockedCounts(guildId, userId);
           counts = await getInventoryCounts(guildId, userId);
-          invTotal = inventoryTotalCount(counts);
-          items = buildOwnedList(counts, poolMap);
+          availableCounts = subtractLockedCounts(counts, lockedCounts);
+          invTotal = inventoryTotalCount(availableCounts);
+          items = buildOwnedList(availableCounts, poolMap);
           itemsById.clear();
           for (const it of items) itemsById.set(it.cardId, it);
 

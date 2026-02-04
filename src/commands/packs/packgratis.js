@@ -1,5 +1,5 @@
 import { AttachmentBuilder, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { addCardsToInventory, getInventoryCounts, inventoryTotalCount } from "../../packs/inventoryModel.js";
+import { addCardsToInventory, getInventoryCounts, inventoryTotalCount, subtractLockedCounts } from "../../packs/inventoryModel.js";
 import { formatCoins } from "../../ui/embeds.js";
 import { renderPackOpeningPng } from "../../ui/renderPackOpening.js";
 import { renderPackRevealPng } from "../../ui/renderPackReveal.js";
@@ -7,6 +7,7 @@ import { renderWalkoutScenePng } from "../../ui/renderWalkoutScene.js";
 import { generatePackCards } from "../../game/packs/packEngine.js";
 import { PACKS } from "../../game/packs/packCatalog.js";
 import { claimFreePack } from "../../game/packs/freePackCooldown.js";
+import { getSquadLockedCounts } from "../../game/squad/squadService.js";
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -106,7 +107,8 @@ export default {
 
     const packObj = PACKS[packId];
     const invCounts = await getInventoryCounts(interaction.guildId, interaction.user.id);
-    const invTotal = inventoryTotalCount(invCounts);
+    const lockedCounts = await getSquadLockedCounts(interaction.guildId, interaction.user.id);
+    const invTotal = inventoryTotalCount(subtractLockedCounts(invCounts, lockedCounts));
     const willAdd = packCardCount(packObj);
     const after = invTotal + willAdd;
 
@@ -116,7 +118,7 @@ export default {
           new EmbedBuilder()
             .setTitle("❌ Time Cheio")
             .setDescription(
-              `Seu inventário está com **${invTotal}/${INVENTORY_LIMIT}** cartas.\n` +
+              `Seu inventário (sem os escalados) está com **${invTotal}/${INVENTORY_LIMIT}** cartas.\n` +
               `Abrir o pack grátis adicionaria **${willAdd}** (ficaria **${after}/${INVENTORY_LIMIT}**).\n\n` +
               "Use **/vender** para liberar espaço."
             )

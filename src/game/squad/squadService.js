@@ -74,6 +74,22 @@ export async function getOrCreateSquad(guildId, userId) {
   return doc;
 }
 
+export async function getSquadLockedCounts(guildId, userId) {
+  if (!isMongoConnected()) {
+    throw new Error("MongoDB nÃ£o conectado. Verifique MONGO_URI.");
+  }
+
+  const doc = await Squad.findOne({ guildId, userId }).lean();
+  const slots = doc?.slots ? Object.fromEntries(Object.entries(doc.slots)) : {};
+  const locked = {};
+  for (const v of Object.values(slots)) {
+    if (!v) continue;
+    const id = String(v);
+    locked[id] = (locked[id] ?? 0) + 1;
+  }
+  return locked;
+}
+
 export function getFormation(formationId) {
   return FORMATIONS[formationId] ?? FORMATIONS["4-3-3"];
 }

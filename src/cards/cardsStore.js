@@ -4,6 +4,7 @@ import path from "node:path";
 let CACHE = null;
 
 const ALLOWED_POS = new Set(["GOL", "ZAG", "LE", "LD", "VOL", "MC", "MEI", "PE", "PD", "ATA"]);
+const ALLOWED_RARITY = new Set(["common", "rare", "epic", "legendary"]);
 
 function clamp(n, a, b) {
   return Math.max(a, Math.min(b, n));
@@ -63,6 +64,32 @@ function normalizePos(pos) {
   return p;
 }
 
+function inferPosFromRawPosition(rawPosition) {
+  const rp = String(rawPosition ?? "").trim().toLowerCase();
+  if (!rp) return null;
+
+  const has = (re) => re.test(rp);
+
+  if (has(/\b(goalkeeper|keeper|gk)\b/)) return "GOL";
+
+  if (has(/\b(left[-\s]?back|lb)\b/)) return "LE";
+  if (has(/\b(right[-\s]?back|rb)\b/)) return "LD";
+  if (has(/\b(centre[-\s]?back|center[-\s]?back|cb)\b/)) return "ZAG";
+
+  if (has(/\b(defensive[-\s]?midfield|cdm)\b/)) return "VOL";
+  if (has(/\b(attacking[-\s]?midfield|cam)\b/)) return "MEI";
+  if (has(/\b(central[-\s]?midfield|cm)\b/)) return "MC";
+
+  // pontas / meias abertos (prioriza lado)
+  if (has(/\b(left[-\s]?(wing|winger|midfield)|lw|lm)\b/)) return "PE";
+  if (has(/\b(right[-\s]?(wing|winger|midfield)|rw|rm)\b/)) return "PD";
+
+  // atacantes
+  if (has(/\b(forward|striker|centre[-\s]?forward|center[-\s]?forward|st|cf)\b/)) return "ATA";
+
+  return null;
+}
+
 function isStaffLike(rawPosition, status) {
   const st = String(status ?? "").trim().toLowerCase();
   if (st === "coaching") return true;
@@ -119,6 +146,27 @@ function rarityBand(pct) {
   if (pct >= 0.92) return { key: "epic", lo: 0.92, hi: 0.985, min: 84, max: 93 };
   if (pct >= 0.65) return { key: "rare", lo: 0.65, hi: 0.92, min: 72, max: 88 };
   return { key: "common", lo: 0.0, hi: 0.65, min: 55, max: 80 };
+}
+
+function normalizeRarity(r) {
+  const rr = String(r ?? "").trim().toLowerCase();
+  if (ALLOWED_RARITY.has(rr)) return rr;
+  return "common";
+}
+
+function fifaScaleOvr(baseOvr) {
+  // Converte o OVR "base" (gerado no sync) para um range mais FIFA-like.
+  // Mantém estabilidade por jogador sem depender do pool inteiro.
+  const b = Number(baseOvr ?? 0);
+  if (!Number.isFinite(b) || b <= 0) return 55;
+
+  const inMin = 45;
+  const inMax = 85;
+  const outMin = 55;
+  const outMax = 99;
+
+  const t = clamp((b - inMin) / Math.max(1e-6, inMax - inMin), 0, 1);
+  return clamp(Math.round(outMin + t * (outMax - outMin)), 45, 99);
 }
 
 function scaleStatsToOvr(stats, scale) {
@@ -216,14 +264,24 @@ function normalizeCard(c) {
   const playerId = c?.playerId ? String(c.playerId).trim() : null;
   const name = String(c?.name ?? "").trim() || "Jogador";
 
-  const stats = normalizeStats(c?.stats);
-  const pos = normalizePos(c?.pos);
+  let stats = normalizeStats(c?.stats);
+  const rawPosition = c?.rawPosition ? String(c.rawPosition) : null;
+  const pos = inferPosFromRawPosition(rawPosition) ?? normalizePos(c?.pos);
   const ovrRaw = computeOvrRaw(stats, pos);
 
   const portraitFile = c?.portraitFile ? path.basename(String(c.portraitFile)) : null;
   const countryCode = c?.countryCode ? String(c.countryCode).toLowerCase() : null;
-  const rawPosition = c?.rawPosition ? String(c.rawPosition) : null;
   const status = c?.status ? String(c.status) : null;
+
+  const ovrFromFile = Number(c?.ovr);
+  const baseOvr = Number.isFinite(ovrFromFile) ? clamp(Math.round(ovrFromFile), 1, 99) : clamp(Math.round(ovrRaw), 1, 99);
+  const ovr = fifaScaleOvr(baseOvr);
+  const rarity = normalizeRarity(c?.rarity);
+
+  // Ajuste leve dos stats pra acompanhar o OVR final (sem depender do pool inteiro)
+  const rawNow = computeOvrRaw(stats, pos);
+  const scale = clamp(ovr / Math.max(1, rawNow), 0.88, 1.18);
+  stats = scaleStatsToOvr(stats, scale);
 
   let clubBadgeFile = c?.clubBadgeFile ? path.basename(String(c.clubBadgeFile)) : null;
   const clubId = c?.clubId ? String(c.clubId) : null;
@@ -237,8 +295,8 @@ function normalizeCard(c) {
     playerId,
     name,
     pos,
-    ovrRaw,
-    ovr: Math.round(ovrRaw),
+    ovrRaw: computeOvrRaw(stats, pos),
+    ovr,
     stats,
     clubId,
     clubName,
@@ -251,7 +309,7 @@ function normalizeCard(c) {
     status
   };
 
-  out.rarity = c?.rarity ?? "common"; // placeholder, ajustado depois por ranking
+  out.rarity = rarity;
   out.value = cardValue(out);
   return out;
 }
@@ -280,26 +338,8 @@ async function loadFromDisk() {
     .filter((c) => (includeStaff ? true : !isStaffLike(c.rawPosition, c.status)))
     .filter((c) => ALLOWED_POS.has(c.pos) || (includeCoaches && c.pos === "TEC"));
 
-  // escala OVR pra ficar mais “FIFA-like” (range mais gostoso)
-  // raridade/OVR por percentil no pool completo (evita "OVR alto pra todo mundo")
-  cards.sort((a, b) => (a.ovrRaw - b.ovrRaw) || a.name.localeCompare(b.name, "pt-BR")); // pior -> melhor
-  const totalAll = cards.length;
-  for (let i = 0; i < cards.length; i++) {
-    const pct = (i + 1) / Math.max(1, totalAll);
-    const band = rarityBand(pct);
-    const localT = clamp((pct - band.lo) / Math.max(1e-6, band.hi - band.lo), 0, 1);
-
-    cards[i].rarity = band.key;
-    cards[i].ovr = clamp(Math.round(band.min + localT * (band.max - band.min)), 45, 99);
-
-    // ajusta levemente os stats pra acompanharem o OVR final (evita card 90+ com stats baixos)
-    const rawNow = computeOvrRaw(cards[i].stats, cards[i].pos);
-    const scale = clamp(cards[i].ovr / Math.max(1, rawNow), 0.82, 1.28);
-    cards[i].stats = scaleStatsToOvr(cards[i].stats, scale);
-    cards[i].ovrRaw = computeOvrRaw(cards[i].stats, cards[i].pos);
-
-    cards[i].value = cardValue(cards[i]);
-  }
+  // IMPORTANTE: OVR/raridade sÃ£o estÃ¡veis por jogador (vindos do cards.json).
+  // Isso evita o mesmo jogador mudar de card quando o pool cresce/encolhe.
 
   // prune leve (diminuir um pouco a quantidade) + balanceado por posição (garante GOL)
   const limitRaw = process.env.CARDS_LIMIT ? Number(process.env.CARDS_LIMIT) : 200;
