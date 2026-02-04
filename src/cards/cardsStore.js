@@ -107,18 +107,29 @@ function computeOvrRaw(stats, pos) {
 function rarityFromRank(rank, total) {
   const pct = (rank + 1) / Math.max(1, total); // 0..1 (1=melhor)
 
-  // distribuição “FIFA-like” (ajusta fácil via env se quiser)
-  if (pct >= 0.97) return "legendary";
-  if (pct >= 0.87) return "epic";
-  if (pct >= 0.62) return "rare";
+  // distribuição “FIFA-like” mais balanceada (menos 90+ no pool)
+  if (pct >= 0.985) return "legendary";
+  if (pct >= 0.92) return "epic";
+  if (pct >= 0.65) return "rare";
   return "common";
 }
 
 function rarityBand(pct) {
-  if (pct >= 0.97) return { key: "legendary", lo: 0.97, hi: 1.0, min: 92, max: 99 };
-  if (pct >= 0.87) return { key: "epic", lo: 0.87, hi: 0.97, min: 86, max: 94 };
-  if (pct >= 0.62) return { key: "rare", lo: 0.62, hi: 0.87, min: 74, max: 88 };
-  return { key: "common", lo: 0.0, hi: 0.62, min: 55, max: 79 };
+  if (pct >= 0.985) return { key: "legendary", lo: 0.985, hi: 1.0, min: 90, max: 99 };
+  if (pct >= 0.92) return { key: "epic", lo: 0.92, hi: 0.985, min: 84, max: 93 };
+  if (pct >= 0.65) return { key: "rare", lo: 0.65, hi: 0.92, min: 72, max: 88 };
+  return { key: "common", lo: 0.0, hi: 0.65, min: 55, max: 80 };
+}
+
+function scaleStatsToOvr(stats, scale) {
+  const s = stats ?? {};
+  const keys = ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"];
+  for (const k of keys) {
+    const v = Number(s[k] ?? 0);
+    if (!Number.isFinite(v) || v <= 0) continue;
+    s[k] = clamp(Math.round(v * scale), 20, 99);
+  }
+  return s;
 }
 
 function pruneBalanced(cards, limit) {
@@ -202,6 +213,7 @@ export function cardValue(card) {
 
 function normalizeCard(c) {
   const id = String(c?.id ?? "").trim();
+  const playerId = c?.playerId ? String(c.playerId).trim() : null;
   const name = String(c?.name ?? "").trim() || "Jogador";
 
   const stats = normalizeStats(c?.stats);
@@ -222,6 +234,7 @@ function normalizeCard(c) {
 
   const out = {
     id,
+    playerId,
     name,
     pos,
     ovrRaw,
@@ -278,6 +291,13 @@ async function loadFromDisk() {
 
     cards[i].rarity = band.key;
     cards[i].ovr = clamp(Math.round(band.min + localT * (band.max - band.min)), 45, 99);
+
+    // ajusta levemente os stats pra acompanharem o OVR final (evita card 90+ com stats baixos)
+    const rawNow = computeOvrRaw(cards[i].stats, cards[i].pos);
+    const scale = clamp(cards[i].ovr / Math.max(1, rawNow), 0.82, 1.28);
+    cards[i].stats = scaleStatsToOvr(cards[i].stats, scale);
+    cards[i].ovrRaw = computeOvrRaw(cards[i].stats, cards[i].pos);
+
     cards[i].value = cardValue(cards[i]);
   }
 

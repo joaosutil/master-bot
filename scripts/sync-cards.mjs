@@ -210,12 +210,36 @@ function posToPt(posRaw) {
   const staffHints = ["coach", "manager", "trainer", "assistant", "goalkeeping", "keeper coach"];
   if (staffHints.some((h) => p.includes(h))) return null;
 
-  if (p.includes("goal") || p.includes("keeper")) return "GOL";
-  if (p.includes("back") || p.includes("def") || p.includes("centre-back") || p.includes("center-back"))
+  // GK
+  if (p.includes("goalkeeper") || (p.includes("goal") && p.includes("keep")) || p === "gk") return "GOL";
+
+  // fullbacks
+  if (p.includes("left back") || p.includes("left-back") || p === "lb" || p.includes("left fullback") || p.includes("left full-back"))
+    return "LE";
+  if (p.includes("right back") || p.includes("right-back") || p === "rb" || p.includes("right fullback") || p.includes("right full-back"))
+    return "LD";
+
+  // center backs / defenders
+  if (p.includes("centre-back") || p.includes("center-back") || p === "cb" || p.includes("defender") || p.includes("back"))
     return "ZAG";
-  if (p.includes("mid")) return "MEI";
-  if (p.includes("wing") || p.includes("forward") || p.includes("striker") || p.includes("attack"))
+
+  // midfield
+  if (p.includes("defensive midfield") || p.includes("holding midfield") || p === "cdm" || p.includes("dm")) return "VOL";
+  if (p.includes("attacking midfield") || p === "cam") return "MEI";
+  if (p.includes("central midfield") || p === "cm") return "MC";
+  if (p.includes("midfield") || p.includes("midfielder") || p.includes("mid")) return "MEI";
+
+  // wings
+  if (p.includes("left wing") || p.includes("left winger") || p === "lw" || p.includes("left forward")) return "PE";
+  if (p.includes("right wing") || p.includes("right winger") || p === "rw" || p.includes("right forward")) return "PD";
+
+  // attack
+  if (p.includes("centre-forward") || p.includes("center-forward") || p.includes("striker") || p.includes("forward") || p.includes("attack") || p === "st" || p === "cf")
     return "ATA";
+
+  // generic winger
+  if (p.includes("winger") || p.includes("wing")) return "ATA";
+
   return null;
 }
 

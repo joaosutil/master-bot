@@ -153,6 +153,7 @@ export default {
             res.reason === "card_not_found" ? "Não achei essa carta no pool do bot." :
             res.reason === "wrong_position" ? `Posição incorreta. Essa carta é **${res.cardPos}** e o slot aceita: **${res.allowed.join(", ")}**.` :
             res.reason === "duplicate_not_owned" ? `Você já está usando essa carta no time e não tem duplicata (você tem ${res.owned}x).` :
+            res.reason === "player_already_used" ? "Você já tem esse jogador no time (não pode repetir jogador)." :
             "Não consegui setar esse slot.";
 
           await interaction.editReply({ content: `❌ ${msg}` });

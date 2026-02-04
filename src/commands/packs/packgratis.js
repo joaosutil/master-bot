@@ -1,9 +1,9 @@
 import { AttachmentBuilder, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { addCardsToInventory, getInventoryCounts, inventoryTotalCount } from "../../packs/inventoryModel.js";
 import { formatCoins } from "../../ui/embeds.js";
-import { renderCardPng } from "../../ui/renderCard.js";
 import { renderPackOpeningPng } from "../../ui/renderPackOpening.js";
 import { renderPackRevealPng } from "../../ui/renderPackReveal.js";
+import { renderWalkoutScenePng } from "../../ui/renderWalkoutScene.js";
 import { generatePackCards } from "../../game/packs/packEngine.js";
 import { PACKS } from "../../game/packs/packCatalog.js";
 import { claimFreePack } from "../../game/packs/freePackCooldown.js";
@@ -134,7 +134,12 @@ export default {
 
     const topOvr = typeof top?.ovr === "number" ? top.ovr : 0;
     if (top && (top.rarity === "epic" || top.rarity === "legendary" || topOvr >= 90)) {
-      const topPng = await renderCardPng(top);
+      const topPng = await renderWalkoutScenePng({
+        card: top,
+        title: "WALKOUT",
+        subtitle: "PACK GRÁTIS",
+        badge: `${topOvr} OVR`
+      });
       const topFile = `walkout-free-${top.id}-${Date.now()}.png`;
       const topAttachment = new AttachmentBuilder(topPng, { name: topFile });
 

@@ -21,10 +21,10 @@ import { addCardsToInventory } from "../../packs/inventoryModel.js";
 import { getInventoryCounts, inventoryTotalCount } from "../../packs/inventoryModel.js";
 
 import { renderPackRevealPng } from "../../ui/renderPackReveal.js";
-import { renderCardPng } from "../../ui/renderCard.js";
 import { renderPackOpeningPng } from "../../ui/renderPackOpening.js";
 import { renderPackArtPng } from "../../ui/renderPackArt.js";
 import { renderPackStashBannerPng } from "../../ui/renderPackStashBanner.js";
+import { renderWalkoutScenePng } from "../../ui/renderWalkoutScene.js";
 import { formatCoins } from "../../ui/embeds.js";
 
 const DEFAULT_PACK_ID = "bronze";
@@ -249,6 +249,25 @@ function utilityButtons({ userId, packId }) {
   );
 }
 
+function resultButtons({ userId, packId, owned }) {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`pack_open:${userId}:${packId}:1`)
+      .setLabel("Abrir novamente x1")
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(!owned || owned <= 0),
+    new ButtonBuilder()
+      .setCustomId(`pack_open:${userId}:${packId}:5`)
+      .setLabel("Abrir novamente x5")
+      .setStyle(ButtonStyle.Success)
+      .setDisabled(!owned || owned < 5),
+    new ButtonBuilder()
+      .setCustomId(`pack_back:${userId}:${packId}`)
+      .setLabel("Voltar")
+      .setStyle(ButtonStyle.Secondary)
+  );
+}
+
 export async function showPackShop(interaction) {
   const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
   const counts = await getPackCounts(interaction.guildId, interaction.user.id);
@@ -306,7 +325,7 @@ export async function handlePackSelect(interaction) {
 
 export async function handlePackButton(interaction) {
   const parts = interaction.customId.split(":");
-  const action = parts[0]; // pack_buy | pack_open | pack_refresh
+  const action = parts[0]; // pack_buy | pack_open | pack_refresh | pack_back
   const ownerId = parts[1];
   const packId = parts[2];
   const qty = Number(parts[3] || "1");
@@ -316,6 +335,32 @@ export async function handlePackButton(interaction) {
   }
 
   try {
+    if (action === "pack_back") {
+      const pack = PACKS[packId] ?? PACKS[DEFAULT_PACK_ID] ?? PACK_LIST[0];
+      if (!pack) return interaction.reply({ content: "Pack inválido.", ephemeral: true });
+
+      const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
+      const counts = await getPackCounts(interaction.guildId, interaction.user.id);
+      const owned = counts?.[pack.id] ?? 0;
+
+      const view = await buildHubView({
+        userTag: interaction.user?.tag,
+        pack,
+        balance,
+        counts
+      });
+
+      return interaction.update({
+        embeds: view.embeds,
+        files: view.files,
+        components: [
+          selectMenu({ userId: ownerId }),
+          actionButtons({ userId: ownerId, packId: pack.id, owned }),
+          utilityButtons({ userId: ownerId, packId: pack.id })
+        ]
+      });
+    }
+
     if (action === "pack_refresh") {
       const pack = PACKS[packId];
       if (!pack) return interaction.reply({ content: "Pack inválido.", ephemeral: true });
@@ -512,7 +557,12 @@ export async function handlePackButton(interaction) {
       const top = bestCard(pulled);
       const topOvr = typeof top?.ovr === "number" ? top.ovr : 0;
       if (top && (top.rarity === "epic" || top.rarity === "legendary" || topOvr >= 90)) {
-        const topPng = await renderCardPng(top);
+        const topPng = await renderWalkoutScenePng({
+          card: top,
+          title: "WALKOUT",
+          subtitle: pack.name,
+          badge: `${topOvr} OVR`
+        });
         const topFileName = `walkout-${top.id}-${Date.now()}.png`;
         const topAttachment = new AttachmentBuilder(topPng, { name: topFileName });
 
@@ -553,20 +603,11 @@ export async function handlePackButton(interaction) {
         .setImage(`attachment://${fileName}`)
         .setFooter({ text: `Restam no estoque: ${owned}x • Saldo: ${formatCoins(balance)} 🪙` });
 
-      const view = await buildHubView({
-        userTag: interaction.user?.tag,
-        pack,
-        balance,
-        counts
-      });
-
       return interaction.editReply({
-        embeds: [e, ...view.embeds],
-        files: [attachment, ...view.files],
+        embeds: [e],
+        files: [attachment],
         components: [
-          selectMenu({ userId: ownerId }),
-          actionButtons({ userId: ownerId, packId: pack.id, owned }),
-          utilityButtons({ userId: ownerId, packId: pack.id })
+          resultButtons({ userId: ownerId, packId: pack.id, owned })
         ]
       });
     }

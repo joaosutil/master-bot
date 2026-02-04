@@ -1,6 +1,6 @@
 {
-  "leagues": [4328, 4331],
-  "teams": [133604],
+  "leagues": [4328, 4331, 4351],
+  "teams": [133604, 134287, 134284, 134465, 134291, 134288, 134299, 134286],
   "maxTeams": 999,
   "maxPlayersPerTeam": 35,
   "onlySoccer": true

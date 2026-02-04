@@ -90,6 +90,30 @@ function drawShardedBg(ctx, W, H) {
 }
 
 function drawPitch(ctx, { topLeft, topRight, bottomRight, bottomLeft }, { line = "#ff9aa5" } = {}) {
+  function lerpLocal(a, b, t) {
+    return a + (b - a) * t;
+  }
+
+  function rowX(ny, nx) {
+    const leftX = lerpLocal(topLeft.x, bottomLeft.x, ny);
+    const rightX = lerpLocal(topRight.x, bottomRight.x, ny);
+    return lerpLocal(leftX, rightX, nx);
+  }
+
+  function rowY(ny) {
+    return lerpLocal(topLeft.y, bottomLeft.y, ny);
+  }
+
+  function clipPitch() {
+    ctx.beginPath();
+    ctx.moveTo(topLeft.x, topLeft.y);
+    ctx.lineTo(topRight.x, topRight.y);
+    ctx.lineTo(bottomRight.x, bottomRight.y);
+    ctx.lineTo(bottomLeft.x, bottomLeft.y);
+    ctx.closePath();
+    ctx.clip();
+  }
+
   // pitch fill
   ctx.save();
   const g = ctx.createLinearGradient(0, topLeft.y, 0, bottomLeft.y);
@@ -104,6 +128,39 @@ function drawPitch(ctx, { topLeft, topRight, bottomRight, bottomLeft }, { line =
   ctx.lineTo(bottomLeft.x, bottomLeft.y);
   ctx.closePath();
   ctx.fill();
+
+  // neon grass stripes (clipped to pitch polygon)
+  ctx.save();
+  clipPitch();
+  ctx.globalCompositeOperation = "screen";
+  ctx.globalAlpha = 0.20;
+  const stripes = 11;
+  for (let i = 0; i < stripes; i++) {
+    const ny0 = i / stripes;
+    const ny1 = (i + 1) / stripes;
+    const y0 = rowY(ny0);
+    const y1 = rowY(ny1);
+    const xl0 = rowX(ny0, 0);
+    const xr0 = rowX(ny0, 1);
+    const xl1 = rowX(ny1, 0);
+    const xr1 = rowX(ny1, 1);
+
+    const band = ctx.createLinearGradient(0, y0, 0, y1);
+    const tint = i % 2 ? "rgba(120,252,255,0.16)" : "rgba(255,70,170,0.14)";
+    band.addColorStop(0, tint);
+    band.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = band;
+
+    ctx.beginPath();
+    ctx.moveTo(xl0, y0);
+    ctx.lineTo(xr0, y0);
+    ctx.lineTo(xr1, y1);
+    ctx.lineTo(xl1, y1);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+  ctx.globalCompositeOperation = "source-over";
 
   // soft inner glow
   ctx.globalCompositeOperation = "screen";
@@ -164,6 +221,57 @@ function drawPitch(ctx, { topLeft, topRight, bottomRight, bottomLeft }, { line =
   ctx.arc(0, 0, 120, 0, Math.PI * 2);
   ctx.stroke();
   ctx.restore();
+
+  ctx.restore();
+
+  // penalty boxes (stylized, perspective)
+  ctx.save();
+  ctx.strokeStyle = "rgba(255,255,255,0.10)";
+  ctx.lineWidth = 6;
+  ctx.globalAlpha = 0.95;
+
+  const boxW = 0.58;
+  const boxH = 0.18;
+
+  // top box
+  {
+    const ny0 = 0.04;
+    const ny1 = ny0 + boxH;
+    const xl0 = rowX(ny0, 0.5 - boxW / 2);
+    const xr0 = rowX(ny0, 0.5 + boxW / 2);
+    const xl1 = rowX(ny1, 0.5 - boxW / 2);
+    const xr1 = rowX(ny1, 0.5 + boxW / 2);
+    const y0 = rowY(ny0);
+    const y1 = rowY(ny1);
+
+    ctx.beginPath();
+    ctx.moveTo(xl0, y0);
+    ctx.lineTo(xr0, y0);
+    ctx.lineTo(xr1, y1);
+    ctx.lineTo(xl1, y1);
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  // bottom box
+  {
+    const ny1 = 0.96;
+    const ny0 = ny1 - boxH;
+    const xl0 = rowX(ny0, 0.5 - boxW / 2);
+    const xr0 = rowX(ny0, 0.5 + boxW / 2);
+    const xl1 = rowX(ny1, 0.5 - boxW / 2);
+    const xr1 = rowX(ny1, 0.5 + boxW / 2);
+    const y0 = rowY(ny0);
+    const y1 = rowY(ny1);
+
+    ctx.beginPath();
+    ctx.moveTo(xl0, y0);
+    ctx.lineTo(xr0, y0);
+    ctx.lineTo(xr1, y1);
+    ctx.lineTo(xl1, y1);
+    ctx.closePath();
+    ctx.stroke();
+  }
 
   ctx.restore();
 }

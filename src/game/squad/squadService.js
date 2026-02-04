@@ -44,6 +44,22 @@ function compareCard(a, b) {
   return na.localeCompare(nb, "pt-BR");
 }
 
+function normalizeNameKey(name) {
+  return String(name ?? "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+}
+
+function playerUniqKey(card) {
+  const pid = card?.playerId ? String(card.playerId).trim() : "";
+  if (pid) return `p:${pid}`;
+  return `n:${normalizeNameKey(card?.name ?? "")}`;
+}
+
 export async function getOrCreateSquad(guildId, userId) {
   if (!isMongoConnected()) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
@@ -116,7 +132,8 @@ export async function setSquadSlot(guildId, userId, slotKey, cardId) {
   if (owned <= 0) return { ok: false, reason: "not_owned" };
 
   const pool = await getCardPool();
-  const card = pool.find((c) => c.id === cardId);
+  const poolMap = new Map(pool.map((c) => [c.id, c]));
+  const card = poolMap.get(cardId);
   if (!card) return { ok: false, reason: "card_not_found" };
 
   const pos = normalizePos(card.pos);
@@ -129,6 +146,18 @@ export async function setSquadSlot(guildId, userId, slotKey, cardId) {
   for (const v of Object.values(current)) {
     if (!v) continue;
     assignedCounts[v] = (assignedCounts[v] ?? 0) + 1;
+  }
+
+  // Nunca permitir o mesmo jogador 2x no time (mesmo se o usuário tiver duplicata)
+  const pkey = playerUniqKey(card);
+  for (const [k, v] of Object.entries(current)) {
+    if (!v) continue;
+    if (k === slotKey) continue; // substitui o próprio slot
+    const other = poolMap.get(v);
+    if (!other) continue;
+    if (playerUniqKey(other) === pkey) {
+      return { ok: false, reason: "player_already_used" };
+    }
   }
 
   // se já tá usando a carta em outro slot, precisa ter duplicata
@@ -190,6 +219,7 @@ export async function autoSquad(guildId, userId, formationId) {
   ownedCards.sort((a, b) => compareCard(a.card, b.card));
 
   const used = {}; // cardId -> usedCount
+  const usedPlayers = new Set(); // playerId/name key
   const slots = {};
 
   for (const slot of formation.slots) {
@@ -202,8 +232,12 @@ export async function autoSquad(guildId, userId, formationId) {
       const usedCount = used[oc.card.id] ?? 0;
       if (usedCount >= oc.count) continue;
 
+      const pkey = playerUniqKey(oc.card);
+      if (usedPlayers.has(pkey)) continue;
+
       picked = oc.card;
       used[oc.card.id] = usedCount + 1;
+      usedPlayers.add(pkey);
       break;
     }
 

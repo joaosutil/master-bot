@@ -86,21 +86,33 @@ function buildEmbed({ user, invTotal, items, selected, itemsById, page, totalPag
   const topColor =
     items[0]?.card?.rarity ? rarityColor(items[0].card.rarity) : 0x3498db;
 
+  const selectedItems = Array.from(selected)
+    .map((id) => itemsById.get(id))
+    .filter(Boolean)
+    .sort((a, b) => sortCards(a.card, b.card));
+
   const lines = [];
-  for (const it of items.slice(0, 12)) {
-    const ovr = typeof it.card?.ovr === "number" ? it.card.ovr : "??";
-    const tag = selected.has(it.cardId) ? "✅" : "•";
-    lines.push(
-      `${tag} ${emojiByRarity(it.card.rarity)} **${it.card.name}** (${it.card.pos}) • OVR **${ovr}** • x**${it.count}**`
-    );
+  if (!selectedItems.length) {
+    lines.push("Nenhuma carta selecionada.");
+    lines.push("");
+    lines.push("Abra o menu abaixo para escolher cartas e depois clique **Vender seleção**.");
+  } else {
+    for (const it of selectedItems.slice(0, 18)) {
+      const ovr = typeof it.card?.ovr === "number" ? it.card.ovr : "??";
+      const valEach = Number(it.card?.value ?? 0);
+      const total = Number.isFinite(valEach) ? valEach * it.count : 0;
+      lines.push(
+        `✅ ${emojiByRarity(it.card.rarity)} **${it.card.name}** (${it.card.pos}) • OVR **${ovr}** • x**${it.count}** • ${formatCoins(total)} 🪙`
+      );
+    }
+    if (selectedItems.length > 18) lines.push(`… +${selectedItems.length - 18} stacks`);
   }
-  if (items.length > 12) lines.push("…");
 
   const desc =
     `Inventário: **${invTotal}/${INVENTORY_LIMIT}** cartas\n` +
     `Stacks: **${items.length}**\n\n` +
     `**Selecionado:** ${sel.stacks} stacks • ${sel.cards} cartas • **${formatCoins(sel.coins)} 🪙**\n\n` +
-    (lines.length ? lines.join("\n") : "Nenhuma carta.");
+    lines.join("\n");
 
   return new EmbedBuilder()
     .setTitle("💸 Vender Cartas")
@@ -381,4 +393,3 @@ export default {
     });
   }
 };
-

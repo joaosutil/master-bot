@@ -177,15 +177,6 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
       ctx.rotate(tilt);
       ctx.drawImage(img, -cardW / 2, -cardH / 2, cardW, cardH);
       ctx.restore();
-
-      ctx.save();
-      ctx.globalCompositeOperation = "screen";
-      ctx.globalAlpha = 0.24;
-      ctx.strokeStyle = "rgba(255,255,255,0.55)";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(x + 6, y + 6, cardW - 12, cardH - 12);
-      ctx.restore();
-      ctx.globalCompositeOperation = "source-over";
     }
   }
 
