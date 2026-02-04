@@ -1236,11 +1236,11 @@ export async function renderCardPng(card) {
   ctx.fillText(rarityText, badgeX + badgeW / 2, rarityBadgeY + badgeH / 2 + 1);
   ctx.restore();
 
-  // Portrait frame
+  // Portrait frame (tuned so the bottom stats always fit inside the silhouette)
   const artX = innerX;
-  const artY = y + 240;
+  const artY = y + 228;
   const artW = innerW;
-  const artH = 470;
+  const artH = 440;
 
   ctx.save();
   shadow(ctx, { blur: 26, color: "rgba(0,0,0,0.70)", y: 18 });
@@ -1363,8 +1363,8 @@ export async function renderCardPng(card) {
   const cc = card?.countryCode ? String(card.countryCode).toUpperCase() : "";
   const sub = [club, cc].filter(Boolean).join(" • ");
 
-  const nameY = artY + artH + 24;
-  const nameH = 96;
+  const nameY = artY + artH + 18;
+  const nameH = 84;
 
   ctx.save();
   shadow(ctx, { blur: 24, color: "rgba(0,0,0,0.70)", y: 14 });
@@ -1402,16 +1402,16 @@ export async function renderCardPng(card) {
   const order = ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"];
   const entries = order.map((k) => [k, stats[k] ?? "—"]);
 
-  const statsY = nameY + nameH + 22;
+  const statsY = nameY + nameH + 16;
   const gap = 16;
   const pillW = Math.floor((innerW - gap) / 2);
-  const pillH = 78;
+  const pillH = 64;
 
   for (let i = 0; i < entries.length; i++) {
     const col = i < 3 ? 0 : 1;
     const row = i % 3;
     const x = innerX + col * (pillW + gap);
-    const y = statsY + row * (pillH + 12);
+    const y = statsY + row * (pillH + 10);
     const [k, v] = entries[i];
     drawStat(ctx, x, y, pillW, pillH, accent, k, v);
   }

@@ -7,6 +7,9 @@ const FONT = `system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif`;
 function clamp(n, a, b) {
   return Math.max(a, Math.min(b, n));
 }
+function rgba(rgb, a) {
+  return `rgba(${rgb.r},${rgb.g},${rgb.b},${a})`;
+}
 function drawRoundedRect(ctx, x, y, w, h, r) {
   const radius = Math.min(r, w / 2, h / 2);
   ctx.beginPath();
@@ -73,6 +76,19 @@ function background(ctx, W, H, accent) {
 function drawHeader(ctx, W, title) {
   const pad = 54;
 
+  // header bar (helps with legibility)
+  ctx.save();
+  ctx.globalAlpha = 0.55;
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  drawRoundedRect(ctx, pad - 10, pad - 18, W - (pad - 10) * 2, 108, 34);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(255,255,255,0.10)";
+  drawRoundedRect(ctx, pad - 10, pad - 18, W - (pad - 10) * 2, 108, 34);
+  ctx.stroke();
+  ctx.restore();
+
   ctx.save();
   ctx.globalAlpha = 0.85;
   ctx.fillStyle = "rgba(255,255,255,0.14)";
@@ -84,12 +100,12 @@ function drawHeader(ctx, W, title) {
   ctx.restore();
 
   const maxW = W - pad * 2 - 80;
-  const size = fitText(ctx, title, maxW, 74, 40, 900);
+  const size = fitText(ctx, title, maxW, 62, 34, 900);
 
   ctx.save();
   ctx.font = `900 ${size}px ${FONT}`;
   ctx.textBaseline = "top";
-  ctx.lineWidth = 12;
+  ctx.lineWidth = 10;
   ctx.strokeStyle = "rgba(0,0,0,0.55)";
   ctx.strokeText(title, pad + 70, pad - 14);
   ctx.fillStyle = "rgba(255,255,255,0.96)";
@@ -122,6 +138,29 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
   const topY = 136;
   const areaH = H - topY - 84;
   const areaW = W - padX * 2;
+
+  // stage panel behind cards (more "arena" feel, less empty background)
+  const a = asRgb(accent);
+  ctx.save();
+  ctx.globalAlpha = 0.95;
+  const panelX = padX - 12;
+  const panelY = topY - 12;
+  const panelW = areaW + 24;
+  const panelH = areaH + 24;
+  const pg = ctx.createLinearGradient(panelX, panelY, panelX + panelW, panelY + panelH);
+  pg.addColorStop(0, rgba(a, 0.10));
+  pg.addColorStop(0.45, "rgba(255,255,255,0.04)");
+  pg.addColorStop(1, "rgba(0,0,0,0.10)");
+  ctx.fillStyle = pg;
+  drawRoundedRect(ctx, panelX, panelY, panelW, panelH, 48);
+  ctx.fill();
+
+  ctx.globalAlpha = 0.55;
+  ctx.strokeStyle = rgba(a, 0.22);
+  ctx.lineWidth = 2;
+  drawRoundedRect(ctx, panelX, panelY, panelW, panelH, 48);
+  ctx.stroke();
+  ctx.restore();
 
   const display = cards.slice(0, 7);
   const n = display.length;
@@ -164,11 +203,33 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
       const idx = row[i];
       const x = x0 + i * (cardW + gap);
 
+      // slot/backplate
+      ctx.save();
+      ctx.shadowBlur = 44;
+      ctx.shadowColor = "rgba(0,0,0,0.55)";
+      ctx.shadowOffsetY = 22;
+      const slotG = ctx.createLinearGradient(x, y, x + cardW, y + cardH);
+      slotG.addColorStop(0, "rgba(0,0,0,0.25)");
+      slotG.addColorStop(0.55, rgba(a, 0.10));
+      slotG.addColorStop(1, "rgba(255,255,255,0.04)");
+      ctx.fillStyle = slotG;
+      drawRoundedRect(ctx, x - 8, y - 8, cardW + 16, cardH + 16, 34);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(255,255,255,0.10)";
+      drawRoundedRect(ctx, x - 8, y - 8, cardW + 16, cardH + 16, 34);
+      ctx.stroke();
+      ctx.restore();
+
       const png = await renderCardPng(display[idx]);
       const img = await loadImage(png);
 
       ctx.save();
-      ctx.shadowBlur = 34;
+      const rarity = String(display[idx]?.rarity ?? "");
+      const ovr = typeof display[idx]?.ovr === "number" ? display[idx].ovr : 0;
+      const glow = ovr >= 90 || rarity === "legendary" || rarity === "epic" ? 0.52 : 0.24;
+      ctx.shadowBlur = 42;
       ctx.shadowColor = "rgba(0,0,0,0.60)";
       ctx.shadowOffsetY = 18;
 
@@ -176,6 +237,21 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
       const tilt = centerBias * 0.018;
       ctx.translate(x + cardW / 2, y + cardH / 2);
       ctx.rotate(tilt);
+
+      // glow behind the card
+      ctx.globalCompositeOperation = "screen";
+      ctx.globalAlpha = glow;
+      const halo = ctx.createRadialGradient(0, 10, 40, 0, 10, Math.max(cardW, cardH) * 0.80);
+      halo.addColorStop(0, rgba(a, 0.22));
+      halo.addColorStop(0.42, "rgba(255,255,255,0.10)");
+      halo.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = halo;
+      ctx.beginPath();
+      ctx.ellipse(0, 80, cardW * 0.60, cardH * 0.52, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 1;
+
       ctx.drawImage(img, -cardW / 2, -cardH / 2, cardW, cardH);
       ctx.restore();
     }
