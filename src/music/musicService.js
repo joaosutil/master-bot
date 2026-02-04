@@ -62,6 +62,18 @@ function ensureState(guildId) {
     });
   });
 
+  player.on(AudioPlayerStatus.Playing, () => {
+    clearDisconnectTimer(state);
+  });
+
+  player.on(AudioPlayerStatus.Paused, () => {
+    scheduleDisconnect(state);
+  });
+
+  player.on(AudioPlayerStatus.AutoPaused, () => {
+    scheduleDisconnect(state);
+  });
+
   player.on("error", (error) => {
     console.warn("[music] player error:", error);
     state.current = null;
@@ -247,12 +259,16 @@ export async function enqueueTrack({ guildId, voiceChannel, query, requestedById
 
 export function pause(guildId) {
   const state = ensureState(guildId);
-  return state.player.pause();
+  const ok = state.player.pause();
+  if (ok) scheduleDisconnect(state);
+  return ok;
 }
 
 export function resume(guildId) {
   const state = ensureState(guildId);
-  return state.player.unpause();
+  const ok = state.player.unpause();
+  if (ok) clearDisconnectTimer(state);
+  return ok;
 }
 
 export function skip(guildId) {
