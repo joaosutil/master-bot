@@ -26,6 +26,8 @@ import {
   handleModerationMemberJoin
 } from "./moderation/moderationService.js";
 
+import { handlePrefixCommands } from "./services/prefixCommands.js";
+
 // âœ… PACK UI (novo)
 import { handlePackButton, handlePackSelect } from "./game/packs/packUi.js";
 import { handleGiveawayButton, startGiveawayScheduler } from "./giveaway/giveawayService.js";
@@ -85,6 +87,11 @@ client.on(Events.MessageCreate, async (message) => {
     await handleTicketMessageCreate(message);
   } catch (error) {
     console.warn("MessageCreate ticket error:", error);
+  }
+  try {
+    await handlePrefixCommands(message);
+  } catch (error) {
+    console.warn("MessageCreate prefix error:", error);
   }
 });
 
