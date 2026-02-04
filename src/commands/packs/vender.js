@@ -8,7 +8,12 @@ import {
 } from "discord.js";
 import mongoose from "mongoose";
 
-import { Inventory, getInventoryCounts, inventoryTotalCount } from "../../packs/inventoryModel.js";
+import {
+  Inventory,
+  getInventoryCounts,
+  hideLockedCounts,
+  inventoryTotalCount
+} from "../../packs/inventoryModel.js";
 import { getCardPool } from "../../cards/cardsStore.js";
 import { addBalance } from "../../economy/economyService.js";
 import { emojiByRarity, formatCoins, rarityColor } from "../../ui/embeds.js";
@@ -17,6 +22,7 @@ import { subtractLockedCounts } from "../../packs/inventoryModel.js";
 
 const PAGE_SIZE = 25; // select menu limit
 const INVENTORY_LIMIT = Math.max(1, Number(process.env.INVENTORY_LIMIT ?? 150) || 150);
+const GLOBAL_SCOPE_GUILD_ID = "global";
 
 function clamp(n, a, b) {
   return Math.max(a, Math.min(b, n));
@@ -175,7 +181,7 @@ function buildNavButtons({ prevId, nextId, selectAllId, clearId, closeId }, { pa
     new ButtonBuilder()
       .setCustomId(selectAllId)
       .setStyle(ButtonStyle.Primary)
-      .setLabel("Duplicatas (<90)"),
+      .setLabel("Selecionar <90"),
     new ButtonBuilder()
       .setCustomId(clearId)
       .setStyle(ButtonStyle.Secondary)
@@ -240,7 +246,11 @@ async function sellSelection({ guildId, userId, selected, itemsById, lockedCount
       earned += Math.max(0, it.value) * it.count;
     }
 
-    await Inventory.updateOne({ guildId, userId }, { $inc: inc }, { upsert: true, session });
+    await Inventory.updateOne(
+      { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
+      { $inc: inc },
+      { upsert: true, session }
+    );
     if (earned > 0) await addBalance(guildId, userId, earned, session);
 
     await session.commitTransaction();
@@ -268,7 +278,10 @@ export default {
 
     let lockedCounts = await getSquadLockedCounts(guildId, userId);
     let counts = await getInventoryCounts(guildId, userId);
-    let availableCounts = subtractLockedCounts(counts, lockedCounts);
+    let availableCounts = hideLockedCounts(
+      subtractLockedCounts(counts, lockedCounts),
+      lockedCounts
+    );
     let invTotal = inventoryTotalCount(availableCounts);
 
     let items = buildOwnedList(availableCounts, poolMap);
@@ -354,14 +367,11 @@ export default {
         }
 
         if (i.customId === selectAllId) {
-          // Seleciona apenas duplicatas (<90) automaticamente (não marca 90+)
           for (const it of items) {
             const ovr = typeof it.card?.ovr === "number" ? it.card.ovr : 0;
             if (ovr >= 90) continue;
-            if (it.count <= 1) continue;
-            const dupQty = Math.max(0, it.count - 1);
             const cur = Math.max(0, Math.trunc(Number(selected.get(it.cardId) ?? 0)));
-            if (dupQty > cur) selected.set(it.cardId, dupQty);
+            if (it.count > cur) selected.set(it.cardId, it.count);
           }
         }
 
@@ -415,7 +425,10 @@ export default {
 
           lockedCounts = await getSquadLockedCounts(guildId, userId);
           counts = await getInventoryCounts(guildId, userId);
-          availableCounts = subtractLockedCounts(counts, lockedCounts);
+          availableCounts = hideLockedCounts(
+            subtractLockedCounts(counts, lockedCounts),
+            lockedCounts
+          );
           invTotal = inventoryTotalCount(availableCounts);
           items = buildOwnedList(availableCounts, poolMap);
           itemsById.clear();

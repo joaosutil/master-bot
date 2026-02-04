@@ -21,7 +21,7 @@ export default {
         await interaction.editReply({
           embeds: [
             economyEmbed({
-              title: "🏆 Ranking",
+              title: "🏆 Ranking global",
               description: "Ainda não tem ninguém no ranking.",
               color: 0x95a5a6
             })
@@ -38,7 +38,7 @@ export default {
       await interaction.editReply({
         embeds: [
           economyEmbed({
-            title: "🏆 Ranking de moedas (Top 10)",
+            title: "🏆 Ranking global de moedas (Top 10)",
             description: lines.join("\n"),
             color: 0xf1c40f,
             footer: "Ganhe moedas com /daily e abra packs com /pack"
@@ -59,4 +59,3 @@ export default {
     }
   }
 };
-

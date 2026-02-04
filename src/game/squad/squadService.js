@@ -4,6 +4,61 @@ import { FORMATIONS } from "./formations.js";
 import { getInventoryCounts } from "../../packs/inventoryModel.js";
 import { getCardPool } from "../../cards/cardsStore.js";
 
+const GLOBAL_SCOPE_GUILD_ID = "global";
+
+function withSession(query, session) {
+  return session ? query.session(session) : query;
+}
+
+async function ensureGlobalSquadMerged(userId, { session } = {}) {
+  const global = await withSession(
+    Squad.findOne({ guildId: GLOBAL_SCOPE_GUILD_ID, userId })
+      .select({ legacyMerged: 1, formationId: 1, slots: 1, updatedAt: 1 })
+      .lean(),
+    session
+  );
+  if (global?.legacyMerged) return;
+
+  const legacyTop = await withSession(
+    Squad.findOne({ userId, guildId: { $ne: GLOBAL_SCOPE_GUILD_ID } })
+      .sort({ updatedAt: -1 })
+      .select({ formationId: 1, slots: 1, updatedAt: 1 })
+      .lean(),
+    session
+  );
+
+  if (!legacyTop) {
+    await Squad.updateOne(
+      { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
+      { $set: { legacyMerged: true }, $setOnInsert: { formationId: "4-3-3", slots: {} } },
+      { upsert: true, session }
+    );
+    return;
+  }
+
+  const globalUpdated = global?.updatedAt ? new Date(global.updatedAt).getTime() : 0;
+  const legacyUpdated = legacyTop?.updatedAt ? new Date(legacyTop.updatedAt).getTime() : 0;
+  const keepGlobal = Boolean(global && globalUpdated >= legacyUpdated);
+
+  const nextFormationId = keepGlobal
+    ? global?.formationId ?? "4-3-3"
+    : legacyTop?.formationId ?? "4-3-3";
+  const nextSlots = keepGlobal
+    ? (global?.slots ? Object.fromEntries(Object.entries(global.slots)) : {})
+    : (legacyTop?.slots ? Object.fromEntries(Object.entries(legacyTop.slots)) : {});
+
+  await Squad.updateOne(
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
+    { $set: { formationId: nextFormationId, slots: nextSlots, legacyMerged: true } },
+    { upsert: true, session }
+  );
+
+  await Squad.deleteMany(
+    { userId, guildId: { $ne: GLOBAL_SCOPE_GUILD_ID } },
+    { session }
+  );
+}
+
 function isMongoConnected() {
   return mongoose.connection?.readyState === 1;
 }
@@ -65,8 +120,10 @@ export async function getOrCreateSquad(guildId, userId) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
 
+  await ensureGlobalSquadMerged(userId);
+
   const doc = await Squad.findOneAndUpdate(
-    { guildId, userId },
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     { $setOnInsert: { formationId: "4-3-3", slots: {} } },
     { new: true, upsert: true }
   ).lean();
@@ -79,7 +136,8 @@ export async function getSquadLockedCounts(guildId, userId) {
     throw new Error("MongoDB nÃ£o conectado. Verifique MONGO_URI.");
   }
 
-  const doc = await Squad.findOne({ guildId, userId }).lean();
+  await ensureGlobalSquadMerged(userId);
+  const doc = await Squad.findOne({ guildId: GLOBAL_SCOPE_GUILD_ID, userId }).lean();
   const slots = doc?.slots ? Object.fromEntries(Object.entries(doc.slots)) : {};
   const locked = {};
   for (const v of Object.values(slots)) {
@@ -99,6 +157,8 @@ export async function setFormation(guildId, userId, formationId) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
 
+  await ensureGlobalSquadMerged(userId);
+
   const f = getFormation(formationId);
 
   const existing = await getOrCreateSquad(guildId, userId);
@@ -111,7 +171,7 @@ export async function setFormation(guildId, userId, formationId) {
   }
 
   const updated = await Squad.findOneAndUpdate(
-    { guildId, userId },
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     { $set: { formationId: f.id, slots: nextSlots } },
     { new: true }
   ).lean();
@@ -124,8 +184,10 @@ export async function clearSquad(guildId, userId) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
 
+  await ensureGlobalSquadMerged(userId);
+
   const updated = await Squad.findOneAndUpdate(
-    { guildId, userId },
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     { $set: { slots: {} } },
     { new: true, upsert: true }
   ).lean();
@@ -137,6 +199,8 @@ export async function setSquadSlot(guildId, userId, slotKey, cardId) {
   if (!isMongoConnected()) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
+
+  await ensureGlobalSquadMerged(userId);
 
   const squad = await getOrCreateSquad(guildId, userId);
   const formation = getFormation(squad.formationId);
@@ -185,7 +249,7 @@ export async function setSquadSlot(guildId, userId, slotKey, cardId) {
   current[slotKey] = cardId;
 
   const updated = await Squad.findOneAndUpdate(
-    { guildId, userId },
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     { $set: { slots: current } },
     { new: true }
   ).lean();
@@ -198,12 +262,14 @@ export async function removeSquadSlot(guildId, userId, slotKey) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
 
+  await ensureGlobalSquadMerged(userId);
+
   const squad = await getOrCreateSquad(guildId, userId);
   const current = squad?.slots ? Object.fromEntries(Object.entries(squad.slots)) : {};
   delete current[slotKey];
 
   const updated = await Squad.findOneAndUpdate(
-    { guildId, userId },
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     { $set: { slots: current } },
     { new: true }
   ).lean();
@@ -215,6 +281,8 @@ export async function autoSquad(guildId, userId, formationId) {
   if (!isMongoConnected()) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
+
+  await ensureGlobalSquadMerged(userId);
 
   const formation = getFormation(formationId);
   const counts = await getInventoryCounts(guildId, userId);
@@ -261,7 +329,7 @@ export async function autoSquad(guildId, userId, formationId) {
   }
 
   const updated = await Squad.findOneAndUpdate(
-    { guildId, userId },
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     { $set: { formationId: formation.id, slots } },
     { new: true, upsert: true }
   ).lean();
@@ -270,6 +338,7 @@ export async function autoSquad(guildId, userId, formationId) {
 }
 
 export async function hydrateSquad(guildId, userId) {
+  await ensureGlobalSquadMerged(userId);
   const squad = await getOrCreateSquad(guildId, userId);
   const formation = getFormation(squad.formationId);
   const pool = await getCardPool();

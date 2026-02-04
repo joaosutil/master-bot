@@ -8,6 +8,7 @@ const DAILY_REWARD = Number(process.env.DAILY_REWARD ?? 250000); // 250 mil
 const WEEKLY_REWARD = Number(process.env.WEEKLY_REWARD ?? 1500000); // 1.5 mi
 const ECONOMY_VERSION = 2;
 const ECONOMY_MIGRATE_MULT = Number(process.env.ECONOMY_MIGRATE_MULT ?? 10000);
+const GLOBAL_SCOPE_GUILD_ID = "global";
 
 function safeMoney(n, fallback = 0) {
   const v = Number(n);
@@ -21,8 +22,18 @@ function safeDelta(n) {
   return Math.trunc(v);
 }
 
+function safeExistingBalance(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return 0;
+  return Math.trunc(v);
+}
+
 function isMongoConnected() {
   return mongoose.connection?.readyState === 1;
+}
+
+function withSession(query, session) {
+  return session ? query.session(session) : query;
 }
 
 export function formatTime(ms) {
@@ -38,22 +49,101 @@ export function formatTime(ms) {
   return parts.join(" ");
 }
 
+async function ensureGlobalEconomyUserMerged(userId, { session } = {}) {
+  const global = await withSession(
+    EconomyUser.findOne({
+      guildId: GLOBAL_SCOPE_GUILD_ID,
+      userId
+    }).select({ legacyMerged: 1, initialized: 1, balance: 1 }),
+    session
+  );
+
+  if (global?.legacyMerged) return;
+
+  const legacy = await withSession(
+    EconomyUser.find({
+      userId,
+      guildId: { $ne: GLOBAL_SCOPE_GUILD_ID }
+    })
+      .select({ balance: 1, lastDaily: 1, lastWeekly: 1, version: 1 })
+      .lean(),
+    session
+  );
+
+  if (!legacy.length) {
+    const initial = safeMoney(START_BALANCE, 0);
+    await EconomyUser.updateOne(
+      { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
+      {
+        $set: {
+          legacyMerged: true,
+          initialized: true,
+          ...(global?.initialized ? {} : { balance: safeExistingBalance(global?.balance ?? 0) || initial })
+        }
+      },
+      { upsert: true, session }
+    );
+    return;
+  }
+
+  let sumBalance = 0;
+  let maxDaily = 0;
+  let maxWeekly = 0;
+  const mult = safeMoney(ECONOMY_MIGRATE_MULT, 10000);
+
+  for (const doc of legacy) {
+    const v = Number(doc?.version ?? 1);
+    const rawBal = safeExistingBalance(doc?.balance ?? 0);
+    const bal = v !== ECONOMY_VERSION && rawBal > 0 ? safeMoney(rawBal * mult, rawBal) : rawBal;
+    sumBalance += bal;
+    maxDaily = Math.max(maxDaily, Number(doc?.lastDaily ?? 0) || 0);
+    maxWeekly = Math.max(maxWeekly, Number(doc?.lastWeekly ?? 0) || 0);
+  }
+
+  await EconomyUser.updateOne(
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
+    {
+      $inc: { balance: sumBalance },
+      $max: { lastDaily: maxDaily, lastWeekly: maxWeekly },
+      $set: { version: ECONOMY_VERSION, legacyMerged: true, initialized: true },
+      $setOnInsert: { balance: 0, lastDaily: 0, lastWeekly: 0, version: ECONOMY_VERSION, initialized: true }
+    },
+    { upsert: true, session }
+  );
+
+  await EconomyUser.deleteMany(
+    { userId, guildId: { $ne: GLOBAL_SCOPE_GUILD_ID } },
+    { session }
+  );
+}
+
 export async function getOrCreateEconomyUser(guildId, userId, session) {
   if (!isMongoConnected()) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
 
-  const doc = await EconomyUser.findOneAndUpdate(
-    { guildId, userId },
+  const scopeGuildId = GLOBAL_SCOPE_GUILD_ID;
+
+  await EconomyUser.findOneAndUpdate(
+    { guildId: scopeGuildId, userId },
     {
       $setOnInsert: {
         version: ECONOMY_VERSION,
-        balance: safeMoney(START_BALANCE, 0),
+        balance: 0,
         lastDaily: 0,
-        lastWeekly: 0
+        lastWeekly: 0,
+        legacyMerged: false,
+        initialized: false
       }
     },
     { new: true, upsert: true, session }
+  );
+
+  await ensureGlobalEconomyUserMerged(userId, { session });
+
+  const doc = await withSession(
+    EconomyUser.findOne({ guildId: scopeGuildId, userId }),
+    session
   );
 
   // migração automática (v1 -> v2): valores antigos eram muito pequenos
@@ -82,7 +172,7 @@ export async function addBalance(guildId, userId, delta, session) {
   await getOrCreateEconomyUser(guildId, userId, session);
 
   const doc = await EconomyUser.findOneAndUpdate(
-    { guildId, userId },
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     { $inc: { balance: safeDelta(delta) } },
     { new: true, session }
   );
@@ -104,7 +194,7 @@ export async function trySpendBalance(guildId, userId, amount, session) {
   await getOrCreateEconomyUser(guildId, userId, session);
 
   const updated = await EconomyUser.findOneAndUpdate(
-    { guildId, userId, balance: { $gte: v } },
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId, balance: { $gte: v } },
     { $inc: { balance: -v } },
     { new: true, session }
   );
@@ -174,7 +264,7 @@ export async function getTopBalances(guildId, limit = 10) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
 
-  const docs = await EconomyUser.find({ guildId })
+  const docs = await EconomyUser.find({ guildId: GLOBAL_SCOPE_GUILD_ID })
     .sort({ balance: -1 })
     .limit(limit)
     .select({ userId: 1, balance: 1, _id: 0 })

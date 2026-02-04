@@ -18,7 +18,7 @@ export default {
       await interaction.reply({
         embeds: [
           economyEmbed({
-            title: "💰 Seu saldo",
+            title: "💰 Seu saldo (Global)",
             description: `<@${userId}> você tem **${formatCoins(balance)}** 🪙.`,
             color: 0x3498db
           })
@@ -39,4 +39,3 @@ export default {
     }
   }
 };
-

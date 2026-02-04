@@ -16,10 +16,15 @@ import {
 } from "./packStash.js";
 import { generatePackCards } from "./packEngine.js";
 
-import { getBalance as getEcoBalance, trySpendBalance } from "../../economy/economyService.js";
 import {
-  addCardsToInventory,
+  addBalance,
+  getBalance as getEcoBalance,
+  trySpendBalance
+} from "../../economy/economyService.js";
+import {
+  addCardsToInventorySmart,
   getInventoryCounts,
+  hideLockedCounts,
   inventoryTotalCount,
   subtractLockedCounts
 } from "../../packs/inventoryModel.js";
@@ -465,44 +470,16 @@ export async function handlePackButton(interaction) {
       const openQty = Number.isFinite(qty) && qty > 1 ? Math.floor(qty) : 1;
       const invCounts = await getInventoryCounts(interaction.guildId, interaction.user.id);
       const lockedCounts = await getSquadLockedCounts(interaction.guildId, interaction.user.id);
-      const invTotal = inventoryTotalCount(subtractLockedCounts(invCounts, lockedCounts));
-      const willAdd = packCardCount(pack) * openQty;
-      const after = invTotal + willAdd;
-
-      if (after > INVENTORY_LIMIT) {
-        const balance = await getBalance({ guildId: interaction.guildId, userId: interaction.user.id });
-        const counts = await getPackCounts(interaction.guildId, interaction.user.id);
-        const owned = counts?.[pack.id] ?? 0;
-
-        const desc =
-          `${pack.description}\n\n` +
-          `❌ **Time Cheio**: seu inventário (sem os escalados) está com **${invTotal}/${INVENTORY_LIMIT}** cartas.\n` +
-          `Abrir **${openQty}x** adicionaria **${willAdd}** cartas (ficaria **${after}/${INVENTORY_LIMIT}**).\n\n` +
-          `Use **/vender** para liberar espaço (o botão "Selecionar tudo" não marca cartas 90+ automaticamente).`;
-
-        const view = await buildHubView({
-          userTag: interaction.user?.tag,
-          pack,
-          balance,
-          counts,
-          descriptionOverride: desc
-        });
-
-        return interaction.editReply({
-          embeds: view.embeds,
-          files: view.files,
-          components: [
-            selectMenu({ userId: ownerId }),
-            actionButtons({ userId: ownerId, packId: pack.id, owned }),
-            utilityButtons({ userId: ownerId, packId: pack.id })
-          ]
-        });
-      }
+      const invTotal = inventoryTotalCount(
+        hideLockedCounts(subtractLockedCounts(invCounts, lockedCounts), lockedCounts)
+      );
+      const freeSlots = Math.max(0, INVENTORY_LIMIT - invTotal);
 
       const session = await mongoose.startSession();
       session.startTransaction();
 
       let pulled = [];
+      let autoSell = { added: 0, sold: 0, earned: 0 };
       try {
         const consumed = await consumePackFromStash(interaction.guildId, interaction.user.id, packId, openQty, { session });
         if (!consumed.ok) {
@@ -536,7 +513,13 @@ export async function handlePackButton(interaction) {
           const cards = await generatePackCards(packId);
           pulled.push(...cards);
         }
-        await addCardsToInventory(interaction.guildId, interaction.user.id, pulled, { session });
+        autoSell = await addCardsToInventorySmart(interaction.guildId, interaction.user.id, pulled, {
+          session,
+          maxNewAdds: freeSlots
+        });
+        if (autoSell.earned > 0) {
+          await addBalance(interaction.guildId, interaction.user.id, autoSell.earned, session);
+        }
 
         await session.commitTransaction();
       } finally {
@@ -647,7 +630,11 @@ export async function handlePackButton(interaction) {
       const e = new EmbedBuilder()
         .setTitle(`🎴 ${pack.emoji} ${pack.name} aberto!`)
         .setColor(top ? rarityAccent(top.rarity) : packAccent(packId))
-        .setDescription(list)
+        .setDescription(
+          (autoSell?.sold
+            ? `🛒 Auto-venda: **${autoSell.sold}** repetidas/overflow • +**${formatCoins(autoSell.earned)}** 🪙\n\n`
+            : "") + list
+        )
         .setImage(`attachment://${fileName}`)
         .setFooter({ text: `Restam no estoque: ${owned}x • Saldo: ${formatCoins(balance)} 🪙` });
 

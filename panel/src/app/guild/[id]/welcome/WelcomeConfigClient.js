@@ -43,6 +43,8 @@ export default function WelcomeConfigClient({
   const [footerText, setFooterText] = useState(initialWelcome.footerText || "");
   const [meta, setMeta] = useState({ channels: [], roles: [] });
   const [usersById, setUsersById] = useState({});
+  const [testSending, setTestSending] = useState(false);
+  const [testNotice, setTestNotice] = useState(null);
 
   function collectUserMentionIds(text) {
     const ids = new Set();
@@ -195,6 +197,11 @@ export default function WelcomeConfigClient({
       .filter((group) => group.channels.length);
   }, [groupedTextChannels, channelSearch]);
 
+  const selectedChannel = useMemo(() => {
+    if (!channelId) return null;
+    return (meta.channels || []).find((c) => String(c.id) === String(channelId)) ?? null;
+  }, [meta.channels, channelId]);
+
   function handleColorInput(value) {
     const cleaned = String(value || "").trim();
     setColorText(cleaned);
@@ -213,6 +220,113 @@ export default function WelcomeConfigClient({
       channelsById,
       usersById
     });
+  }
+
+  async function sendTestMessage() {
+    setTestNotice(null);
+    if (!channelId) {
+      setTestNotice({
+        tone: "error",
+        title: "Canal obrigatório",
+        message: "Selecione um canal para enviar a mensagem de teste."
+      });
+      return;
+    }
+
+    setTestSending(true);
+    try {
+      const res = await fetch(`/api/guild/${guildId}/welcome/test`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          channelId,
+          title,
+          description,
+          color: colorText,
+          footerText,
+          thumbnailUrl,
+          imageUrl,
+          authorName,
+          authorIconUrl
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        if (data?.error === "missing_permissions") {
+          setTestNotice({
+            tone: "error",
+            title: "Sem permissão",
+            message:
+              "O bot não conseguiu enviar a mensagem nesse canal. Verifique permissões de ver canal / enviar mensagens."
+          });
+          return;
+        }
+
+        if (data?.error === "rate_limited") {
+          const retryAfter = Number(data?.retryAfter ?? 1) || 1;
+          setTestNotice({
+            tone: "error",
+            title: "Aguarde um pouco",
+            message: `Discord rate limit. Tente novamente em ~${retryAfter}s.`
+          });
+          return;
+        }
+
+        if (data?.error === "channel_not_text") {
+          setTestNotice({
+            tone: "error",
+            title: "Canal inválido",
+            message: "Escolha um canal de texto para enviar o teste."
+          });
+          return;
+        }
+
+        if (data?.error === "channel_not_in_guild") {
+          setTestNotice({
+            tone: "error",
+            title: "Canal inválido",
+            message: "O canal selecionado não pertence a este servidor."
+          });
+          return;
+        }
+
+        if (data?.error === "not_found") {
+          setTestNotice({
+            tone: "error",
+            title: "Canal não encontrado",
+            message: "O canal selecionado não foi encontrado (ou o bot não consegue ver ele)."
+          });
+          return;
+        }
+
+        setTestNotice({
+          tone: "error",
+          title: "Falha ao enviar",
+          message: "Não foi possível enviar a mensagem de teste."
+        });
+        return;
+      }
+
+      const channelName = selectedChannel?.name ? `#${selectedChannel.name}` : "canal selecionado";
+      setTestNotice({
+        tone: "success",
+        title: "Teste enviado",
+        message: `Mensagem de teste enviada em ${channelName}.`
+      });
+    } catch (error) {
+      console.error(error);
+      setTestNotice({
+        tone: "error",
+        title: "Falha ao enviar",
+        message: "Não foi possível enviar a mensagem de teste."
+      });
+    } finally {
+      setTestSending(false);
+    }
   }
 
   return (
@@ -480,9 +594,27 @@ export default function WelcomeConfigClient({
             </div>
           </div>
 
-          <button className="button" type="submit">
-            Salvar boas-vindas
-          </button>
+          {testNotice ? (
+            <div className={`notice compact ${testNotice.tone || "info"}`}>
+              <strong>{testNotice.title}</strong>
+              <span className="helper">{testNotice.message}</span>
+            </div>
+          ) : null}
+
+          <div className="form-actions">
+            <button className="button" type="submit">
+              Salvar boas-vindas
+            </button>
+            <button
+              className="button button--secondary"
+              type="button"
+              onClick={sendTestMessage}
+              disabled={testSending || !channelId}
+              title={!channelId ? "Selecione um canal" : "Enviar mensagem de teste"}
+            >
+              {testSending ? "Enviando teste..." : "Testar mensagem"}
+            </button>
+          </div>
         </form>
 
         <aside className="config-aside">

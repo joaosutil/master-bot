@@ -1,5 +1,10 @@
 import { SlashCommandBuilder } from "discord.js";
-import { getInventoryCounts, inventoryTotalCount, subtractLockedCounts } from "../../packs/inventoryModel.js";
+import {
+  getInventoryCounts,
+  hideLockedCounts,
+  inventoryTotalCount,
+  subtractLockedCounts
+} from "../../packs/inventoryModel.js";
 import { getCardPool } from "../../cards/cardsStore.js";
 import { economyEmbed, rarityColor, emojiByRarity } from "../../ui/embeds.js";
 import { getSquadLockedCounts } from "../../game/squad/squadService.js";
@@ -31,7 +36,10 @@ export default {
 
     const lockedCounts = await getSquadLockedCounts(guildId, targetUser.id);
     const counts = await getInventoryCounts(guildId, targetUser.id);
-    const availableCounts = subtractLockedCounts(counts, lockedCounts);
+    const availableCounts = hideLockedCounts(
+      subtractLockedCounts(counts, lockedCounts),
+      lockedCounts
+    );
 
     const availableCards = inventoryTotalCount(availableCounts);
     const lockedCards = inventoryTotalCount(lockedCounts);

@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const GLOBAL_SCOPE_GUILD_ID = "global";
+
 const InventorySchema = new mongoose.Schema(
   {
     guildId: { type: String, required: true, index: true },
@@ -20,5 +22,9 @@ export async function addCardsToInventory(guildId, userId, cards) {
     if (!c?.id) continue;
     inc[`counts.${c.id}`] = (inc[`counts.${c.id}`] ?? 0) + 1;
   }
-  await Inventory.updateOne({ guildId, userId }, { $inc: inc }, { upsert: true });
+  await Inventory.updateOne(
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
+    { $inc: inc },
+    { upsert: true }
+  );
 }

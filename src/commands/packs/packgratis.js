@@ -1,5 +1,11 @@
 import { AttachmentBuilder, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { addCardsToInventory, getInventoryCounts, inventoryTotalCount, subtractLockedCounts } from "../../packs/inventoryModel.js";
+import {
+  addCardsToInventorySmart,
+  getInventoryCounts,
+  hideLockedCounts,
+  inventoryTotalCount,
+  subtractLockedCounts
+} from "../../packs/inventoryModel.js";
 import { formatCoins } from "../../ui/embeds.js";
 import { renderPackOpeningPng } from "../../ui/renderPackOpening.js";
 import { renderPackRevealPng } from "../../ui/renderPackReveal.js";
@@ -8,6 +14,7 @@ import { generatePackCards } from "../../game/packs/packEngine.js";
 import { PACKS } from "../../game/packs/packCatalog.js";
 import { claimFreePack } from "../../game/packs/freePackCooldown.js";
 import { getSquadLockedCounts } from "../../game/squad/squadService.js";
+import { addBalance } from "../../economy/economyService.js";
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -161,29 +168,18 @@ export default {
     const packObj = PACKS[packId];
     const invCounts = await getInventoryCounts(interaction.guildId, interaction.user.id);
     const lockedCounts = await getSquadLockedCounts(interaction.guildId, interaction.user.id);
-    const invTotal = inventoryTotalCount(subtractLockedCounts(invCounts, lockedCounts));
-    const willAdd = packCardCount(packObj);
-    const after = invTotal + willAdd;
-
-    if (after > INVENTORY_LIMIT) {
-      await interaction.editReply({
-        embeds: [
-          new EmbedBuilder()
-            .setTitle("❌ Time Cheio")
-            .setDescription(
-              `Seu inventário (sem os escalados) está com **${invTotal}/${INVENTORY_LIMIT}** cartas.\n` +
-              `Abrir o pack grátis adicionaria **${willAdd}** (ficaria **${after}/${INVENTORY_LIMIT}**).\n\n` +
-              "Use **/vender** para liberar espaço."
-            )
-            .setColor(0xe74c3c)
-        ],
-        files: []
-      });
-      return;
-    }
+    const invTotal = inventoryTotalCount(
+      hideLockedCounts(subtractLockedCounts(invCounts, lockedCounts), lockedCounts)
+    );
+    const freeSlots = Math.max(0, INVENTORY_LIMIT - invTotal);
 
     const pulled = await generatePackCards(packId);
-    await addCardsToInventory(interaction.guildId, interaction.user.id, pulled);
+    const autoSell = await addCardsToInventorySmart(interaction.guildId, interaction.user.id, pulled, {
+      maxNewAdds: freeSlots
+    });
+    if (autoSell.earned > 0) {
+      await addBalance(interaction.guildId, interaction.user.id, autoSell.earned);
+    }
 
     const top = bestCard(pulled);
 
@@ -232,7 +228,11 @@ export default {
       embeds: [
         new EmbedBuilder()
           .setTitle(`🎴 Pack grátis aberto!`)
-          .setDescription(list)
+          .setDescription(
+            (autoSell?.sold
+              ? `🛒 Auto-venda: **${autoSell.sold}** repetidas/overflow • +**${formatCoins(autoSell.earned)}** 🪙\n\n`
+              : "") + list
+          )
           .setImage(`attachment://${fileName}`)
       ],
       files: [attachment]

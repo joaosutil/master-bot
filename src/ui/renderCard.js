@@ -1237,10 +1237,11 @@ export async function renderCardPng(card) {
   // <90 cards should share the same template. Rarity changes colors, not layout/format.
   const seed = hash32(`${card?.id ?? ""}|${card?.name ?? ""}|${card?.clubId ?? ""}|base`);
   const rng = mulberry32(seed);
-  const secondary = mixRgb(accent, { r: 255, g: 255, b: 255 }, 0.22);
-  const theme = { seed, rng, variant: 0, secondary };
-
-  const shapeVariant = 0;
+  const hue = Math.floor(rng() * 360);
+  const vibe = hslToRgb(hue, 92, 56);
+  // Common cards use a neutral accent, so we add a secondary "vibe" color for more detail.
+  const secondary = mixRgb(accent, vibe, rarity === "common" ? 0.70 : 0.58);
+  const theme = { seed, rng, variant: 1, secondary };
 
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
@@ -1248,32 +1249,33 @@ export async function renderCardPng(card) {
   ctx.imageSmoothingQuality = "high";
   ctx.clearRect(0, 0, W, H);
 
-  // non-rectangular silhouette (more "desenhado" + less card padrão)
+  // Standard rectangular card (rounded corners) for all <90 OVR.
   const pad = 36;
   const x = pad;
   const y = pad;
   const w = W - pad * 2;
   const h = H - pad * 2;
+  const radius = 52;
 
   // soft shadow under the card
   ctx.save();
   shadow(ctx, { blur: 68, color: "rgba(0,0,0,0.78)", y: 28 });
   ctx.fillStyle = "rgba(0,0,0,0.35)";
-  baseSilhouettePath(ctx, x, y, w, h, shapeVariant);
+  drawRoundedRect(ctx, x, y, w, h, radius);
   ctx.fill();
   resetShadow(ctx);
   ctx.restore();
 
   // clip + background inside card
   ctx.save();
-  baseSilhouettePath(ctx, x, y, w, h, shapeVariant);
+  drawRoundedRect(ctx, x, y, w, h, radius);
   ctx.clip();
   drawBaseBackground(ctx, { rng: theme.rng, variant: theme.variant, accent, secondary: theme.secondary });
 
   // inner lighting for readability
   ctx.save();
   ctx.globalCompositeOperation = "screen";
-  ctx.globalAlpha = rarity === "common" ? 0.20 : rarity === "rare" ? 0.26 : 0.30;
+  ctx.globalAlpha = rarity === "common" ? 0.30 : rarity === "rare" ? 0.28 : 0.32;
   const light = ctx.createRadialGradient(x + w * 0.35, y + h * 0.22, 40, x + w * 0.35, y + h * 0.22, w * 1.05);
   light.addColorStop(0, rgba(accent, 0.22));
   light.addColorStop(0.55, rgba(theme.secondary, 0.12));
@@ -1283,26 +1285,38 @@ export async function renderCardPng(card) {
   ctx.restore();
   ctx.globalCompositeOperation = "source-over";
 
+  // subtle top gloss band (helps common cards look less flat)
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+  ctx.globalAlpha = 0.22;
+  const gloss = ctx.createLinearGradient(x, y, x, y + h * 0.28);
+  gloss.addColorStop(0, "rgba(255,255,255,0.18)");
+  gloss.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = gloss;
+  ctx.fillRect(x, y, w, Math.round(h * 0.28));
+  ctx.restore();
+  ctx.globalCompositeOperation = "source-over";
+
   // subtle noise only inside the clip
   applyNoise(ctx, W, H, 0.06);
   ctx.restore(); // end clip
 
-  // outer frame (glow) around silhouette
+  // outer frame (glow) around card
   ctx.save();
   const frameG = ctx.createLinearGradient(x, y, x + w, y + h);
   frameG.addColorStop(0, rgba(accent, 0.92));
-  frameG.addColorStop(0.5, rgba(theme.secondary ?? accent, 0.88));
+  frameG.addColorStop(0.5, rgba(theme.secondary ?? accent, 0.94));
   frameG.addColorStop(1, rgba(accent, 0.92));
-  shadow(ctx, { blur: 58, color: rgba(accent, rarity === "common" ? 0.26 : 0.42), y: 0 });
+  shadow(ctx, { blur: 58, color: rgba(mixRgb(accent, theme.secondary, 0.55), rarity === "common" ? 0.30 : 0.46), y: 0 });
   ctx.lineWidth = 12;
   ctx.strokeStyle = frameG;
-  baseSilhouettePath(ctx, x + 2, y + 2, w - 4, h - 4, shapeVariant);
+  drawRoundedRect(ctx, x + 2, y + 2, w - 4, h - 4, radius);
   ctx.stroke();
   resetShadow(ctx);
 
   ctx.lineWidth = 3;
-  ctx.strokeStyle = "rgba(255,255,255,0.14)";
-  baseSilhouettePath(ctx, x + 22, y + 22, w - 44, h - 44, shapeVariant);
+  ctx.strokeStyle = "rgba(255,255,255,0.16)";
+  drawRoundedRect(ctx, x + 22, y + 22, w - 44, h - 44, radius - 10);
   ctx.stroke();
   ctx.restore();
 
@@ -1310,10 +1324,10 @@ export async function renderCardPng(card) {
   const innerX = x + innerPad;
   const innerW = w - innerPad * 2;
 
-  // Keep every UI element inside the card silhouette (prevents text/OVR "vazando" fora do card,
+  // Keep every UI element inside the card (prevents text/OVR "vazando" fora do card,
   // especially when the card is scaled down in pack reveals).
   ctx.save();
-  baseSilhouettePath(ctx, x, y, w, h, shapeVariant);
+  drawRoundedRect(ctx, x, y, w, h, radius);
   ctx.clip();
 
   // Header (bigger + legible, but auto-fit to avoid weird overflow)
@@ -1572,12 +1586,12 @@ export async function renderCardPng(card) {
 
   // final micro-noise (only inside card)
   ctx.save();
-  baseSilhouettePath(ctx, x, y, w, h, shapeVariant);
+  drawRoundedRect(ctx, x, y, w, h, radius);
   ctx.clip();
   applyNoise(ctx, W, H, 0.05);
   ctx.restore();
 
-  ctx.restore(); // end silhouette clip for the whole card UI
+  ctx.restore(); // end card clip for the whole card UI
   const out = canvas.toBuffer("image/png");
   cacheSet(renderedCache, key, out, maxRenderedCache);
   return out;

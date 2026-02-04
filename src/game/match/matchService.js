@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import { MatchProfile } from "./matchModel.js";
 import { hydrateSquad } from "../squad/squadService.js";
 
+const GLOBAL_SCOPE_GUILD_ID = "global";
+
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
@@ -237,16 +239,95 @@ function eloDelta(a, b, scoreA, { k = 32 } = {}) {
   return delta;
 }
 
+function withSession(query, session) {
+  return session ? query.session(session) : query;
+}
+
+async function ensureGlobalProfileMerged(userId, { session } = {}) {
+  const global = await withSession(
+    MatchProfile.findOne({ guildId: GLOBAL_SCOPE_GUILD_ID, userId })
+      .select({ legacyMerged: 1, rankedMmr: 1 })
+      .lean(),
+    session
+  );
+  if (global?.legacyMerged) return;
+
+  const legacy = await withSession(
+    MatchProfile.find({ userId, guildId: { $ne: GLOBAL_SCOPE_GUILD_ID } })
+      .select({ rankedMmr: 1, rankedWins: 1, rankedDraws: 1, rankedLosses: 1 })
+      .lean(),
+    session
+  );
+
+  if (!legacy.length) {
+    await MatchProfile.updateOne(
+      { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
+      { $set: { legacyMerged: true } },
+      { upsert: true, session }
+    );
+    return;
+  }
+
+  let maxLegacyMmr = 1000;
+  let sumWins = 0;
+  let sumDraws = 0;
+  let sumLosses = 0;
+
+  for (const doc of legacy) {
+    const mmr = Number(doc?.rankedMmr ?? 1000);
+    if (Number.isFinite(mmr)) maxLegacyMmr = Math.max(maxLegacyMmr, Math.trunc(mmr));
+    sumWins += Math.max(0, Math.trunc(Number(doc?.rankedWins ?? 0) || 0));
+    sumDraws += Math.max(0, Math.trunc(Number(doc?.rankedDraws ?? 0) || 0));
+    sumLosses += Math.max(0, Math.trunc(Number(doc?.rankedLosses ?? 0) || 0));
+  }
+
+  const nextMmr = Math.max(
+    1000,
+    Math.trunc(Number(global?.rankedMmr ?? 1000) || 1000),
+    maxLegacyMmr
+  );
+
+  await MatchProfile.updateOne(
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
+    {
+      $inc: { rankedWins: sumWins, rankedDraws: sumDraws, rankedLosses: sumLosses },
+      $set: { rankedMmr: nextMmr, legacyMerged: true },
+      $setOnInsert: { rankedMmr: nextMmr, rankedWins: 0, rankedDraws: 0, rankedLosses: 0 }
+    },
+    { upsert: true, session }
+  );
+
+  await MatchProfile.deleteMany(
+    { userId, guildId: { $ne: GLOBAL_SCOPE_GUILD_ID } },
+    { session }
+  );
+}
+
 async function getOrCreateProfile(guildId, userId, { session } = {}) {
   if (mongoose.connection?.readyState !== 1) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
 
-  const doc = await MatchProfile.findOneAndUpdate(
-    { guildId, userId },
-    { $setOnInsert: { rankedMmr: 1000, rankedWins: 0, rankedDraws: 0, rankedLosses: 0 } },
+  await MatchProfile.findOneAndUpdate(
+    { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
+    {
+      $setOnInsert: {
+        rankedMmr: 1000,
+        rankedWins: 0,
+        rankedDraws: 0,
+        rankedLosses: 0,
+        legacyMerged: false
+      }
+    },
     { new: true, upsert: true, session }
-  ).lean();
+  );
+
+  await ensureGlobalProfileMerged(userId, { session });
+
+  const doc = await withSession(
+    MatchProfile.findOne({ guildId: GLOBAL_SCOPE_GUILD_ID, userId }).lean(),
+    session
+  );
 
   return doc;
 }
@@ -277,13 +358,13 @@ async function applyRankedResult(guildId, aUserId, bUserId, result) {
       { rankedDraws: 1 };
 
     const updatedA = await MatchProfile.findOneAndUpdate(
-      { guildId, userId: aUserId },
+      { guildId: GLOBAL_SCOPE_GUILD_ID, userId: aUserId },
       { $inc: { rankedMmr: da, ...aInc } },
       { new: true, session }
     ).lean();
 
     const updatedB = await MatchProfile.findOneAndUpdate(
-      { guildId, userId: bUserId },
+      { guildId: GLOBAL_SCOPE_GUILD_ID, userId: bUserId },
       { $inc: { rankedMmr: db, ...bInc } },
       { new: true, session }
     ).lean();
@@ -461,4 +542,3 @@ export async function runMatch({
 
   return { final, result, events, rankedInfo };
 }
-
