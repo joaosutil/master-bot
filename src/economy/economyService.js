@@ -15,6 +15,12 @@ function safeMoney(n, fallback = 0) {
   return Math.max(0, Math.trunc(v));
 }
 
+function safeDelta(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return 0;
+  return Math.trunc(v);
+}
+
 function isMongoConnected() {
   return mongoose.connection?.readyState === 1;
 }
@@ -72,13 +78,13 @@ export async function addBalance(guildId, userId, delta, session) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
 
+  // Garante o doc existir para evitar conflito de update ($inc + $setOnInsert no mesmo path)
+  await getOrCreateEconomyUser(guildId, userId, session);
+
   const doc = await EconomyUser.findOneAndUpdate(
     { guildId, userId },
-    {
-      $inc: { balance: delta },
-      $setOnInsert: { balance: safeMoney(START_BALANCE, 0), lastDaily: 0, lastWeekly: 0 }
-    },
-    { new: true, upsert: true, session }
+    { $inc: { balance: safeDelta(delta) } },
+    { new: true, session }
   );
 
   return doc.balance;

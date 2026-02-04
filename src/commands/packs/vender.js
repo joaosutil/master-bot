@@ -226,7 +226,7 @@ const data = new SlashCommandBuilder()
 export default {
   data,
   async execute(interaction) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: 64 });
 
     const guildId = interaction.guildId;
     const userId = interaction.user.id;
@@ -378,7 +378,7 @@ export default {
       } catch (err) {
         console.error("[/vender] erro:", err);
         try {
-          await i.reply({ content: "❌ Erro ao processar venda. Veja o console.", ephemeral: true });
+          await i.reply({ content: "❌ Erro ao processar venda. Veja o console.", flags: 64 });
         } catch {}
       }
     });
