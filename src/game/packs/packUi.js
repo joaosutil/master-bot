@@ -543,22 +543,64 @@ export async function handlePackButton(interaction) {
         session.endSession();
       }
 
-      const opening = await renderPackOpeningPng({
+      const seedSalt = interaction.id;
+
+      const opening1 = await renderPackOpeningPng({
         packId,
         name: pack.name,
         emoji: pack.emoji,
-        accent: packAccent(packId)
+        accent: packAccent(packId),
+        phase: "closed",
+        seedSalt
       });
-      const openingFileName = `opening-${packId}-${Date.now()}.png`;
-      const openingAttachment = new AttachmentBuilder(opening, { name: openingFileName });
+      const openingFileName1 = `opening-${packId}-1-${Date.now()}.png`;
+      const openingAttachment1 = new AttachmentBuilder(opening1, { name: openingFileName1 });
 
-      const openingEmbed = new EmbedBuilder()
+      const openingEmbed1 = new EmbedBuilder()
         .setTitle(`✨ Abrindo ${pack.emoji} ${pack.name}…`)
         .setColor(packAccent(packId))
-        .setImage(`attachment://${openingFileName}`);
+        .setImage(`attachment://${openingFileName1}`);
 
-      await interaction.editReply({ embeds: [openingEmbed], files: [openingAttachment], components: [] });
-      await sleep(850);
+      await interaction.editReply({ embeds: [openingEmbed1], files: [openingAttachment1], components: [] });
+      await sleep(420);
+
+      const openingShake = await renderPackOpeningPng({
+        packId,
+        name: pack.name,
+        emoji: pack.emoji,
+        accent: packAccent(packId),
+        phase: "shake",
+        seedSalt
+      });
+      const openingShakeName = `opening-${packId}-shake-${Date.now()}.png`;
+      const openingShakeAttachment = new AttachmentBuilder(openingShake, { name: openingShakeName });
+
+      const openingShakeEmbed = new EmbedBuilder()
+        .setTitle(`✨ Abrindo ${pack.emoji} ${pack.name}…`)
+        .setColor(packAccent(packId))
+        .setImage(`attachment://${openingShakeName}`);
+
+      await interaction.editReply({ embeds: [openingShakeEmbed], files: [openingShakeAttachment], components: [] });
+      await sleep(280);
+
+      const opening2 = await renderPackOpeningPng({
+        packId,
+        name: pack.name,
+        emoji: pack.emoji,
+        accent: packAccent(packId),
+        phase: "burst",
+        seedSalt
+      });
+      const openingFileName2 = `opening-${packId}-2-${Date.now()}.png`;
+      const openingAttachment2 = new AttachmentBuilder(opening2, { name: openingFileName2 });
+
+      const openingEmbed2 = new EmbedBuilder()
+        .setTitle(`💥 Revelando ${pack.emoji} ${pack.name}!`)
+        .setColor(packAccent(packId))
+        .setImage(`attachment://${openingFileName2}`);
+
+      await interaction.editReply({ embeds: [openingEmbed2], files: [openingAttachment2], components: [] });
+      await sleep(650);
 
       const top = bestCard(pulled);
       const topOvr = typeof top?.ovr === "number" ? top.ovr : 0;

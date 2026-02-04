@@ -77,7 +77,7 @@ const data = new SlashCommandBuilder()
 export default {
   data,
   async execute(interaction) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: 64 });
 
     const gate = await claimFreePack(interaction.guildId, interaction.user.id);
     if (!gate.ok) {
@@ -90,20 +90,73 @@ export default {
     const packId = "bronze";
     const pack = PACKS[packId] ?? { name: "FUTPACK GRÁTIS", emoji: "🎁" };
 
-    const opening = await renderPackOpeningPng({ packId: "free", name: "PACK GRÁTIS", emoji: pack.emoji ?? "🎁", accent: packAccent(packId) });
-    const openingFile = `opening-free-${Date.now()}.png`;
-    const openingAttachment = new AttachmentBuilder(opening, { name: openingFile });
+    const seedSalt = interaction.id;
+
+    const opening1 = await renderPackOpeningPng({
+      packId: "free",
+      name: "PACK GRÁTIS",
+      emoji: pack.emoji ?? "🎁",
+      accent: packAccent(packId),
+      phase: "closed",
+      seedSalt
+    });
+    const openingFile1 = `opening-free-1-${Date.now()}.png`;
+    const openingAttachment1 = new AttachmentBuilder(opening1, { name: openingFile1 });
 
     await interaction.editReply({
       embeds: [
         new EmbedBuilder()
-          .setTitle(`🎁 Abrindo pack grátis…`)
-          .setImage(`attachment://${openingFile}`)
+          .setTitle("🎁 Abrindo pack grátis…")
+          .setImage(`attachment://${openingFile1}`)
       ],
-      files: [openingAttachment]
+      files: [openingAttachment1]
     });
 
-    await sleep(800);
+    await sleep(420);
+
+    const openingShake = await renderPackOpeningPng({
+      packId: "free",
+      name: "PACK GRÁTIS",
+      emoji: pack.emoji ?? "🎁",
+      accent: packAccent(packId),
+      phase: "shake",
+      seedSalt
+    });
+    const openingFileShake = `opening-free-shake-${Date.now()}.png`;
+    const openingAttachmentShake = new AttachmentBuilder(openingShake, { name: openingFileShake });
+
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("🎁 Abrindo pack grátis…")
+          .setImage(`attachment://${openingFileShake}`)
+      ],
+      files: [openingAttachmentShake]
+    });
+
+    await sleep(280);
+
+    const opening2 = await renderPackOpeningPng({
+      packId: "free",
+      name: "PACK GRÁTIS",
+      emoji: pack.emoji ?? "🎁",
+      accent: packAccent(packId),
+      phase: "burst",
+      seedSalt
+    });
+    const openingFile2 = `opening-free-2-${Date.now()}.png`;
+    const openingAttachment2 = new AttachmentBuilder(opening2, { name: openingFile2 });
+
+    await interaction.editReply({
+      embeds: [
+        new EmbedBuilder()
+          .setTitle("💥 Revelando pack grátis!")
+          .setImage(`attachment://${openingFile2}`)
+      ],
+      files: [openingAttachment2]
+    });
+
+    await sleep(650);
 
     const packObj = PACKS[packId];
     const invCounts = await getInventoryCounts(interaction.guildId, interaction.user.id);

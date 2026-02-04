@@ -109,7 +109,8 @@ function drawHeader(ctx, W, title) {
 
 export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, accent } = {}) {
   const W = 1920;
-  const H = 1080;
+  // Taller canvas so cards can be bigger/legible (Discord will scale it down anyway).
+  const H = 1350;
 
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
@@ -119,7 +120,7 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
 
   const padX = 56;
   const topY = 136;
-  const areaH = 900;
+  const areaH = H - topY - 84;
   const areaW = W - padX * 2;
 
   const display = cards.slice(0, 7);

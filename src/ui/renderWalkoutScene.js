@@ -252,7 +252,8 @@ export async function renderWalkoutScenePng({
   ctx.fillRect(0, 0, W, H);
 
   const cardCx = W * 0.70;
-  const cardCy = H * 0.60;
+  // Keep the card + shadow fully inside the canvas (avoid "cortada")
+  const cardCy = H * 0.56;
 
   // scene variants (each player 90+ feels different)
   if (variant === 0) {
@@ -284,7 +285,7 @@ export async function renderWalkoutScenePng({
   // card
   const cardBuf = await renderCardPng(card);
   const cardImg = await loadImage(cardBuf);
-  const cardW = 680;
+  const cardW = 620;
   const cardH = Math.round(cardW * (1080 / 768));
   const cx = cardCx;
   const cy = cardCy;
@@ -292,9 +293,9 @@ export async function renderWalkoutScenePng({
   ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate((rng() - 0.5) * 0.10);
-  ctx.shadowBlur = 110;
+  ctx.shadowBlur = 92;
   ctx.shadowColor = rgba(accent, 0.65);
-  ctx.shadowOffsetY = 18;
+  ctx.shadowOffsetY = 12;
 
   // extra glow behind the card (no "cortada" edges)
   ctx.globalCompositeOperation = "screen";

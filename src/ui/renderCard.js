@@ -1185,19 +1185,28 @@ export async function renderCardPng(card) {
   const innerX = x + innerPad;
   const innerW = w - innerPad * 2;
 
-  // Header (bigger + legible)
+  // Keep every UI element inside the card silhouette (prevents text/OVR "vazando" fora do card,
+  // especially when the card is scaled down in pack reveals).
+  ctx.save();
+  baseSilhouettePath(ctx, x, y, w, h, shapeVariant);
+  ctx.clip();
+
+  // Header (bigger + legible, but auto-fit to avoid weird overflow)
   const ovr = typeof card?.ovr === "number" ? String(card.ovr) : "??";
   const pos = String(card?.pos ?? "??").toUpperCase();
   const rarityText = rarityLabel(rarity).toUpperCase();
+  const headerMaxW = Math.floor(innerW * 0.52);
+  const ovrSize = fitText(ctx, ovr, headerMaxW, 150, 116, 900);
+  const posSize = fitText(ctx, pos, headerMaxW, 60, 44, 900);
 
   ctx.save();
   ctx.textAlign = "left";
   ctx.textBaseline = "alphabetic";
-  ctx.font = `900 156px ${FONT}`;
+  ctx.font = `900 ${ovrSize}px ${FONT}`;
   shadow(ctx, { blur: 26, color: rgba(accent, 0.30), y: 10 });
   textStroke(ctx, ovr, innerX + 2, y + 174, "rgba(255,255,255,0.98)", "rgba(0,0,0,0.80)", 18);
   resetShadow(ctx);
-  ctx.font = `900 62px ${FONT}`;
+  ctx.font = `900 ${posSize}px ${FONT}`;
   textStroke(ctx, pos, innerX + 6, y + 216, "rgba(255,255,255,0.96)", "rgba(0,0,0,0.80)", 12);
   ctx.restore();
 
@@ -1421,6 +1430,8 @@ export async function renderCardPng(card) {
   ctx.clip();
   applyNoise(ctx, W, H, 0.05);
   ctx.restore();
+
+  ctx.restore(); // end silhouette clip for the whole card UI
   const out = canvas.toBuffer("image/png");
   cacheSet(renderedCache, key, out, maxRenderedCache);
   return out;
