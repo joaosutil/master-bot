@@ -291,8 +291,7 @@ async function ensureGlobalProfileMerged(userId, { session } = {}) {
     { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     {
       $inc: { rankedWins: sumWins, rankedDraws: sumDraws, rankedLosses: sumLosses },
-      $set: { rankedMmr: nextMmr, legacyMerged: true },
-      $setOnInsert: { rankedMmr: nextMmr, rankedWins: 0, rankedDraws: 0, rankedLosses: 0 }
+      $set: { rankedMmr: nextMmr, legacyMerged: true }
     },
     { upsert: true, session }
   );

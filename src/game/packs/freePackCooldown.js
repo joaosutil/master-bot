@@ -7,7 +7,8 @@ const FreePackCooldownSchema = new mongoose.Schema(
   {
     guildId: { type: String, required: true, index: true },
     userId: { type: String, required: true, index: true },
-    lastAt: { type: Date, default: null }
+    lastAt: { type: Date, default: null },
+    legacyMerged: { type: Boolean, default: false }
   },
   { timestamps: true }
 );
@@ -62,8 +63,7 @@ async function ensureGlobalCooldownMerged(userId, { session } = {}) {
   await FreePackCooldown.updateOne(
     { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     {
-      $set: { legacyMerged: true, ...(lastAt ? { lastAt } : {}) },
-      $setOnInsert: { lastAt: lastAt ?? null }
+      $set: { legacyMerged: true, ...(lastAt ? { lastAt } : {}) }
     },
     { upsert: true, session }
   );

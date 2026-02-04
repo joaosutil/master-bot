@@ -105,8 +105,7 @@ async function ensureGlobalEconomyUserMerged(userId, { session } = {}) {
     {
       $inc: { balance: sumBalance },
       $max: { lastDaily: maxDaily, lastWeekly: maxWeekly },
-      $set: { version: ECONOMY_VERSION, legacyMerged: true, initialized: true },
-      $setOnInsert: { balance: 0, lastDaily: 0, lastWeekly: 0, version: ECONOMY_VERSION, initialized: true }
+      $set: { version: ECONOMY_VERSION, legacyMerged: true, initialized: true }
     },
     { upsert: true, session }
   );

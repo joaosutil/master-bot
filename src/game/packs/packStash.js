@@ -6,7 +6,8 @@ const PackStashSchema = new mongoose.Schema(
   {
     guildId: { type: String, required: true, index: true },
     userId: { type: String, required: true, index: true },
-    counts: { type: Map, of: Number, default: {} }
+    counts: { type: Map, of: Number, default: {} },
+    legacyMerged: { type: Boolean, default: false }
   },
   { timestamps: true }
 );
@@ -66,8 +67,7 @@ async function ensureGlobalPackStashMerged(userId, { session } = {}) {
     { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     {
       ...(Object.keys(inc).length ? { $inc: inc } : {}),
-      $set: { legacyMerged: true },
-      $setOnInsert: { counts: {} }
+      $set: { legacyMerged: true }
     },
     { upsert: true, session }
   );

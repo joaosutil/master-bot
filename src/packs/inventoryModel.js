@@ -6,7 +6,8 @@ const invSchema = new mongoose.Schema(
   {
     guildId: { type: String, required: true },
     userId: { type: String, required: true },
-    counts: { type: Map, of: Number, default: {} }
+    counts: { type: Map, of: Number, default: {} },
+    legacyMerged: { type: Boolean, default: false }
   },
   { timestamps: true }
 );
@@ -105,8 +106,7 @@ async function ensureGlobalInventoryMerged(userId, { session } = {}) {
     { guildId: GLOBAL_SCOPE_GUILD_ID, userId },
     {
       ...(Object.keys(inc).length ? { $inc: inc } : {}),
-      $set: { legacyMerged: true },
-      $setOnInsert: { counts: {} }
+      $set: { legacyMerged: true }
     },
     { upsert: true, session }
   );
