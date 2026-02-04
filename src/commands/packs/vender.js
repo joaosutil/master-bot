@@ -59,13 +59,15 @@ function selectedSummary(selected, itemsById) {
   let stacks = 0;
   let coins = 0;
 
-  for (const id of selected) {
+  for (const [id, qtyRaw] of selected.entries()) {
     const it = itemsById.get(id);
     if (!it) continue;
+    const qty = Math.max(0, Math.trunc(Number(qtyRaw ?? 0)));
+    if (!qty) continue;
     stacks++;
-    cards += it.count;
+    cards += qty;
     const val = Number(it.card?.value ?? 0);
-    if (Number.isFinite(val) && val > 0) coins += val * it.count;
+    if (Number.isFinite(val) && val > 0) coins += val * qty;
   }
 
   return { cards, stacks, coins };
@@ -82,38 +84,49 @@ function pageSlice(items, page) {
   };
 }
 
-function buildEmbed({ user, invTotal, items, selected, itemsById, page, totalPages }) {
+function buildEmbed({ user, invTotal, items, selected, itemsById, page, totalPages, focusId }) {
   const sel = selectedSummary(selected, itemsById);
 
   const topColor =
     items[0]?.card?.rarity ? rarityColor(items[0].card.rarity) : 0x3498db;
 
-  const selectedItems = Array.from(selected)
-    .map((id) => itemsById.get(id))
-    .filter(Boolean)
-    .sort((a, b) => sortCards(a.card, b.card));
+  const selectedItems = Array.from(selected.entries())
+    .map(([id, qty]) => ({ it: itemsById.get(id), qty: Math.max(0, Math.trunc(Number(qty ?? 0))) }))
+    .filter((x) => x.it && x.qty > 0)
+    .sort((a, b) => sortCards(a.it.card, b.it.card));
 
   const lines = [];
   if (!selectedItems.length) {
     lines.push("Nenhuma carta selecionada.");
     lines.push("");
-    lines.push("Abra o menu abaixo para escolher cartas e depois clique **Vender seleção**.");
+    lines.push("Abra o menu abaixo para escolher cartas, ajuste a quantidade e depois clique **Vender seleção**.");
   } else {
-    for (const it of selectedItems.slice(0, 18)) {
+    for (const { it, qty } of selectedItems.slice(0, 18)) {
       const ovr = typeof it.card?.ovr === "number" ? it.card.ovr : "??";
       const valEach = Number(it.card?.value ?? 0);
-      const total = Number.isFinite(valEach) ? valEach * it.count : 0;
+      const total = Number.isFinite(valEach) ? valEach * qty : 0;
       lines.push(
-        `✅ ${emojiByRarity(it.card.rarity)} **${it.card.name}** (${it.card.pos}) • OVR **${ovr}** • x**${it.count}** • ${formatCoins(total)} 🪙`
+        `✅ ${emojiByRarity(it.card.rarity)} **${it.card.name}** (${it.card.pos}) • OVR **${ovr}** • vender **${qty}/${it.count}** • ${formatCoins(total)} 🪙`
       );
     }
     if (selectedItems.length > 18) lines.push(`… +${selectedItems.length - 18} stacks`);
   }
 
+  let focusLine = "";
+  if (focusId) {
+    const it = itemsById.get(focusId);
+    if (it) {
+      const cur = Math.max(0, Math.trunc(Number(selected.get(focusId) ?? 0)));
+      focusLine = `\n**Em foco:** ${emojiByRarity(it.card.rarity)} **${it.card.name}** • vender **${cur}/${it.count}**\n`;
+    }
+  }
+
   const desc =
     `Inventário (sem escalados): **${invTotal}/${INVENTORY_LIMIT}** cartas\n` +
     `Stacks: **${items.length}**\n\n` +
-    `**Selecionado:** ${sel.stacks} stacks • ${sel.cards} cartas • **${formatCoins(sel.coins)} 🪙**\n\n` +
+    `**Selecionado:** ${sel.stacks} stacks • ${sel.cards} cartas • **${formatCoins(sel.coins)} 🪙**\n` +
+    focusLine +
+    `\n` +
     lines.join("\n");
 
   return new EmbedBuilder()
@@ -126,7 +139,7 @@ function buildEmbed({ user, invTotal, items, selected, itemsById, page, totalPag
 function buildSelect(customId, slice) {
   const menu = new StringSelectMenuBuilder()
     .setCustomId(customId)
-    .setPlaceholder("Selecionar uma carta para vender (stack inteiro)…")
+    .setPlaceholder("Selecionar uma carta para vender (ajuste a quantidade)…")
     .setMinValues(1)
     .setMaxValues(1);
 
@@ -162,7 +175,7 @@ function buildNavButtons({ prevId, nextId, selectAllId, clearId, closeId }, { pa
     new ButtonBuilder()
       .setCustomId(selectAllId)
       .setStyle(ButtonStyle.Primary)
-      .setLabel("Selecionar tudo (<90)"),
+      .setLabel("Duplicatas (<90)"),
     new ButtonBuilder()
       .setCustomId(clearId)
       .setStyle(ButtonStyle.Secondary)
@@ -184,19 +197,33 @@ function buildSellButton(sellId, disabled) {
   );
 }
 
+function buildQtyButtons({ decId, inc1Id, inc5Id, maxId, removeId }, { disabled }) {
+  return new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setCustomId(decId).setStyle(ButtonStyle.Secondary).setLabel("−1").setDisabled(disabled),
+    new ButtonBuilder().setCustomId(inc1Id).setStyle(ButtonStyle.Secondary).setLabel("+1").setDisabled(disabled),
+    new ButtonBuilder().setCustomId(inc5Id).setStyle(ButtonStyle.Secondary).setLabel("+5").setDisabled(disabled),
+    new ButtonBuilder().setCustomId(maxId).setStyle(ButtonStyle.Primary).setLabel("MAX").setDisabled(disabled),
+    new ButtonBuilder().setCustomId(removeId).setStyle(ButtonStyle.Danger).setLabel("Remover").setDisabled(disabled)
+  );
+}
+
 async function sellSelection({ guildId, userId, selected, itemsById, lockedCounts }) {
   if (mongoose.connection?.readyState !== 1) {
     throw new Error("MongoDB não conectado. Verifique MONGO_URI.");
   }
 
   const toSell = [];
-  for (const id of selected) {
+  for (const [id, qtyRaw] of selected.entries()) {
     if (lockedCounts?.[id]) {
       throw new Error(`Tentou vender carta escalada (bloqueada): ${id}`);
     }
     const it = itemsById.get(id);
     if (!it) continue;
-    toSell.push({ cardId: id, count: it.count, value: Number(it.card?.value ?? 0) || 0 });
+    const qty = Math.max(0, Math.trunc(Number(qtyRaw ?? 0)));
+    const maxQty = Math.max(0, Math.trunc(Number(it.count ?? 0)));
+    const sellQty = Math.min(qty, maxQty);
+    if (!sellQty) continue;
+    toSell.push({ cardId: id, count: sellQty, value: Number(it.card?.value ?? 0) || 0 });
   }
   if (!toSell.length) return { ok: false, reason: "empty" };
 
@@ -259,7 +286,8 @@ export default {
     }
 
     const itemsById = new Map(items.map((it) => [it.cardId, it]));
-    const selected = new Set();
+    const selected = new Map(); // cardId -> qty
+    let focusId = null;
     let page = 1;
 
     const selectId = `sell_select:${interaction.id}`;
@@ -269,6 +297,11 @@ export default {
     const clearId = `sell_clear:${interaction.id}`;
     const sellId = `sell_sell:${interaction.id}`;
     const closeId = `sell_close:${interaction.id}`;
+    const decId = `sell_dec:${interaction.id}`;
+    const inc1Id = `sell_inc1:${interaction.id}`;
+    const inc5Id = `sell_inc5:${interaction.id}`;
+    const maxId = `sell_max:${interaction.id}`;
+    const removeId = `sell_remove:${interaction.id}`;
 
     function buildView() {
       const paged = pageSlice(items, page);
@@ -280,12 +313,15 @@ export default {
         selected,
         itemsById,
         page: paged.safePage,
-        totalPages: paged.totalPages
+        totalPages: paged.totalPages,
+        focusId
       });
+      const qtyDisabled = !focusId || !itemsById.get(focusId);
       return {
         embeds: [embed],
         components: [
           buildSelect(selectId, paged.slice),
+          buildQtyButtons({ decId, inc1Id, inc5Id, maxId, removeId }, { disabled: qtyDisabled }),
           buildNavButtons({ prevId, nextId, selectAllId, clearId, closeId }, { page: paged.safePage, totalPages: paged.totalPages }),
           buildSellButton(sellId, selected.size === 0)
         ]
@@ -297,7 +333,7 @@ export default {
 
     const filter = (i) =>
       i.user.id === interaction.user.id &&
-      [selectId, prevId, nextId, selectAllId, clearId, sellId, closeId].includes(i.customId);
+      [selectId, prevId, nextId, selectAllId, clearId, sellId, closeId, decId, inc1Id, inc5Id, maxId, removeId].includes(i.customId);
 
     const collector = msg.createMessageComponentCollector({ filter, time: 180_000 });
 
@@ -314,22 +350,56 @@ export default {
 
         if (i.customId === clearId) {
           selected.clear();
+          focusId = null;
         }
 
         if (i.customId === selectAllId) {
-          // Não seleciona 90+ automaticamente (só manual)
+          // Seleciona apenas duplicatas (<90) automaticamente (não marca 90+)
           for (const it of items) {
             const ovr = typeof it.card?.ovr === "number" ? it.card.ovr : 0;
             if (ovr >= 90) continue;
-            selected.add(it.cardId);
+            if (it.count <= 1) continue;
+            const dupQty = Math.max(0, it.count - 1);
+            const cur = Math.max(0, Math.trunc(Number(selected.get(it.cardId) ?? 0)));
+            if (dupQty > cur) selected.set(it.cardId, dupQty);
           }
         }
 
         if (i.customId === selectId) {
           const picked = i.values?.[0];
           if (picked && picked !== "none") {
-            selected.add(picked);
+            focusId = picked;
+            const it = itemsById.get(picked);
+            const maxQty = Math.max(0, Math.trunc(Number(it?.count ?? 0)));
+            const cur = Math.max(0, Math.trunc(Number(selected.get(picked) ?? 0)));
+            if (maxQty > 0) selected.set(picked, Math.min(maxQty, cur + 1));
           }
+        }
+
+        if ([decId, inc1Id, inc5Id, maxId, removeId].includes(i.customId)) {
+          if (!focusId) {
+            await i.update(buildView());
+            return;
+          }
+          const it = itemsById.get(focusId);
+          if (!it) {
+            focusId = null;
+            await i.update(buildView());
+            return;
+          }
+
+          const maxQty = Math.max(0, Math.trunc(Number(it.count ?? 0)));
+          const cur = Math.max(0, Math.trunc(Number(selected.get(focusId) ?? 0)));
+          let nextQty = cur;
+
+          if (i.customId === decId) nextQty = Math.max(0, cur - 1);
+          if (i.customId === inc1Id) nextQty = Math.min(maxQty, cur + 1);
+          if (i.customId === inc5Id) nextQty = Math.min(maxQty, cur + 5);
+          if (i.customId === maxId) nextQty = maxQty;
+          if (i.customId === removeId) nextQty = 0;
+
+          if (nextQty > 0) selected.set(focusId, nextQty);
+          else selected.delete(focusId);
         }
 
         if (i.customId === sellId) {
@@ -341,6 +411,7 @@ export default {
           const before = selectedSummary(selected, itemsById);
           const sold = await sellSelection({ guildId, userId, selected, itemsById, lockedCounts });
           selected.clear();
+          focusId = null;
 
           lockedCounts = await getSquadLockedCounts(guildId, userId);
           counts = await getInventoryCounts(guildId, userId);
