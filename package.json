@@ -11,11 +11,14 @@
     "sync:cards": "node scripts/sync-cards.mjs"
   },
   "dependencies": {
+    "@discordjs/voice": "^0.19.0",
     "@napi-rs/canvas": "^0.1.88",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "i18n-iso-countries": "^7.14.0",
     "markdown-it": "^14.1.0",
-    "mongoose": "^8.7.0"
+    "mongoose": "^8.7.0",
+    "opusscript": "^0.0.8",
+    "play-dl": "^1.9.7"
   }
 }
