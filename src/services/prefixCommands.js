@@ -137,6 +137,22 @@ function buildAliasMap(commands) {
   set("ajuda", "ajuda");
   set("help", "ajuda");
 
+  // Music
+  set("tocar", "tocar");
+  set("play", "tocar");
+  set("pausar", "pausar");
+  set("pause", "pausar");
+  set("resumir", "resumir");
+  set("resume", "resumir");
+  set("pular", "pular");
+  set("skip", "pular");
+  set("parar", "parar");
+  set("stop", "parar");
+  set("tocando", "tocando");
+  set("np", "tocando");
+  set("fila", "fila");
+  set("queue", "fila");
+
   return map;
 }
 
@@ -166,6 +182,18 @@ function normalizeArgsForCommand(commandName, args) {
     if (!hasQtd && out.length && /^\d+$/.test(String(out[0]))) {
       const qty = out.shift();
       out.unshift("--quantidade", qty);
+    }
+    return out;
+  }
+
+  if (commandName === "tocar") {
+    // .tocar thunderstruck => /tocar musica:"thunderstruck"
+    // .tocar --musica thunderstruck => keep as-is
+    const out = [...args];
+    const hasMusic = out.includes("--musica");
+    if (!hasMusic) {
+      const query = out.join(" ").trim();
+      if (query) return ["--musica", query];
     }
     return out;
   }
