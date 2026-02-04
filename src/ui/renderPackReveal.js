@@ -130,6 +130,8 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
 
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
 
   background(ctx, W, H, accent);
   drawHeader(ctx, W, `${title} x${qty}`);
@@ -162,9 +164,20 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
   ctx.stroke();
   ctx.restore();
 
-  const display = cards.slice(0, 7);
+  const rawCards = Array.isArray(cards) ? cards : [];
+  const maxDisplay = Math.max(
+    1,
+    Math.min(
+      12,
+      Number.parseInt(process.env.PACK_REVEAL_MAX_CARDS ?? "", 10) || 12
+    )
+  );
+  const display = rawCards.slice(0, maxDisplay);
   const n = display.length;
-  const gap = 22;
+  const gap = n > 7 ? 16 : 22;
+  if (n === 0) {
+    return canvas.toBuffer("image/png");
+  }
 
   // layout (bigger cards to keep text legible)
   let rows = [];
@@ -175,11 +188,24 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
   else if (n === 4) rows = [[0, 1], [2, 3]];
   else if (n === 5) rows = [[0, 1, 2], [3, 4]];
   else if (n === 6) rows = [[0, 1, 2], [3, 4, 5]];
-  else rows = [[0, 1, 2, 3], [4, 5, 6]]; // 7
+  else if (n === 7) rows = [[0, 1, 2, 3], [4, 5, 6]];
+  else {
+    const cols = 4;
+    const rowCount = Math.ceil(n / cols);
+    rows = Array.from({ length: rowCount }, (_, r) => {
+      const out = [];
+      for (let c = 0; c < cols; c++) {
+        const idx = r * cols + c;
+        if (idx >= n) break;
+        out.push(idx);
+      }
+      return out;
+    });
+  }
 
   const rowCount = rows.length || 1;
   const cardAspect = 1080 / 768;
-  const rowGapY = 46;
+  const rowGapY = n > 7 ? 28 : 46;
   const maxRowLen = Math.max(...rows.map((r) => r.length));
 
   const cardWByWidth = Math.floor((areaW - gap * (maxRowLen - 1)) / maxRowLen);
@@ -187,11 +213,15 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
   const cardHByHeight = Math.floor((areaH - rowGapY * (rowCount - 1)) / rowCount);
   const cardWByHeight = Math.floor(cardHByHeight / cardAspect);
 
-  const cardW = Math.max(290, Math.min(cardWByWidth, cardWByHeight));
+  const minCardW = n > 7 ? 240 : 290;
+  const cardW = Math.max(minCardW, Math.min(cardWByWidth, cardWByHeight));
   const cardH = Math.floor(cardW * cardAspect);
 
   const totalH = rowCount * cardH + (rowCount - 1) * rowGapY;
   let y0 = topY + Math.floor((areaH - totalH) / 2);
+
+  const pngs = await Promise.all(display.map((c) => renderCardPng(c)));
+  const imgs = await Promise.all(pngs.map((png) => loadImage(png)));
 
   for (let r = 0; r < rows.length; r++) {
     const row = rows[r];
@@ -222,8 +252,7 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
       ctx.stroke();
       ctx.restore();
 
-      const png = await renderCardPng(display[idx]);
-      const img = await loadImage(png);
+      const img = imgs[idx];
 
       ctx.save();
       const rarity = String(display[idx]?.rarity ?? "");
@@ -234,7 +263,7 @@ export async function renderPackRevealPng({ cards, title = "FUTPACK", qty = 1, a
       ctx.shadowOffsetY = 18;
 
       const centerBias = (i - (row.length - 1) / 2) / Math.max(1, row.length);
-      const tilt = centerBias * 0.018;
+      const tilt = centerBias * (n > 7 ? 0.012 : 0.018);
       ctx.translate(x + cardW / 2, y + cardH / 2);
       ctx.rotate(tilt);
 

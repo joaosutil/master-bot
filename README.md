@@ -39,6 +39,7 @@ Local com MongoDB em container:
 - `RENDER_FAST=1` desliga efeitos de ruído (mais rápido)
 - `RENDER_NOISE=0` desliga ruído
 - `CARD_RENDER_CACHE=50` cache de cards renderizados (aumente se tiver RAM)
+- `PACK_REVEAL_MAX_CARDS=12` quantas cartas aparecem na imagem do reveal do /pack
 
 ## Comandos iniciais
 - /ping

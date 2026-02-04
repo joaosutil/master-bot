@@ -8,6 +8,58 @@ function clamp(n, a, b) {
   return Math.max(a, Math.min(b, n));
 }
 
+function isFastRender() {
+  return process.env.RENDER_FAST === "1";
+}
+
+function fitText(ctx, text, maxW, start, min, weight = 900) {
+  let size = start;
+  while (size >= min) {
+    ctx.font = `${weight} ${size}px ${FONT}`;
+    if (ctx.measureText(text).width <= maxW) return size;
+    size -= 2;
+  }
+  return min;
+}
+
+function ellipsize(ctx, text, maxW) {
+  const raw = String(text ?? "");
+  if (!raw) return "";
+  if (ctx.measureText(raw).width <= maxW) return raw;
+
+  const suffix = "…";
+  const suffixW = ctx.measureText(suffix).width;
+  if (suffixW >= maxW) return suffix;
+
+  let lo = 0;
+  let hi = raw.length;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    const slice = raw.slice(0, mid);
+    const w = ctx.measureText(slice).width + suffixW;
+    if (w <= maxW) lo = mid;
+    else hi = mid - 1;
+  }
+
+  const n = Math.max(0, lo);
+  return raw.slice(0, n) + suffix;
+}
+
+function fitSubLine(ctx, text, maxW, { start = 28, min = 18, weight = 800 } = {}) {
+  const raw = String(text ?? "").trim();
+  if (!raw) return { size: min, text: "" };
+
+  let size = start;
+  while (size >= min) {
+    ctx.font = `${weight} ${size}px ${FONT}`;
+    if (ctx.measureText(raw).width <= maxW) return { size, text: raw };
+    size -= 1;
+  }
+
+  ctx.font = `${weight} ${min}px ${FONT}`;
+  return { size: min, text: ellipsize(ctx, raw, maxW) };
+}
+
 function hash32(str) {
   // FNV-1a
   let h = 2166136261;
@@ -73,7 +125,9 @@ function drawSparks(ctx, W, H, rng, a, strength = 1) {
   ctx.save();
   ctx.globalCompositeOperation = "screen";
   ctx.globalAlpha = 0.30 * strength;
-  for (let i = 0; i < Math.floor(180 * strength); i++) {
+  const fast = isFastRender();
+  const count = Math.max(40, Math.floor(180 * strength * (fast ? 0.45 : 1)));
+  for (let i = 0; i < count; i++) {
     const x = W * (0.10 + rng() * 0.80);
     const y = H * (0.12 + rng() * 0.70);
     const r = 0.8 + rng() * 2.4;
@@ -87,6 +141,7 @@ function drawSparks(ctx, W, H, rng, a, strength = 1) {
 }
 
 function drawConfetti(ctx, W, H, rng, a, strength = 1) {
+  if (isFastRender()) return;
   ctx.save();
   ctx.globalCompositeOperation = "screen";
   ctx.globalAlpha = 0.40 * strength;
@@ -159,7 +214,9 @@ function drawSmoke(ctx, W, H, rng, a, strength = 1) {
 
   const cx = W * 0.5;
   const cy = H * 0.56;
-  for (let i = 0; i < Math.floor(28 * strength); i++) {
+  const fast = isFastRender();
+  const count = Math.max(10, Math.floor(28 * strength * (fast ? 0.55 : 1)));
+  for (let i = 0; i < count; i++) {
     const x = cx + (rng() - 0.5) * W * 0.46;
     const y = cy + (rng() - 0.5) * H * 0.34;
     const r = 60 + rng() * 190;
@@ -181,7 +238,9 @@ function drawMotionStreaks(ctx, W, H, rng, a, strength = 1) {
   ctx.save();
   ctx.globalCompositeOperation = "screen";
   ctx.globalAlpha = 0.22 * strength;
-  for (let i = 0; i < Math.floor(24 * strength); i++) {
+  const fast = isFastRender();
+  const count = Math.max(8, Math.floor(24 * strength * (fast ? 0.55 : 1)));
+  for (let i = 0; i < count; i++) {
     const x = W * (0.18 + rng() * 0.64);
     const y = H * (0.12 + rng() * 0.62);
     const w = 180 + rng() * 420;
@@ -231,6 +290,8 @@ export async function renderPackOpeningPng({
 
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   const a = asRgb(accent);
 
   const seed = hash32(`${packId}|${name ?? ""}|${phase}|${seedSalt}|opening`);
@@ -325,24 +386,42 @@ export async function renderPackOpeningPng({
     drawShockwave(ctx, W, H, a, 1);
   }
 
-  // header text
+  // header text (with legibility plate)
+  ctx.save();
+  const plateW = Math.min(1180, W - 180);
+  const plateH = 132;
+  const plateX = Math.floor((W - plateW) / 2);
+  const plateY = 58;
+  ctx.globalAlpha = 0.70;
+  ctx.fillStyle = "rgba(0,0,0,0.30)";
+  drawRoundedRect(ctx, plateX, plateY, plateW, plateH, 32);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = `rgba(${a.r},${a.g},${a.b},0.22)`;
+  drawRoundedRect(ctx, plateX, plateY, plateW, plateH, 32);
+  ctx.stroke();
+  ctx.restore();
+
   ctx.save();
   ctx.textAlign = "center";
-  ctx.font = `900 64px ${FONT}`;
+  const header = phase === "burst" ? "REVELANDO!" : "ABRINDO…";
+  const headerSize = fitText(ctx, header, plateW - 120, 64, 46, 900);
+  ctx.font = `900 ${headerSize}px ${FONT}`;
   ctx.lineWidth = 12;
   ctx.strokeStyle = "rgba(0,0,0,0.55)";
-  const header = phase === "burst" ? "REVELANDO!" : "ABRINDO…";
-  ctx.strokeText(header, W / 2, 110);
+  ctx.strokeText(header, W / 2, 118);
   ctx.fillStyle = "rgba(255,255,255,0.96)";
-  ctx.fillText(header, W / 2, 110);
+  ctx.fillText(header, W / 2, 118);
 
-  ctx.font = `800 28px ${FONT}`;
-  const t = String(packName).toUpperCase();
+  const packTitle = String(packName).toUpperCase();
+  const packFit = fitSubLine(ctx, packTitle, plateW - 160, { start: 28, min: 18, weight: 800 });
+  ctx.font = `800 ${packFit.size}px ${FONT}`;
   ctx.lineWidth = 8;
   ctx.strokeStyle = "rgba(0,0,0,0.55)";
-  ctx.strokeText(t, W / 2, 160);
+  ctx.strokeText(packFit.text, W / 2, 162);
   ctx.fillStyle = "rgba(255,255,255,0.78)";
-  ctx.fillText(t, W / 2, 160);
+  ctx.fillText(packFit.text, W / 2, 162);
   ctx.restore();
 
   // footer

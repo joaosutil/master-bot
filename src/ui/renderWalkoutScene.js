@@ -40,9 +40,101 @@ function mulberry32(seed) {
   };
 }
 
-function drawTextStroke(ctx, text, x, y, { size = 72, align = "left", fill = "rgba(255,255,255,0.96)", stroke = "rgba(0,0,0,0.72)", lw = 14 } = {}) {
+function ellipsize(ctx, text, maxW) {
+  const raw = String(text ?? "");
+  if (!raw) return "";
+  if (ctx.measureText(raw).width <= maxW) return raw;
+
+  const suffix = "…";
+  const suffixW = ctx.measureText(suffix).width;
+  if (suffixW >= maxW) return suffix;
+
+  let lo = 0;
+  let hi = raw.length;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    const slice = raw.slice(0, mid);
+    const w = ctx.measureText(slice).width + suffixW;
+    if (w <= maxW) lo = mid;
+    else hi = mid - 1;
+  }
+
+  const n = Math.max(0, lo);
+  return raw.slice(0, n) + suffix;
+}
+
+function fitText(ctx, text, maxW, start, min, weight = 900) {
+  let size = start;
+  while (size >= min) {
+    ctx.font = `${weight} ${size}px ${FONT}`;
+    if (ctx.measureText(text).width <= maxW) return size;
+    size -= 2;
+  }
+  return min;
+}
+
+function bestTwoLineSplit(ctx, words, maxW) {
+  if (!Array.isArray(words) || words.length < 2) return null;
+
+  let best = null;
+  for (let i = 1; i < words.length; i++) {
+    const a = words.slice(0, i).join(" ");
+    const b = words.slice(i).join(" ");
+    const wa = ctx.measureText(a).width;
+    const wb = ctx.measureText(b).width;
+    if (wa > maxW || wb > maxW) continue;
+    const score = Math.max(wa, wb);
+    if (!best || score < best.score) best = { a, b, score };
+  }
+
+  return best ? [best.a, best.b] : null;
+}
+
+function fitWrappedText(ctx, text, maxW, { start = 60, min = 30, weight = 900, maxLines = 2 } = {}) {
+  const raw = String(text ?? "").trim();
+  if (!raw) return { size: min, lines: [""] };
+
+  const words = raw.split(/\s+/g).filter(Boolean);
+
+  let size = start;
+  while (size >= min) {
+    ctx.font = `${weight} ${size}px ${FONT}`;
+    if (ctx.measureText(raw).width <= maxW) return { size, lines: [raw] };
+
+    if (maxLines >= 2 && words.length >= 2) {
+      const split = bestTwoLineSplit(ctx, words, maxW);
+      if (split) return { size, lines: split };
+    }
+
+    size -= 2;
+  }
+
+  ctx.font = `${weight} ${min}px ${FONT}`;
+  return { size: min, lines: [ellipsize(ctx, raw, maxW)] };
+}
+
+function fitSubLine(ctx, text, maxW, { start = 34, min = 18, weight = 800 } = {}) {
+  const raw = String(text ?? "").trim();
+  if (!raw) return { size: min, text: "" };
+
+  let size = start;
+  while (size >= min) {
+    ctx.font = `${weight} ${size}px ${FONT}`;
+    if (ctx.measureText(raw).width <= maxW) return { size, text: raw };
+    size -= 1;
+  }
+
+  ctx.font = `${weight} ${min}px ${FONT}`;
+  return { size: min, text: ellipsize(ctx, raw, maxW) };
+}
+
+function isFastRender() {
+  return process.env.RENDER_FAST === "1";
+}
+
+function drawTextStroke(ctx, text, x, y, { size = 72, weight = 900, align = "left", fill = "rgba(255,255,255,0.96)", stroke = "rgba(0,0,0,0.72)", lw = 14 } = {}) {
   ctx.save();
-  ctx.font = `900 ${size}px ${FONT}`;
+  ctx.font = `${weight} ${size}px ${FONT}`;
   ctx.textAlign = align;
   ctx.textBaseline = "alphabetic";
   ctx.lineWidth = lw;
@@ -67,7 +159,8 @@ function smokeBlob(ctx, cx, cy, r, color, alpha) {
 
 function drawSmoke(ctx, W, H, rng, accent) {
   const a = accent;
-  for (let i = 0; i < 38; i++) {
+  const count = isFastRender() ? 18 : 38;
+  for (let i = 0; i < count; i++) {
     const cx = W * (0.18 + rng() * 0.64);
     const cy = H * (0.22 + rng() * 0.70);
     const r = 90 + rng() * 260;
@@ -80,7 +173,8 @@ function drawStars(ctx, W, H, rng) {
   ctx.save();
   ctx.globalCompositeOperation = "screen";
   ctx.globalAlpha = 0.8;
-  for (let i = 0; i < 160; i++) {
+  const count = isFastRender() ? 90 : 160;
+  for (let i = 0; i < count; i++) {
     const x = rng() * W;
     const y = rng() * H * 0.75;
     const r = 0.8 + rng() * 2.6;
@@ -98,7 +192,8 @@ function drawBeams(ctx, W, H, rng, accent) {
   ctx.save();
   ctx.globalCompositeOperation = "screen";
   ctx.globalAlpha = 0.42;
-  for (let i = 0; i < 9; i++) {
+  const count = isFastRender() ? 6 : 9;
+  for (let i = 0; i < count; i++) {
     const x = W * (0.15 + rng() * 0.70);
     const w = 160 + rng() * 340;
     const rot = (rng() - 0.5) * 0.5;
@@ -118,6 +213,7 @@ function drawBeams(ctx, W, H, rng, accent) {
 }
 
 function drawConfetti(ctx, W, H, rng, accent) {
+  if (isFastRender()) return;
   const colors = [
     rgba(accent, 0.9),
     "rgba(255,255,255,0.92)",
@@ -151,7 +247,7 @@ function drawFirebursts(ctx, W, H, rng, accent, { cx, cy } = {}) {
   ctx.globalCompositeOperation = "screen";
   ctx.globalAlpha = 0.55;
 
-  const rays = 56;
+  const rays = isFastRender() ? 34 : 56;
   for (let i = 0; i < rays; i++) {
     const ang = (i / rays) * Math.PI * 2 + (rng() - 0.5) * 0.16;
     const len = 520 + rng() * 720;
@@ -182,7 +278,8 @@ function drawSparks(ctx, W, H, rng, accent) {
   ctx.save();
   ctx.globalCompositeOperation = "screen";
   ctx.globalAlpha = 0.55;
-  for (let i = 0; i < 220; i++) {
+  const count = isFastRender() ? 120 : 220;
+  for (let i = 0; i < count; i++) {
     const x = W * (0.12 + rng() * 0.78);
     const y = H * (0.18 + rng() * 0.76);
     const r = 0.8 + rng() * 2.8;
@@ -228,6 +325,8 @@ export async function renderWalkoutScenePng({
   const H = 1080;
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
 
   // Keep the "style" deterministic per player (unique look), while still allowing optional salt.
   const seed = hash32(`${card?.id ?? ""}|${card?.name ?? ""}|${card?.ovr ?? ""}|${seedSalt}|walkout`);
@@ -319,19 +418,59 @@ export async function renderWalkoutScenePng({
   const name = String(card?.name ?? "Jogador");
   const pos = String(card?.pos ?? "").toUpperCase();
 
-  drawTextStroke(ctx, title.toUpperCase(), 110, 140, { size: 92, align: "left", lw: 18 });
-  if (subtitle) drawTextStroke(ctx, subtitle.toUpperCase(), 110, 210, { size: 34, fill: "rgba(255,255,255,0.78)", lw: 10 });
+  const textX = 110;
+  const leftMaxW = Math.floor(cardCx - cardW / 2 - textX - 42);
+  const safeMaxW = Math.max(280, leftMaxW);
 
-  drawTextStroke(ctx, `${ovr} ${pos}`.trim(), 110, 330, { size: 110, align: "left", lw: 22 });
-  drawTextStroke(ctx, name.toUpperCase(), 110, 420, { size: 72, align: "left", lw: 18 });
+  const titleText = String(title ?? "").toUpperCase();
+  const titleSize = fitText(ctx, titleText, safeMaxW, 92, 62, 900);
+  drawTextStroke(ctx, titleText, textX, 140, { size: titleSize, align: "left", lw: 18 });
 
+  let cursorY = 210;
+  if (subtitle) {
+    const subText = String(subtitle ?? "").toUpperCase();
+    const subFit = fitSubLine(ctx, subText, safeMaxW, { start: 34, min: 22, weight: 800 });
+    drawTextStroke(ctx, subFit.text, textX, cursorY, {
+      size: subFit.size,
+      weight: 800,
+      align: "left",
+      fill: "rgba(255,255,255,0.78)",
+      lw: 10
+    });
+    cursorY += 120;
+  } else {
+    cursorY += 120;
+  }
+
+  const ovrPosText = `${ovr} ${pos}`.trim();
+  const ovrPosSize = fitText(ctx, ovrPosText, safeMaxW, 110, 78, 900);
+  drawTextStroke(ctx, ovrPosText, textX, 330, { size: ovrPosSize, align: "left", lw: 22 });
+
+  const nameText = String(name ?? "").toUpperCase();
+  const nameFit = fitWrappedText(ctx, nameText, safeMaxW, { start: 72, min: 44, weight: 900, maxLines: 2 });
+  const nameLineH = Math.round(nameFit.size * 0.92);
+  const nameTopY = 420;
+  for (let i = 0; i < nameFit.lines.length; i++) {
+    drawTextStroke(ctx, nameFit.lines[i], textX, nameTopY + i * nameLineH, { size: nameFit.size, align: "left", lw: 18 });
+  }
+
+  const afterNameY = nameTopY + nameFit.lines.length * nameLineH + 26;
   if (badge) {
     ctx.save();
     ctx.globalAlpha = 0.85;
     ctx.fillStyle = "rgba(255,255,255,0.16)";
-    ctx.fillRect(110, 462, 420, 8);
+    ctx.fillRect(textX, afterNameY - 58, Math.min(520, safeMaxW), 8);
     ctx.restore();
-    drawTextStroke(ctx, badge.toUpperCase(), 110, 520, { size: 28, align: "left", fill: "rgba(255,255,255,0.72)", lw: 10 });
+
+    const badgeText = String(badge ?? "").toUpperCase();
+    const badgeFit = fitSubLine(ctx, badgeText, safeMaxW, { start: 28, min: 18, weight: 800 });
+    drawTextStroke(ctx, badgeFit.text, textX, afterNameY, {
+      size: badgeFit.size,
+      weight: 800,
+      align: "left",
+      fill: "rgba(255,255,255,0.72)",
+      lw: 10
+    });
   }
 
   applyNoise(ctx, W, H, 0.06);

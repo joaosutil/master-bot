@@ -88,6 +88,8 @@ export function renderPackArtPng({ packId = "", name = "PACK", emoji = "🎁", a
   const H = 820;
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   const a = asRgb(accent);
 
   // background
@@ -220,7 +222,35 @@ export function renderPackArtPng({ packId = "", name = "PACK", emoji = "🎁", a
   // name plate (stronger)
   ctx.save();
   const title = String(name).toUpperCase();
-  const size = fitText(ctx, title, w - 70, 56, 30, 900);
+  const maxTitleW = w - 90;
+  let lines = [title];
+  let size = fitText(ctx, title, maxTitleW, 56, 30, 900);
+
+  // If it's shrinking too much, try a clean 2-line split to keep it legible on mobile.
+  if (size <= 34 && title.includes(" ")) {
+    const words = title.split(/\s+/g).filter(Boolean);
+    for (let trySize = 46; trySize >= 26; trySize -= 2) {
+      ctx.font = `900 ${trySize}px ${FONT}`;
+
+      let best = null;
+      for (let i = 1; i < words.length; i++) {
+        const a1 = words.slice(0, i).join(" ");
+        const b1 = words.slice(i).join(" ");
+        const wa = ctx.measureText(a1).width;
+        const wb = ctx.measureText(b1).width;
+        if (wa > maxTitleW || wb > maxTitleW) continue;
+        const score = Math.max(wa, wb);
+        if (!best || score < best.score) best = { a: a1, b: b1, score };
+      }
+
+      if (best) {
+        lines = [best.a, best.b];
+        size = trySize;
+        break;
+      }
+    }
+  }
+
   ctx.font = `900 ${size}px ${FONT}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -230,19 +260,25 @@ export function renderPackArtPng({ packId = "", name = "PACK", emoji = "🎁", a
   ctx.shadowColor = "rgba(0,0,0,0.70)";
   ctx.shadowOffsetY = 12;
   ctx.fillStyle = "rgba(0,0,0,0.32)";
-  drawRoundedRect(ctx, x + 40, plateY, w - 80, 96, 26);
+  const plateH = lines.length === 1 ? 96 : 122;
+  drawRoundedRect(ctx, x + 40, plateY, w - 80, plateH, 26);
   ctx.fill();
   ctx.shadowBlur = 0;
   ctx.lineWidth = 3;
   ctx.strokeStyle = rgba(a, 0.62);
-  drawRoundedRect(ctx, x + 40, plateY, w - 80, 96, 26);
+  drawRoundedRect(ctx, x + 40, plateY, w - 80, plateH, 26);
   ctx.stroke();
 
   ctx.lineWidth = 14;
   ctx.strokeStyle = "rgba(0,0,0,0.72)";
-  ctx.strokeText(title, W / 2, plateY + 48);
   ctx.fillStyle = "rgba(255,255,255,0.98)";
-  ctx.fillText(title, W / 2, plateY + 48);
+  const lineH = Math.round(size * 0.90);
+  const textTop = plateY + (lines.length === 1 ? plateH / 2 : 46);
+  for (let i = 0; i < lines.length; i++) {
+    const yy = textTop + i * lineH;
+    ctx.strokeText(lines[i], W / 2, yy);
+    ctx.fillText(lines[i], W / 2, yy);
+  }
   ctx.restore();
 
   // footer tag

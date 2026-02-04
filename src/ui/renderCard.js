@@ -314,6 +314,84 @@ function fitText(ctx, text, maxW, start, min, weight = 900) {
   return min;
 }
 
+function ellipsize(ctx, text, maxW) {
+  const raw = String(text ?? "");
+  if (!raw) return "";
+  if (ctx.measureText(raw).width <= maxW) return raw;
+
+  const suffix = "…";
+  const suffixW = ctx.measureText(suffix).width;
+  if (suffixW >= maxW) return suffix;
+
+  let lo = 0;
+  let hi = raw.length;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    const slice = raw.slice(0, mid);
+    const w = ctx.measureText(slice).width + suffixW;
+    if (w <= maxW) lo = mid;
+    else hi = mid - 1;
+  }
+
+  const n = Math.max(0, lo);
+  return raw.slice(0, n) + suffix;
+}
+
+function bestTwoLineSplit(ctx, words, maxW) {
+  if (!Array.isArray(words) || words.length < 2) return null;
+
+  let best = null;
+  for (let i = 1; i < words.length; i++) {
+    const a = words.slice(0, i).join(" ");
+    const b = words.slice(i).join(" ");
+    const wa = ctx.measureText(a).width;
+    const wb = ctx.measureText(b).width;
+    if (wa > maxW || wb > maxW) continue;
+    const score = Math.max(wa, wb);
+    if (!best || score < best.score) best = { a, b, score };
+  }
+
+  return best ? [best.a, best.b] : null;
+}
+
+function fitWrappedText(ctx, text, maxW, { start = 60, min = 30, weight = 900, maxLines = 2 } = {}) {
+  const raw = String(text ?? "").trim();
+  if (!raw) return { size: min, lines: [""] };
+
+  const words = raw.split(/\s+/g).filter(Boolean);
+
+  let size = start;
+  while (size >= min) {
+    ctx.font = `${weight} ${size}px ${FONT}`;
+    if (ctx.measureText(raw).width <= maxW) return { size, lines: [raw] };
+
+    if (maxLines >= 2 && words.length >= 2) {
+      const split = bestTwoLineSplit(ctx, words, maxW);
+      if (split) return { size, lines: split };
+    }
+
+    size -= 2;
+  }
+
+  ctx.font = `${weight} ${min}px ${FONT}`;
+  return { size: min, lines: [ellipsize(ctx, raw, maxW)] };
+}
+
+function fitSubLine(ctx, text, maxW, { start = 18, min = 12, weight = 800 } = {}) {
+  const raw = String(text ?? "").trim();
+  if (!raw) return { size: min, text: "" };
+
+  let size = start;
+  while (size >= min) {
+    ctx.font = `${weight} ${size}px ${FONT}`;
+    if (ctx.measureText(raw).width <= maxW) return { size, text: raw };
+    size -= 1;
+  }
+
+  ctx.font = `${weight} ${min}px ${FONT}`;
+  return { size: min, text: ellipsize(ctx, raw, maxW) };
+}
+
 function cacheSet(map, key, value, maxSize) {
   if (maxSize <= 0) return;
   map.set(key, value);
@@ -885,6 +963,8 @@ function drawEliteOrnaments(ctx, x, y, w, h, theme) {
 async function renderEliteCardPng(card) {
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   ctx.clearRect(0, 0, W, H);
 
   const theme = eliteTheme(card);
@@ -1033,17 +1113,38 @@ async function renderEliteCardPng(card) {
   const nameBoxW = w - 88;
   const nameY = panelY + 28;
 
-  const nameSize = fitText(ctx, name, nameBoxW - 40, 66, 34, 900);
+  const nameFit = fitWrappedText(ctx, name, nameBoxW - 40, {
+    start: 66,
+    min: 34,
+    weight: 900,
+    maxLines: 2
+  });
   ctx.save();
   ctx.textAlign = "center";
-  ctx.font = `900 ${nameSize}px ${FONT}`;
-  textStroke(ctx, name, x + w / 2, nameY + 60, "rgba(255,255,255,0.98)", "rgba(0,0,0,0.82)", 14);
+  ctx.textBaseline = "alphabetic";
+  ctx.font = `900 ${nameFit.size}px ${FONT}`;
+
+  const nameLineH = Math.round(nameFit.size * 0.92);
+  const nameTopY = nameY + (nameFit.lines.length === 1 ? 60 : 46);
+  for (let i = 0; i < nameFit.lines.length; i++) {
+    textStroke(
+      ctx,
+      nameFit.lines[i],
+      x + w / 2,
+      nameTopY + i * nameLineH,
+      "rgba(255,255,255,0.98)",
+      "rgba(0,0,0,0.82)",
+      14
+    );
+  }
+
+  let cursorY = nameTopY + nameFit.lines.length * nameLineH + 24;
   if (sub) {
-    const subSize = fitText(ctx, sub, nameBoxW - 80, 22, 14, 900);
-    ctx.font = `900 ${subSize}px ${FONT}`;
+    const subFit = fitSubLine(ctx, sub, nameBoxW - 80, { start: 22, min: 14, weight: 900 });
+    ctx.font = `900 ${subFit.size}px ${FONT}`;
     ctx.fillStyle = "rgba(255,255,255,0.78)";
-    ctx.textBaseline = "alphabetic";
-    ctx.fillText(sub, x + w / 2, nameY + 92);
+    ctx.fillText(subFit.text, x + w / 2, cursorY);
+    cursorY += 20;
   }
   ctx.restore();
 
@@ -1052,7 +1153,7 @@ async function renderEliteCardPng(card) {
   const order = ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"];
   const entries = order.map((k) => [k, stats[k] ?? "—"]);
 
-  const statsY = nameY + 108;
+  const statsY = Math.max(nameY + 108, cursorY + 10);
   const gap = 16;
   const pillW = Math.floor((nameBoxW - gap) / 2);
   const pillH = 66;
@@ -1121,6 +1222,8 @@ export async function renderCardPng(card) {
 
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   ctx.clearRect(0, 0, W, H);
 
   // non-rectangular silhouette (more "desenhado" + less card padrão)
@@ -1364,7 +1467,13 @@ export async function renderCardPng(card) {
   const sub = [club, cc].filter(Boolean).join(" • ");
 
   const nameY = artY + artH + 18;
-  const nameH = 84;
+  const nameFit = fitWrappedText(ctx, name, innerW - 90, {
+    start: 58,
+    min: 30,
+    weight: 900,
+    maxLines: 2
+  });
+  const nameH = nameFit.lines.length === 1 ? 84 : 112;
 
   ctx.save();
   shadow(ctx, { blur: 24, color: "rgba(0,0,0,0.70)", y: 14 });
@@ -1383,17 +1492,28 @@ export async function renderCardPng(card) {
   ctx.stroke();
   ctx.restore();
 
-  const nameSize = fitText(ctx, name, innerW - 80, 58, 30, 900);
   ctx.save();
   ctx.textAlign = "center";
-  ctx.font = `900 ${nameSize}px ${FONT}`;
   ctx.textBaseline = "alphabetic";
-  textStroke(ctx, name, innerX + innerW / 2, nameY + 58, "rgba(255,255,255,0.96)", "rgba(0,0,0,0.72)", 10);
+  ctx.font = `900 ${nameFit.size}px ${FONT}`;
+  const nameLineH = Math.round(nameFit.size * 0.92);
+  const nameTopY = nameY + (nameFit.lines.length === 1 ? 58 : 46);
+  for (let i = 0; i < nameFit.lines.length; i++) {
+    textStroke(
+      ctx,
+      nameFit.lines[i],
+      innerX + innerW / 2,
+      nameTopY + i * nameLineH,
+      "rgba(255,255,255,0.96)",
+      "rgba(0,0,0,0.72)",
+      10
+    );
+  }
   if (sub) {
-    const subSize = fitText(ctx, sub, innerW - 120, 18, 12, 800);
+    const subFit = fitSubLine(ctx, sub, innerW - 120, { start: 18, min: 12, weight: 800 });
     ctx.fillStyle = "rgba(255,255,255,0.74)";
-    ctx.font = `800 ${subSize}px ${FONT}`;
-    ctx.fillText(sub, innerX + innerW / 2, nameY + 84);
+    ctx.font = `800 ${subFit.size}px ${FONT}`;
+    ctx.fillText(subFit.text, innerX + innerW / 2, nameY + nameH - 10);
   }
   ctx.restore();
 
