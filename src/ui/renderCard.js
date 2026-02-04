@@ -394,6 +394,7 @@ function fitSubLine(ctx, text, maxW, { start = 18, min = 12, weight = 800 } = {}
 
 function cacheSet(map, key, value, maxSize) {
   if (maxSize <= 0) return;
+  if (map.has(key)) map.delete(key); // refresh insertion order (poor-man LRU)
   map.set(key, value);
   while (map.size > maxSize) {
     const oldest = map.keys().next().value;
@@ -1119,13 +1120,29 @@ async function renderEliteCardPng(card) {
     weight: 900,
     maxLines: 2
   });
+
+  // Keep stats always visible: never push them down, instead shrink/clip text.
+  const statsY = nameY + 108;
+  const maxNameBottom = statsY - 18;
+
   ctx.save();
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
-  ctx.font = `900 ${nameFit.size}px ${FONT}`;
 
-  const nameLineH = Math.round(nameFit.size * 0.92);
-  const nameTopY = nameY + (nameFit.lines.length === 1 ? 60 : 46);
+  let nameSize = nameFit.size;
+  let nameLineH = Math.round(nameSize * 0.92);
+  let nameTopY = nameY + (nameFit.lines.length === 1 ? 60 : 46);
+
+  while (
+    nameFit.lines.length > 1 &&
+    nameTopY + (nameFit.lines.length - 1) * nameLineH > maxNameBottom &&
+    nameSize > 30
+  ) {
+    nameSize -= 2;
+    nameLineH = Math.round(nameSize * 0.92);
+  }
+
+  ctx.font = `900 ${nameSize}px ${FONT}`;
   for (let i = 0; i < nameFit.lines.length; i++) {
     textStroke(
       ctx,
@@ -1138,12 +1155,12 @@ async function renderEliteCardPng(card) {
     );
   }
 
-  let cursorY = nameTopY + nameFit.lines.length * nameLineH + 24;
-  if (sub) {
+  let cursorY = nameTopY + nameFit.lines.length * nameLineH + 22;
+  if (sub && cursorY <= maxNameBottom) {
     const subFit = fitSubLine(ctx, sub, nameBoxW - 80, { start: 22, min: 14, weight: 900 });
     ctx.font = `900 ${subFit.size}px ${FONT}`;
     ctx.fillStyle = "rgba(255,255,255,0.78)";
-    ctx.fillText(subFit.text, x + w / 2, cursorY);
+    ctx.fillText(subFit.text, x + w / 2, Math.min(cursorY, maxNameBottom));
     cursorY += 20;
   }
   ctx.restore();
@@ -1153,7 +1170,6 @@ async function renderEliteCardPng(card) {
   const order = ["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"];
   const entries = order.map((k) => [k, stats[k] ?? "—"]);
 
-  const statsY = Math.max(nameY + 108, cursorY + 10);
   const gap = 16;
   const pillW = Math.floor((nameBoxW - gap) / 2);
   const pillH = 66;
@@ -1200,7 +1216,12 @@ export async function renderCardPng(card) {
   const key = stableCardKey(card);
   if (maxRenderedCache > 0) {
     const hit = renderedCache.get(key);
-    if (hit) return hit;
+    if (hit) {
+      // Refresh insertion order so frequently used cards stay hot in cache.
+      renderedCache.delete(key);
+      renderedCache.set(key, hit);
+      return hit;
+    }
   }
 
   const ovrNum = typeof card?.ovr === "number" ? card.ovr : 0;
@@ -1212,13 +1233,14 @@ export async function renderCardPng(card) {
 
   const rarity = String(card?.rarity ?? "common");
   const accent = hexToRgb(rarityColor(rarity));
-  const theme = baseTheme(card, accent);
 
-  const shapeVariant =
-    rarity === "legendary" ? 3 :
-    rarity === "epic" ? 2 :
-    rarity === "rare" ? 1 :
-    theme.variant;
+  // <90 cards should share the same template. Rarity changes colors, not layout/format.
+  const seed = hash32(`${card?.id ?? ""}|${card?.name ?? ""}|${card?.clubId ?? ""}|base`);
+  const rng = mulberry32(seed);
+  const secondary = mixRgb(accent, { r: 255, g: 255, b: 255 }, 0.22);
+  const theme = { seed, rng, variant: 0, secondary };
+
+  const shapeVariant = 0;
 
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
@@ -1339,11 +1361,27 @@ export async function renderCardPng(card) {
   ctx.fillText(rarityText, badgeX + badgeW / 2, rarityBadgeY + badgeH / 2 + 1);
   ctx.restore();
 
+  // Precompute name block to keep the bottom stats always visible.
+  const name = String(card?.name ?? "Jogador");
+  const club = card?.clubName ? String(card.clubName).toUpperCase() : "";
+  const cc = card?.countryCode ? String(card.countryCode).toUpperCase() : "";
+  const sub = [club, cc].filter(Boolean).join(" • ");
+
+  const nameFit = fitWrappedText(ctx, name, innerW - 90, {
+    start: 58,
+    min: 30,
+    weight: 900,
+    maxLines: 2
+  });
+  const nameH = nameFit.lines.length === 1 ? 84 : 112;
+
   // Portrait frame (tuned so the bottom stats always fit inside the silhouette)
   const artX = innerX;
   const artY = y + 228;
   const artW = innerW;
-  const artH = 440;
+  const baseArtH = 440;
+  const extraNameH = Math.max(0, nameH - 84);
+  const artH = Math.max(380, baseArtH - extraNameH);
 
   ctx.save();
   shadow(ctx, { blur: 26, color: "rgba(0,0,0,0.70)", y: 18 });
@@ -1461,19 +1499,7 @@ export async function renderCardPng(card) {
   }
 
   // Name + club line
-  const name = String(card?.name ?? "Jogador");
-  const club = card?.clubName ? String(card.clubName).toUpperCase() : "";
-  const cc = card?.countryCode ? String(card.countryCode).toUpperCase() : "";
-  const sub = [club, cc].filter(Boolean).join(" • ");
-
   const nameY = artY + artH + 18;
-  const nameFit = fitWrappedText(ctx, name, innerW - 90, {
-    start: 58,
-    min: 30,
-    weight: 900,
-    maxLines: 2
-  });
-  const nameH = nameFit.lines.length === 1 ? 84 : 112;
 
   ctx.save();
   shadow(ctx, { blur: 24, color: "rgba(0,0,0,0.70)", y: 14 });
