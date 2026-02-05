@@ -220,7 +220,8 @@ async function resolveTrack(query) {
     throw new Error("Informe um nome ou link da música.");
   }
 
-  let trimmed = query.trim();
+  const raw = query.trim();
+  let trimmed = raw;
 
   // Spotify links: use metadata as search query (audio still comes from other source).
   if (trimmed.startsWith("http") && isSpotifyUrl(trimmed)) {
@@ -236,6 +237,14 @@ async function resolveTrack(query) {
   const allowYouTube = String(process.env.MUSIC_ALLOW_YOUTUBE ?? "0").trim() === "1";
 
   if (trimmed.startsWith("http")) {
+    const ytType = play.yt_validate?.(trimmed);
+    if ((ytType === "video" || ytType === "playlist") && !allowYouTube) {
+      throw new Error(
+        "Link do YouTube não está habilitado. Envie o **nome da música** ou um link do **SoundCloud/Spotify**. " +
+          "Se quiser permitir YouTube, defina `MUSIC_ALLOW_YOUTUBE=1` (pode ser bloqueado pelo YouTube)."
+      );
+    }
+
     // Prefer SoundCloud links when available.
     try {
       const scType = await play.so_validate?.(trimmed);
@@ -276,21 +285,27 @@ async function resolveTrack(query) {
   }
 
   if (!video?.url || !video?.title) {
-    throw new Error("Não encontrei nada com essa busca.");
+    const title = String(video?.title ?? video?.name ?? "").trim();
+    const url = String(video?.permalink ?? video?.url ?? "").trim();
+    if (!title || !url) throw new Error("Não encontrei nada com essa busca.");
   }
+
+  const title = String(video.title ?? video.name ?? "").trim();
+  const url = String(video.permalink ?? video.url ?? "").trim();
 
   const durationSec = Number(video.durationInSec);
   const thumbs = Array.isArray(video.thumbnails) ? video.thumbnails : [];
   const thumb =
     thumbs.at(-1)?.url ??
     thumbs[0]?.url ??
+    (typeof video.thumbnail === "string" ? video.thumbnail : null) ??
     video.thumbnail?.url ??
     (Array.isArray(video.thumbnail) ? video.thumbnail[0]?.url : null) ??
     null;
 
   return {
-    title: video.title,
-    url: video.url,
+    title,
+    url,
     durationSec: Number.isFinite(durationSec) ? durationSec : null,
     durationLabel: formatDuration(durationSec),
     thumbnailUrl: thumb
