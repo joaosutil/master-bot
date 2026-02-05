@@ -1,65 +1,113 @@
 # Master Bot
 
-Bot Discord all-in-one (moderação, tickets, utilidades, jogo Expedições Cooperativas).
+Bot Discord all‑in‑one (moderação, tickets, utilidades e jogo de Expedições Cooperativas) + painel web (Next.js).
+
+## Sumário
+- [Recursos](#recursos)
+- [Requisitos](#requisitos)
+- [Rodar localmente](#rodar-localmente)
+- [Deploy com Docker](#deploy-com-docker)
+- [Variáveis de ambiente](#variáveis-de-ambiente)
+- [Comandos](#comandos)
+- [Música (voz)](#música-voz)
+- [Tickets (configuração rápida)](#tickets-configuração-rápida)
+- [Notas](#notas)
+
+## Recursos
+- **Moderação e utilidades:** comandos e automod.
+- **Tickets:** painel fixo + categorias + fechamento com tags.
+- **Boas‑vindas (painel):** mensagem personalizada, auto‑role e botão para *testar mensagem* no canal escolhido.
+- **Packs e cards:** inventário, abertura de packs e renderização de cards.
+- **Economia global:** saldo/inventário/economia ficam **globais** (mesmo usuário = mesmos dados em todos os servidores).
+- **Música (voz):** tocar/pausar/pular/fila, com fila por servidor e auto‑disconnect por inatividade.
 
 ## Requisitos
-- Node.js 18+
+- Node.js 18+ (recomendado 20+)
 - MongoDB
+- (Opcional) Docker + Docker Compose
 
-## Setup
+## Rodar localmente
 1. Copie `.env.example` para `.env`
-2. Preencha `DISCORD_TOKEN`, `CLIENT_ID`, `GUILD_ID` (opcional para registrar em um servidor específico), `MONGO_URI`, `PANEL_BASE_URL`
-3. `npm install`
-4. `npm run deploy:commands`
-5. `npm run dev`
+2. Preencha `DISCORD_TOKEN`, `CLIENT_ID`, `MONGO_URI` e `PANEL_BASE_URL` (e `GUILD_ID` se quiser registrar comandos só em 1 servidor)
+3. Instale dependências: `npm install`
+4. Registre os slash commands: `npm run deploy:commands`
+5. Inicie o bot: `npm run dev` (ou `npm start`)
 
-## Painel web (Next.js)
-Veja `panel/README.md` para configurar o painel local.
+Painel web (Next.js):
+- Veja `panel/README.md` (config do painel local e deploy).
 
-## Deploy (funciona em qualquer servidor)
-O bot e o painel rodam em qualquer lugar que tenha Node 18+ **ou** Docker.
-
-### Opção A (recomendada): Docker (VPS/Oracle Always Free, etc.)
+## Deploy com Docker
 1. Configure `.env` (bot) e `panel/.env` (painel)
-2. Suba os dois:
+2. Suba os serviços:
    - `docker compose up -d --build`
-3. Registrar slash commands (execute 1x ou quando mudar comandos):
+3. Registre os slash commands (execute 1x ou quando mudar comandos):
    - `docker compose run --rm bot npm run deploy:commands`
 
 Local com MongoDB em container:
 - `docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build`
 
-### Opção B (free-tier mais simples): Vercel (painel) + Koyeb (bot) + MongoDB Atlas
-1. Banco: crie um cluster gratuito no MongoDB Atlas e pegue o `MONGO_URI`
-2. Painel (Vercel): importe o repo e selecione `panel` como “Root Directory”; configure as envs do `panel/.env.example` com as URLs finais
-3. Bot (Koyeb): faça deploy do repo e configure as envs do `.env.example`; garanta que `PORT` esteja definido (o bot expõe `/health`)
-4. Discord Developer Portal: adicione o redirect do painel (ex: `https://SEU-DOMINIO/api/auth/callback`) e atualize `PANEL_BASE_URL`/`BASE_URL`
+## Variáveis de ambiente
+Bot (principais):
+- `DISCORD_TOKEN` (obrigatório)
+- `CLIENT_ID` (obrigatório)
+- `GUILD_ID` (opcional; se vazio registra global e pode demorar até 1h para refletir)
+- `MONGO_URI` (obrigatório)
+- `PANEL_BASE_URL` (obrigatório para recursos do painel)
+- `BOT_PREFIX` (opcional; padrão: `.`)
 
-### Performance (VPS fraca)
-- `RENDER_FAST=1` desliga efeitos de ruído (mais rápido)
+Performance (render de cards):
+- `RENDER_FAST=1` desliga efeitos pesados (mais rápido)
 - `RENDER_NOISE=0` desliga ruído
 - `CARD_RENDER_CACHE=50` cache de cards renderizados (aumente se tiver RAM)
-- `PACK_REVEAL_MAX_CARDS=12` quantas cartas aparecem na imagem do reveal do /pack
+- `PACK_REVEAL_MAX_CARDS=12` limite de cartas no reveal do `/pack`
 
-## Comandos iniciais
-- /ping
-- /ajuda
-- /status
-- /expedicao iniciar
-- /memoria adicionar
-- /verificacao painel (cria painel com botão + captcha)
-- /ticket abrir
-- /ticket painel (cria uma mensagem fixa com seletor de categorias)
+Música (opcional):
+- `SOUNDCLOUD_CLIENT_ID` (opcional; se vazio o bot tenta buscar um automaticamente)
+- `MUSIC_ALLOW_YOUTUBE=1` (opcional; por padrão é `0`)
+- `YOUTUBE_COOKIE` / `YOUTUBE_USERAGENT` (opcional; útil se o YouTube bloquear)
 
-## Configurar tickets (básico)
-1. /ticket config tipo (channel ou thread)
-2. /ticket config canal_abertura #canal
-3. /ticket config categoria_canal #categoria (obrigatório para tipo channel)
-4. /ticket config staff_add @cargo
-5. /ticket config categoria_add "Suporte"
+## Comandos
+Alguns comandos iniciais:
+- `/ping`, `/ajuda`, `/status`
+- `/pack`, `/inventory`, `/vender`
+- `/expedicao iniciar`
+- `/memoria adicionar`
+- `/verificacao painel` (cria painel com botão + captcha)
+- `/ticket abrir`, `/ticket painel`
+- Música: `/tocar`, `/pausar`, `/resumir`, `/pular`, `/parar`, `/fila`, `/tocando`
+
+Prefixo (se `BOT_PREFIX=.`):
+- `.pack`, `.inventario`, `.vender`
+- `.tocar`, `.pausar`, `.resumir`, `.pular`, `.parar`, `.fila`, `.tocando`
+
+## Música (voz)
+Comandos (slash e prefixo):
+- `/tocar musica:<nome|link>` ou `.tocar <nome|link>`
+- `/pausar` / `.pausar` | `/resumir` / `.resumir` | `/pular` / `.pular` | `/parar` / `.parar`
+- `/fila` / `.fila` | `/tocando` / `.tocando`
+
+Inatividade:
+- O bot desconecta da call após ~2 minutos sem tocar nada (fila vazia) ou se ficar pausado.
+
+Fontes de música (evitando YouTube por padrão):
+- Por padrão, o `/tocar` **busca no SoundCloud**.
+- Link do Spotify é aceito como entrada: o bot lê o título e usa isso para buscar no SoundCloud (não reproduz áudio diretamente do Spotify).
+- YouTube fica desativado por padrão; para permitir, use `MUSIC_ALLOW_YOUTUBE=1`.
+
+Observação (YouTube):
+- Em alguns servidores/hosts, o YouTube pode bloquear com “Sign in to confirm you’re not a bot”.
+- Solução recomendada: usar **Lavalink**.
+- Alternativa (menos recomendada): definir `YOUTUBE_COOKIE` no `.env` (cookie de uma conta) e reiniciar o bot.
+
+## Tickets (configuração rápida)
+1. `/ticket config tipo` (channel ou thread)
+2. `/ticket config canal_abertura #canal`
+3. `/ticket config categoria_canal #categoria` (obrigatório para tipo channel)
+4. `/ticket config staff_add @cargo`
+5. `/ticket config categoria_add "Suporte"`
 
 ## Notas
-- Para gerar transcript completo (mensagens de usuários) habilite Message Content Intent no Developer Portal.
-- O comando /expedicao iniciar cria uma thread com lobby por 60s e botão "Entrar".
-- Boas-vindas: no painel, você pode configurar cargos automáticos (auto-role) para novos membros.
-- Cápsula do tempo: use `/memoria adicionar` para salvar mensagens engraçadas/fofas e configure a postagem automática no painel.
+- Para comandos por prefixo e logs completos, habilite **Message Content Intent** no Discord Developer Portal.
+- O comando `/expedicao iniciar` cria uma thread com lobby por 60s e botão “Entrar”.
+- Boas‑vindas: no painel, você pode configurar cargos automáticos (auto‑role) e testar a mensagem antes de salvar.
+- Cápsula do tempo: use `/memoria adicionar` para salvar mensagens e configure a postagem automática no painel.

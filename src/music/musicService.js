@@ -11,6 +11,26 @@ import {
 } from "@discordjs/voice";
 
 const guildMusic = new Map();
+let playDlInit = null;
+
+function isSpotifyUrl(url) {
+  const s = String(url ?? "").trim();
+  return /^https?:\/\/open\.spotify\.com\/(track|album|playlist)\//i.test(s);
+}
+
+async function getSpotifyOEmbedTitle(url) {
+  const u = String(url ?? "").trim();
+  const res = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(u)}`, {
+    headers: {
+      "user-agent": "Mozilla/5.0"
+    }
+  });
+  if (!res.ok) throw new Error(`Spotify oEmbed falhou (${res.status})`);
+  const json = await res.json();
+  const title = String(json?.title ?? "").trim();
+  if (!title) throw new Error("Spotify oEmbed sem título.");
+  return title;
+}
 
 function normalizeInputType(type) {
   if (typeof type === "number") return type;
@@ -35,6 +55,44 @@ function formatDuration(totalSeconds) {
 async function getPlayDl() {
   const mod = await import("play-dl");
   return mod.default ?? mod;
+}
+
+async function initPlayDlOnce(play) {
+  if (playDlInit) return playDlInit;
+
+  playDlInit = (async () => {
+    const token = {};
+
+    const cookie = String(process.env.YOUTUBE_COOKIE ?? "").trim();
+    if (cookie) token.youtube = { cookie };
+
+    const userAgent = String(process.env.YOUTUBE_USERAGENT ?? "").trim();
+    if (userAgent) token.useragent = [userAgent];
+
+    const scId = String(process.env.SOUNDCLOUD_CLIENT_ID ?? "").trim();
+    if (scId) {
+      token.soundcloud = { client_id: scId };
+    } else {
+      try {
+        const freeId = await play.getFreeClientID();
+        if (freeId) token.soundcloud = { client_id: freeId };
+      } catch (error) {
+        console.warn("[music] failed to get SoundCloud client_id:", error?.message ?? error);
+      }
+    }
+
+    if (Object.keys(token).length > 0) {
+      await play.setToken(token);
+    }
+  })();
+
+  return playDlInit;
+}
+
+async function getPlayDlReady() {
+  const play = await getPlayDl();
+  await initPlayDlOnce(play);
+  return play;
 }
 
 function ensureState(guildId) {
@@ -156,22 +214,63 @@ async function ensureConnected(state, voiceChannel) {
 }
 
 async function resolveTrack(query) {
-  const play = await getPlayDl();
+  const play = await getPlayDlReady();
 
   if (typeof query !== "string" || !query.trim()) {
     throw new Error("Informe um nome ou link da música.");
   }
 
-  const trimmed = query.trim();
+  let trimmed = query.trim();
+
+  // Spotify links: use metadata as search query (audio still comes from other source).
+  if (trimmed.startsWith("http") && isSpotifyUrl(trimmed)) {
+    try {
+      trimmed = await getSpotifyOEmbedTitle(trimmed);
+    } catch (error) {
+      console.warn("[music] spotify oembed error:", error);
+      throw new Error("Não consegui ler esse link do Spotify. Tente enviar o nome da música.");
+    }
+  }
 
   let video = null;
-  if (trimmed.startsWith("http") && play.yt_validate?.(trimmed) === "video") {
-    const info = await play.video_basic_info(trimmed);
-    video = info?.video_details ?? null;
-  } else if (play.yt_validate?.(trimmed) === "video") {
-    const info = await play.video_basic_info(trimmed);
-    video = info?.video_details ?? null;
-  } else {
+  const allowYouTube = String(process.env.MUSIC_ALLOW_YOUTUBE ?? "0").trim() === "1";
+
+  if (trimmed.startsWith("http")) {
+    // Prefer SoundCloud links when available.
+    try {
+      const scType = await play.so_validate?.(trimmed);
+      if (scType === "track") {
+        const sc = await play.soundcloud(trimmed);
+        video = sc ?? null;
+      }
+    } catch {}
+
+    if (!video && allowYouTube && play.yt_validate?.(trimmed) === "video") {
+      const info = await play.video_basic_info(trimmed);
+      video = info?.video_details ?? null;
+    }
+  }
+
+  if (!video) {
+    // Search: default SoundCloud to avoid YouTube blocks.
+    try {
+      const results = await play.search(trimmed, {
+        limit: 1,
+        source: { soundcloud: "tracks" }
+      });
+      video = results?.[0] ?? null;
+    } catch (error) {
+      const msg = String(error?.message ?? "");
+      if (msg.toLowerCase().includes("client_id")) {
+        throw new Error(
+          "Falha ao usar SoundCloud (sem client_id). Defina `SOUNDCLOUD_CLIENT_ID` no `.env` e reinicie o bot."
+        );
+      }
+      throw error;
+    }
+  }
+
+  if (!video && allowYouTube) {
     const results = await play.search(trimmed, { limit: 1 });
     video = results?.[0] ?? null;
   }
@@ -198,7 +297,16 @@ async function resolveTrack(query) {
   };
 }
 
-async function playNext(state) {
+function isYouTubeBlockedError(error) {
+  const msg = String(error?.message ?? "").toLowerCase();
+  return (
+    msg.includes("sign in to confirm") ||
+    msg.includes("confirm you’re not a bot") ||
+    msg.includes("confirm you're not a bot")
+  );
+}
+
+async function playNext(state, { throwOnFailure = false } = {}) {
   clearDisconnectTimer(state);
 
   if (state.player.state.status !== AudioPlayerStatus.Idle && state.current) return;
@@ -210,7 +318,7 @@ async function playNext(state) {
   }
 
   try {
-    const play = await getPlayDl();
+    const play = await getPlayDlReady();
     const stream = await play.stream(next.url, { quality: 2 });
     const resource = createAudioResource(stream.stream, {
       inputType: normalizeInputType(stream.type),
@@ -222,7 +330,17 @@ async function playNext(state) {
   } catch (error) {
     console.warn("[music] stream error:", error);
     state.current = null;
-    await playNext(state);
+    if (throwOnFailure) {
+      if (isYouTubeBlockedError(error)) {
+        throw new Error(
+          "O YouTube bloqueou o player (\"Sign in to confirm you’re not a bot\"). " +
+            "Recomendado: usar Lavalink. Alternativa: definir `YOUTUBE_COOKIE` no `.env` (cookie de uma conta) e reiniciar o bot."
+        );
+      }
+      throw new Error("Falha ao obter o áudio desta música. Tente outro link/busca.");
+    }
+
+    await playNext(state, { throwOnFailure: false });
   }
 }
 
@@ -251,7 +369,7 @@ export async function enqueueTrack({ guildId, voiceChannel, query, requestedById
   if (state.queue.length > 100) state.queue.length = 100;
 
   if (!state.current && state.player.state.status === AudioPlayerStatus.Idle) {
-    await playNext(state);
+    await playNext(state, { throwOnFailure: true });
   }
 
   return fullTrack;
