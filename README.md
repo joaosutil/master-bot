@@ -74,17 +74,18 @@ Alguns comandos iniciais:
 - `/memoria adicionar`
 - `/verificacao painel` (cria painel com botão + captcha)
 - `/ticket abrir`, `/ticket painel`
-- Música: `/tocar`, `/pausar`, `/resumir`, `/pular`, `/parar`, `/fila`, `/tocando`
+- Música: `/tocar`, `/pausar`, `/resumir`, `/pular`, `/parar`, `/fila`, `/tocando`, `/volume`
 
 Prefixo (se `BOT_PREFIX=.`):
 - `.pack`, `.inventario`, `.vender`
-- `.tocar`, `.pausar`, `.resumir`, `.pular`, `.parar`, `.fila`, `.tocando`
+- `.tocar`, `.pausar`, `.resumir`, `.pular`, `.parar`, `.fila`, `.tocando`, `.volume`
 
 ## Música (voz)
 Comandos (slash e prefixo):
 - `/tocar musica:<nome|link>` ou `.tocar <nome|link>`
 - `/pausar` / `.pausar` | `/resumir` / `.resumir` | `/pular` / `.pular` | `/parar` / `.parar`
 - `/fila` / `.fila` | `/tocando` / `.tocando`
+- `/volume` / `.volume` (ex: `/volume 35` ou `.volume 35`)
 
 Inatividade:
 - O bot desconecta da call após ~2 minutos sem tocar nada (fila vazia) ou se ficar pausado.

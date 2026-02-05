@@ -109,11 +109,14 @@ function ensureState(guildId) {
     player,
     queue: [],
     current: null,
+    currentResource: null,
+    volume: 0.35,
     disconnectTimer: null
   };
 
   player.on(AudioPlayerStatus.Idle, () => {
     state.current = null;
+    state.currentResource = null;
     void playNext(state).catch((error) => {
       console.warn("[music] playNext error:", error);
       scheduleDisconnect(state);
@@ -135,6 +138,7 @@ function ensureState(guildId) {
   player.on("error", (error) => {
     console.warn("[music] player error:", error);
     state.current = null;
+    state.currentResource = null;
     void playNext(state).catch((error2) => {
       console.warn("[music] playNext error:", error2);
       scheduleDisconnect(state);
@@ -337,14 +341,20 @@ async function playNext(state, { throwOnFailure = false } = {}) {
     const stream = await play.stream(next.url, { quality: 2 });
     const resource = createAudioResource(stream.stream, {
       inputType: normalizeInputType(stream.type),
+      inlineVolume: true,
       metadata: next
     });
 
     state.current = next;
+    state.currentResource = resource;
+    try {
+      resource.volume?.setVolume?.(state.volume);
+    } catch {}
     state.player.play(resource);
   } catch (error) {
     console.warn("[music] stream error:", error);
     state.current = null;
+    state.currentResource = null;
     if (throwOnFailure) {
       if (isYouTubeBlockedError(error)) {
         throw new Error(
@@ -367,6 +377,22 @@ export function getNowPlaying(guildId) {
 export function getQueue(guildId) {
   const state = guildMusic.get(guildId);
   return state ? [...state.queue] : [];
+}
+
+export function getVolume(guildId) {
+  const state = ensureState(guildId);
+  return state.volume;
+}
+
+export function setVolume(guildId, volume) {
+  const state = ensureState(guildId);
+  const v = Number(volume);
+  const clamped = Number.isFinite(v) ? Math.max(0, Math.min(2, v)) : state.volume;
+  state.volume = clamped;
+  try {
+    state.currentResource?.volume?.setVolume?.(clamped);
+  } catch {}
+  return clamped;
 }
 
 export async function enqueueTrack({ guildId, voiceChannel, query, requestedById }) {
@@ -414,6 +440,7 @@ export function stop(guildId) {
   const state = ensureState(guildId);
   state.queue = [];
   state.current = null;
+  state.currentResource = null;
   try {
     state.player.stop(true);
   } catch {}

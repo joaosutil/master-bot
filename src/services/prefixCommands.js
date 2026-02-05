@@ -152,6 +152,8 @@ function buildAliasMap(commands) {
   set("np", "tocando");
   set("fila", "fila");
   set("queue", "fila");
+  set("volume", "volume");
+  set("vol", "volume");
 
   return map;
 }
@@ -194,6 +196,17 @@ function normalizeArgsForCommand(commandName, args) {
     if (!hasMusic) {
       const query = out.join(" ").trim();
       if (query) return ["--musica", query];
+    }
+    return out;
+  }
+
+  if (commandName === "volume") {
+    // .volume 50 => /volume valor:50
+    const out = [...args];
+    const hasVal = out.includes("--valor");
+    if (!hasVal && out.length && /^-?\d+(\.\d+)?$/.test(String(out[0]))) {
+      const v = out.shift();
+      out.unshift("--valor", v);
     }
     return out;
   }
