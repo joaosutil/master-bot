@@ -36,6 +36,7 @@ import { handleVerifyAnswer, handleVerifyStart } from "./services/verificationSe
 import { handleVibeVote, startVibeCheckScheduler } from "./services/vibeCheckService.js";
 import { startHealthServer } from "./services/healthServer.js";
 import { startPresenceRotator } from "./services/presenceRotator.js";
+import { handleMusicButton } from "./music/musicInteractions.js";
 
 assertConfig(["token"]);
 startHealthServer();
@@ -123,6 +124,22 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
   // ===== Buttons =====
   if (interaction.isButton()) {
+    if (interaction.customId.startsWith("music:")) {
+      try {
+        const handled = await handleMusicButton(interaction);
+        if (handled) return;
+      } catch (error) {
+        const msg = error?.message ?? "Erro ao controlar música.";
+        try {
+          if (interaction.deferred || interaction.replied) {
+            await interaction.followUp({ content: msg, ephemeral: true });
+          } else {
+            await interaction.reply({ content: msg, ephemeral: true });
+          }
+        } catch {}
+        return;
+      }
+    }
     // âœ… PACK buttons (precisa vir antes pra nÃ£o â€œcairâ€ no resto)
     if (interaction.customId.startsWith("pack_")) {
       return await handlePackButton(interaction);

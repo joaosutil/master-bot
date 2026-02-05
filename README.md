@@ -93,6 +93,7 @@ Inatividade:
 Fontes de música (evitando YouTube por padrão):
 - Por padrão, o `/tocar` **busca no SoundCloud**.
 - Link do Spotify é aceito como entrada: o bot lê o título e usa isso para buscar no SoundCloud (não reproduz áudio diretamente do Spotify).
+- Também aceita link curto do Spotify (`spoti.fi` / `spotify.link`) e URI `spotify:track:...`.
 - YouTube fica desativado por padrão; para permitir, use `MUSIC_ALLOW_YOUTUBE=1`.
 
 Observação (YouTube):

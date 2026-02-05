@@ -1,5 +1,5 @@
 import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { enqueueTrack, getNowPlaying } from "../../music/musicService.js";
+import { buildNowPlayingPayload, enqueueTrack, getNowPlaying } from "../../music/musicService.js";
 import { getMemberVoiceChannel, requireGuild } from "../../music/musicUtils.js";
 
 const data = new SlashCommandBuilder()
@@ -8,7 +8,7 @@ const data = new SlashCommandBuilder()
   .addStringOption((opt) =>
     opt
       .setName("musica")
-      .setDescription("Nome ou link (YouTube)")
+      .setDescription("Nome ou link (SoundCloud/Spotify/Deezer)")
       .setRequired(true)
   );
 
@@ -26,7 +26,9 @@ export default {
         guildId,
         voiceChannel,
         query,
-        requestedById: interaction.user.id
+        requestedById: interaction.user.id,
+        textChannel: interaction.channel,
+        suppressAutoAnnounce: true
       });
 
       const now = getNowPlaying(guildId);
@@ -35,15 +37,21 @@ export default {
         now?.requestedById === track.requestedById &&
         now?.requestedAt === track.requestedAt;
 
+      if (isNow) {
+        const payload = buildNowPlayingPayload(guildId);
+        await interaction.editReply(payload);
+        return;
+      }
+
       const embed = new EmbedBuilder()
-        .setColor(isNow ? 0x22c55e : 0x3b82f6)
-        .setTitle(isNow ? "Tocando agora" : "Adicionado à fila")
+        .setColor(0x3b82f6)
+        .setTitle("Adicionado à fila")
         .setDescription(`[${track.title}](${track.url})`)
         .addFields(
           { name: "Duração", value: track.durationLabel ?? "—", inline: true },
           { name: "Pedido por", value: `<@${track.requestedById}>`, inline: true }
         )
-        .setFooter({ text: "Dica: use /fila, /pular, /pausar, /resumir, /parar" });
+        .setFooter({ text: "Dica: use /fila ou /tocando" });
 
       if (track.thumbnailUrl) embed.setThumbnail(track.thumbnailUrl);
 
@@ -58,4 +66,3 @@ export default {
     }
   }
 };
-

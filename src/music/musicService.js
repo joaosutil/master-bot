@@ -9,19 +9,82 @@ import {
   getVoiceConnection,
   joinVoiceChannel
 } from "@discordjs/voice";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from "discord.js";
 
 const guildMusic = new Map();
 let playDlInit = null;
 
-function isSpotifyUrl(url) {
+function makeTrackKey(track) {
+  if (!track) return null;
+  return `${track.url}|${track.requestedAt ?? ""}`;
+}
+
+function isSpotifyInput(input) {
+  const s = String(input ?? "").trim();
+  if (!s) return false;
+  if (/^spotify:(track|album|playlist):/i.test(s)) return true;
+  if (!/^https?:\/\//i.test(s)) return false;
+  try {
+    const u = new URL(s);
+    if (u.hostname === "open.spotify.com") return true;
+    if (u.hostname === "spoti.fi") return true;
+    if (u.hostname === "spotify.link") return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+function toSpotifyOpenUrl(input) {
+  const s = String(input ?? "").trim();
+  const m = s.match(/^spotify:(track|album|playlist):([A-Za-z0-9]+)$/i);
+  if (!m) return s;
+  const type = m[1].toLowerCase();
+  const id = m[2];
+  return `https://open.spotify.com/${type}/${id}`;
+}
+
+async function resolveFinalUrl(url) {
+  if (typeof fetch !== "function") return String(url ?? "").trim();
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8_000);
+  try {
+    const res = await fetch(String(url ?? "").trim(), {
+      method: "GET",
+      redirect: "follow",
+      signal: controller.signal,
+      headers: {
+        "user-agent": "Mozilla/5.0"
+      }
+    });
+    try {
+      res.body?.cancel?.();
+    } catch {}
+    return res.url || String(url ?? "").trim();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function normalizeKnownShortLinks(url) {
   const s = String(url ?? "").trim();
-  return /^https?:\/\/open\.spotify\.com\/(track|album|playlist)\//i.test(s);
+  if (!/^https?:\/\//i.test(s)) return s;
+  try {
+    const u = new URL(s);
+    const shortHosts = new Set(["spoti.fi", "spotify.link", "on.soundcloud.com", "soundcloud.app.goo.gl"]);
+    if (!shortHosts.has(u.hostname)) return s;
+    return await resolveFinalUrl(s);
+  } catch {
+    return s;
+  }
 }
 
 async function getSpotifyOEmbedTitle(url) {
   const u = String(url ?? "").trim();
   const res = await fetch(`https://open.spotify.com/oembed?url=${encodeURIComponent(u)}`, {
     headers: {
+      accept: "application/json",
       "user-agent": "Mozilla/5.0"
     }
   });
@@ -108,13 +171,23 @@ function ensureState(guildId) {
     connection: null,
     player,
     queue: [],
+    history: [],
     current: null,
     currentResource: null,
     volume: 0.35,
+    announceChannelId: null,
+    client: null,
+    lastAnnouncedKey: null,
+    suppressHistoryPushOnce: false,
     disconnectTimer: null
   };
 
   player.on(AudioPlayerStatus.Idle, () => {
+    if (state.current && !state.suppressHistoryPushOnce) {
+      state.history.push(state.current);
+      if (state.history.length > 50) state.history.shift();
+    }
+    state.suppressHistoryPushOnce = false;
     state.current = null;
     state.currentResource = null;
     void playNext(state).catch((error) => {
@@ -125,6 +198,9 @@ function ensureState(guildId) {
 
   player.on(AudioPlayerStatus.Playing, () => {
     clearDisconnectTimer(state);
+    void announceNowPlayingIfNew(state).catch((error) => {
+      console.warn("[music] announce error:", error);
+    });
   });
 
   player.on(AudioPlayerStatus.Paused, () => {
@@ -137,6 +213,11 @@ function ensureState(guildId) {
 
   player.on("error", (error) => {
     console.warn("[music] player error:", error);
+    if (state.current && !state.suppressHistoryPushOnce) {
+      state.history.push(state.current);
+      if (state.history.length > 50) state.history.shift();
+    }
+    state.suppressHistoryPushOnce = false;
     state.current = null;
     state.currentResource = null;
     void playNext(state).catch((error2) => {
@@ -168,6 +249,78 @@ function scheduleDisconnect(state) {
     state.current = null;
     state.queue = [];
   }, 120_000);
+}
+
+export function setAnnouncementTarget(guildId, { channelId, client } = {}) {
+  const state = ensureState(guildId);
+  if (channelId) state.announceChannelId = channelId;
+  if (client) state.client = client;
+}
+
+export function buildNowPlayingPayload(guildId, { titlePrefix } = {}) {
+  const state = ensureState(guildId);
+  const now = state.current;
+
+  if (!now) {
+    return { content: "Nada tocando agora.", embeds: [], components: [] };
+  }
+
+  const isPaused =
+    state.player.state.status === AudioPlayerStatus.Paused ||
+    state.player.state.status === AudioPlayerStatus.AutoPaused;
+
+  const volPct = Math.round((state.volume ?? 0.35) * 100);
+
+  const embed = new EmbedBuilder()
+    .setColor(isPaused ? 0xf59e0b : 0x22c55e)
+    .setTitle(titlePrefix ?? (isPaused ? "Pausado" : "Tocando agora"))
+    .setDescription(`[${now.title}](${now.url})`)
+    .addFields(
+      { name: "Duração", value: now.durationLabel ?? "—", inline: true },
+      { name: "Volume", value: `${volPct}%`, inline: true },
+      { name: "Pedido por", value: now.requestedById ? `<@${now.requestedById}>` : "—", inline: true }
+    )
+    .setTimestamp(new Date());
+
+  if (now.thumbnailUrl) embed.setThumbnail(now.thumbnailUrl);
+
+  const prevDisabled = state.history.length === 0;
+
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId("music:prev")
+      .setStyle(ButtonStyle.Secondary)
+      .setLabel("Voltar")
+      .setDisabled(prevDisabled),
+    new ButtonBuilder().setCustomId("music:skip").setStyle(ButtonStyle.Primary).setLabel("Pular"),
+    new ButtonBuilder()
+      .setCustomId("music:toggle_pause")
+      .setStyle(isPaused ? ButtonStyle.Success : ButtonStyle.Secondary)
+      .setLabel(isPaused ? "Resumir" : "Pausar"),
+    new ButtonBuilder().setCustomId("music:vol_down").setStyle(ButtonStyle.Secondary).setLabel("Vol -"),
+    new ButtonBuilder().setCustomId("music:vol_up").setStyle(ButtonStyle.Secondary).setLabel("Vol +")
+  );
+
+  const row2 = new ActionRowBuilder().addComponents(
+    new ButtonBuilder().setCustomId("music:stop").setStyle(ButtonStyle.Danger).setLabel("Parar")
+  );
+
+  return { embeds: [embed], components: [row, row2] };
+}
+
+async function announceNowPlayingIfNew(state) {
+  const channelId = state.announceChannelId;
+  const client = state.client;
+  const key = makeTrackKey(state.current);
+  if (!channelId || !client || !key) return;
+  if (state.lastAnnouncedKey === key) return;
+
+  const channel = await client.channels.fetch(channelId).catch(() => null);
+  if (!channel || typeof channel.send !== "function") return;
+
+  const payload = buildNowPlayingPayload(state.guildId);
+  await channel.send(payload).catch(() => {});
+  state.lastAnnouncedKey = key;
 }
 
 async function ensureConnected(state, voiceChannel) {
@@ -227,10 +380,16 @@ async function resolveTrack(query) {
   const raw = query.trim();
   let trimmed = raw;
 
+  if (trimmed.startsWith("http")) {
+    trimmed = await normalizeKnownShortLinks(trimmed);
+  }
+
   // Spotify links: use metadata as search query (audio still comes from other source).
-  if (trimmed.startsWith("http") && isSpotifyUrl(trimmed)) {
+  if (isSpotifyInput(trimmed)) {
     try {
-      trimmed = await getSpotifyOEmbedTitle(trimmed);
+      const openUrl = toSpotifyOpenUrl(trimmed);
+      const finalUrl = await resolveFinalUrl(openUrl);
+      trimmed = await getSpotifyOEmbedTitle(finalUrl);
     } catch (error) {
       console.warn("[music] spotify oembed error:", error);
       throw new Error("Não consegui ler esse link do Spotify. Tente enviar o nome da música.");
@@ -257,6 +416,19 @@ async function resolveTrack(query) {
         video = sc ?? null;
       }
     } catch {}
+
+    // Deezer links: use metadata as search query (audio still comes from other source).
+    if (!video) {
+      try {
+        const dzType = await play.dz_validate?.(trimmed);
+        if (dzType === "track") {
+          const dz = await play.deezer(trimmed);
+          const dzTitle = String(dz?.title ?? "").trim();
+          const dzArtist = String(dz?.artist?.name ?? "").trim();
+          if (dzTitle) trimmed = dzArtist ? `${dzArtist} - ${dzTitle}` : dzTitle;
+        }
+      } catch {}
+    }
 
     if (!video && allowYouTube && play.yt_validate?.(trimmed) === "video") {
       const info = await play.video_basic_info(trimmed);
@@ -286,6 +458,12 @@ async function resolveTrack(query) {
   if (!video && allowYouTube) {
     const results = await play.search(trimmed, { limit: 1 });
     video = results?.[0] ?? null;
+  }
+
+  if (!video) {
+    throw new Error(
+      `Não encontrei nada no SoundCloud com essa busca. Tente "artista - título" (busca: ${raw.slice(0, 80)})`
+    );
   }
 
   if (!video?.url || !video?.title) {
@@ -395,9 +573,24 @@ export function setVolume(guildId, volume) {
   return clamped;
 }
 
-export async function enqueueTrack({ guildId, voiceChannel, query, requestedById }) {
+export function adjustVolume(guildId, delta) {
+  const state = ensureState(guildId);
+  return setVolume(guildId, (state.volume ?? 0.35) + Number(delta));
+}
+
+export async function enqueueTrack({
+  guildId,
+  voiceChannel,
+  textChannel,
+  query,
+  requestedById,
+  suppressAutoAnnounce = false
+}) {
   const state = ensureState(guildId);
   await ensureConnected(state, voiceChannel);
+
+  if (textChannel?.id) state.announceChannelId = textChannel.id;
+  if (textChannel?.client) state.client = textChannel.client;
 
   const track = await resolveTrack(query);
   const fullTrack = {
@@ -406,11 +599,16 @@ export async function enqueueTrack({ guildId, voiceChannel, query, requestedById
     requestedAt: Date.now()
   };
 
+  const willStartNow = !state.current && state.player.state.status === AudioPlayerStatus.Idle;
+
   state.queue.push(fullTrack);
   if (state.queue.length > 100) state.queue.length = 100;
 
   if (!state.current && state.player.state.status === AudioPlayerStatus.Idle) {
     await playNext(state, { throwOnFailure: true });
+    if (suppressAutoAnnounce && willStartNow) {
+      state.lastAnnouncedKey = makeTrackKey(state.current);
+    }
   }
 
   return fullTrack;
@@ -430,8 +628,31 @@ export function resume(guildId) {
   return ok;
 }
 
+export function togglePause(guildId) {
+  const state = ensureState(guildId);
+  const status = state.player.state.status;
+  if (status === AudioPlayerStatus.Paused || status === AudioPlayerStatus.AutoPaused) {
+    resume(guildId);
+    return { paused: false };
+  }
+  pause(guildId);
+  return { paused: true };
+}
+
 export function skip(guildId) {
   const state = ensureState(guildId);
+  state.player.stop(true);
+  return true;
+}
+
+export function previous(guildId) {
+  const state = ensureState(guildId);
+  const prev = state.history.pop();
+  if (!prev) return false;
+
+  if (state.current) state.queue.unshift(state.current);
+  state.queue.unshift(prev);
+  state.suppressHistoryPushOnce = true;
   state.player.stop(true);
   return true;
 }
@@ -439,8 +660,10 @@ export function skip(guildId) {
 export function stop(guildId) {
   const state = ensureState(guildId);
   state.queue = [];
+  state.history = [];
   state.current = null;
   state.currentResource = null;
+  state.lastAnnouncedKey = null;
   try {
     state.player.stop(true);
   } catch {}
