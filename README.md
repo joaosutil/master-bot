@@ -63,8 +63,13 @@ Performance (render de cards):
 
 Música (opcional):
 - `SOUNDCLOUD_CLIENT_ID` (opcional; se vazio o bot tenta buscar um automaticamente)
-- `MUSIC_ALLOW_YOUTUBE=1` (opcional; por padrão é `0`)
+- `MUSIC_ALLOW_YOUTUBE=1` (opcional; padrão: `0`)
+- `MUSIC_MAX_QUEUE` (opcional; padrão: `100`; máx: `1000`)
+- `MUSIC_RESOLVE_CONCURRENCY` (opcional; padrão: `3`; máx: `8`)
 - `YOUTUBE_COOKIE` / `YOUTUBE_USERAGENT` (opcional; útil se o YouTube bloquear)
+- Spotify (necessário para **playlist** do Spotify):
+  - `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN` (e opcional `SPOTIFY_MARKET`)
+  - Alternativa: criar `.data/spotify.data` com o assistente do `play-dl` (veja em “Música (voz)”)
 
 ## Comandos
 Alguns comandos iniciais:
@@ -92,9 +97,14 @@ Inatividade:
 
 Fontes de música (evitando YouTube por padrão):
 - Por padrão, o `/tocar` **busca no SoundCloud**.
-- Link do Spotify é aceito como entrada: o bot lê o título e usa isso para buscar no SoundCloud (não reproduz áudio diretamente do Spotify).
+- Link de música do Spotify é aceito como entrada: o bot lê o título e usa isso para buscar no SoundCloud (não reproduz áudio diretamente do Spotify).
+- Link de **playlist** do Spotify (`.../playlist/...`) adiciona as músicas na fila (precisa configurar token do Spotify no `play-dl` via `.data/spotify.data` ou vars `SPOTIFY_*`).
 - Também aceita link curto do Spotify (`spoti.fi` / `spotify.link`) e URI `spotify:track:...`.
 - YouTube fica desativado por padrão; para permitir, use `MUSIC_ALLOW_YOUTUBE=1`.
+
+Como gerar `.data/spotify.data` (opção alternativa às vars `SPOTIFY_*`):
+- Rode: `node -e "import('play-dl').then(m => (m.default ?? m).authorization())"`
+- Siga o fluxo para obter e salvar as credenciais do Spotify.
 
 Observação (YouTube):
 - Em alguns servidores/hosts, o YouTube pode bloquear com “Sign in to confirm you’re not a bot”.

@@ -14,9 +14,73 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from "disc
 const guildMusic = new Map();
 let playDlInit = null;
 
+function clampInt(value, min, max) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return min;
+  return Math.max(min, Math.min(max, Math.trunc(n)));
+}
+
+function getMaxQueueLength() {
+  const raw = String(process.env.MUSIC_MAX_QUEUE ?? "").trim();
+  const parsed = raw ? Number.parseInt(raw, 10) : NaN;
+  return clampInt(Number.isFinite(parsed) ? parsed : 100, 1, 1000);
+}
+
+function getResolveConcurrency() {
+  const raw = String(process.env.MUSIC_RESOLVE_CONCURRENCY ?? "").trim();
+  const parsed = raw ? Number.parseInt(raw, 10) : NaN;
+  return clampInt(Number.isFinite(parsed) ? parsed : 3, 1, 8);
+}
+
 function makeTrackKey(track) {
   if (!track) return null;
   return `${track.url}|${track.requestedAt ?? ""}`;
+}
+
+function parseSpotifyEntity(input) {
+  const s = String(input ?? "").trim();
+  if (!s) return null;
+
+  const uri = s.match(/^spotify:(track|album|playlist):([A-Za-z0-9]+)$/i);
+  if (uri) return { type: uri[1].toLowerCase(), id: uri[2] };
+
+  if (!/^https?:\/\//i.test(s)) return null;
+
+  try {
+    const u = new URL(s);
+    const host = String(u.hostname ?? "").toLowerCase();
+    if (host !== "open.spotify.com") return null;
+
+    const parts = String(u.pathname ?? "")
+      .split("/")
+      .map((p) => p.trim())
+      .filter(Boolean);
+
+    let i = 0;
+    if (parts[i]?.toLowerCase().startsWith("intl-")) i += 1;
+    if (parts[i]?.toLowerCase() === "embed") i += 1;
+
+    const first = parts[i]?.toLowerCase() ?? null;
+    const second = parts[i + 1] ?? null;
+
+    if (first === "track" || first === "album" || first === "playlist") {
+      const id = String(second ?? "").trim();
+      if (/^[A-Za-z0-9]+$/.test(id)) return { type: first, id };
+      return null;
+    }
+
+    if (first === "user") {
+      const pType = parts.findIndex((p) => String(p).toLowerCase() === "playlist");
+      if (pType >= 0) {
+        const id = String(parts[pType + 1] ?? "").trim();
+        if (/^[A-Za-z0-9]+$/.test(id)) return { type: "playlist", id };
+      }
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 function isSpotifyInput(input) {
@@ -144,8 +208,32 @@ async function initPlayDlOnce(play) {
       }
     }
 
-    if (Object.keys(token).length > 0) {
-      await play.setToken(token);
+    const spClientId = String(process.env.SPOTIFY_CLIENT_ID ?? "").trim();
+    const spClientSecret = String(process.env.SPOTIFY_CLIENT_SECRET ?? "").trim();
+    const spRefreshToken = String(process.env.SPOTIFY_REFRESH_TOKEN ?? "").trim();
+    const spMarket = String(process.env.SPOTIFY_MARKET ?? "").trim();
+    if (spClientId && spClientSecret && spRefreshToken) {
+      token.spotify = {
+        client_id: spClientId,
+        client_secret: spClientSecret,
+        refresh_token: spRefreshToken,
+        market: spMarket || "US"
+      };
+    }
+
+    const tokenPieces = [];
+    if (token.youtube) tokenPieces.push({ youtube: token.youtube });
+    if (token.useragent) tokenPieces.push({ useragent: token.useragent });
+    if (token.soundcloud) tokenPieces.push({ soundcloud: token.soundcloud });
+    if (token.spotify) tokenPieces.push({ spotify: token.spotify });
+
+    for (const piece of tokenPieces) {
+      try {
+        await play.setToken(piece);
+      } catch (error) {
+        const key = Object.keys(piece ?? {})[0] ?? "unknown";
+        console.warn(`[music] failed to set play-dl token (${key}):`, error?.message ?? error);
+      }
     }
   })();
 
@@ -156,6 +244,44 @@ async function getPlayDlReady() {
   const play = await getPlayDl();
   await initPlayDlOnce(play);
   return play;
+}
+
+async function ensureSpotifyTokenFresh(play) {
+  try {
+    if (typeof play?.is_expired === "function" && play.is_expired()) {
+      if (typeof play?.refreshToken === "function") {
+        await play.refreshToken();
+      }
+    }
+  } catch {}
+}
+
+async function mapWithConcurrency(values, concurrency, fn, { onProgress } = {}) {
+  const out = new Array(values.length);
+  const max = clampInt(concurrency, 1, 32);
+  let nextIndex = 0;
+  let done = 0;
+
+  async function worker() {
+    while (true) {
+      const i = nextIndex++;
+      if (i >= values.length) return;
+      try {
+        out[i] = await fn(values[i], i);
+      } catch (error) {
+        out[i] = { ok: false, error };
+      } finally {
+        done += 1;
+        try {
+          onProgress?.(done);
+        } catch {}
+      }
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(max, values.length) }, () => worker());
+  await Promise.all(workers);
+  return out;
 }
 
 function ensureState(guildId) {
@@ -368,6 +494,139 @@ async function ensureConnected(state, voiceChannel) {
   });
 
   await entersState(state.connection, VoiceConnectionStatus.Ready, 20_000);
+}
+
+async function enqueueTrackInState(state, { textChannel, query, requestedById, suppressAutoAnnounce = false } = {}) {
+  if (textChannel?.id) state.announceChannelId = textChannel.id;
+  if (textChannel?.client) state.client = textChannel.client;
+
+  const track = await resolveTrack(query);
+  const fullTrack = {
+    ...track,
+    requestedById,
+    requestedAt: Date.now()
+  };
+
+  const willStartNow = !state.current && state.player.state.status === AudioPlayerStatus.Idle;
+
+  const maxQueue = getMaxQueueLength();
+  state.queue.push(fullTrack);
+  if (state.queue.length > maxQueue) state.queue.length = maxQueue;
+
+  if (!state.current && state.player.state.status === AudioPlayerStatus.Idle) {
+    await playNext(state, { throwOnFailure: true });
+    if (suppressAutoAnnounce && willStartNow) {
+      state.lastAnnouncedKey = makeTrackKey(state.current);
+    }
+  }
+
+  return fullTrack;
+}
+
+function spotifyTrackToSearchQuery(spTrack) {
+  const title = String(spTrack?.name ?? "").trim();
+  const artists = Array.isArray(spTrack?.artists) ? spTrack.artists.map((a) => String(a?.name ?? "").trim()) : [];
+  const artist = artists.find(Boolean) ?? "";
+  if (artist && title) return `${artist} - ${title}`;
+  return title;
+}
+
+async function enqueueSpotifyPlaylistInState(
+  state,
+  { textChannel, playlistUrl, requestedById, suppressAutoAnnounce = false, onProgress } = {}
+) {
+  if (textChannel?.id) state.announceChannelId = textChannel.id;
+  if (textChannel?.client) state.client = textChannel.client;
+
+  const play = await getPlayDlReady();
+  await ensureSpotifyTokenFresh(play);
+
+  const info = await play.spotify(playlistUrl);
+  if (!info || info.type !== "playlist") {
+    throw new Error("O link do Spotify precisa ser de uma playlist.");
+  }
+
+  const playlistName = String(info.name ?? "").trim() || "Playlist do Spotify";
+  const all = await info.all_tracks();
+  const tracks = Array.isArray(all) ? all : [];
+
+  const usable = tracks.filter((t) => t && t.type === "track" && String(t.name ?? "").trim());
+  if (usable.length === 0) {
+    throw new Error("Essa playlist nÃ£o tem mÃºsicas vÃ¡lidas para adicionar.");
+  }
+
+  const maxQueue = getMaxQueueLength();
+  const capacity = Math.max(0, maxQueue - state.queue.length);
+  if (capacity <= 0) throw new Error("A fila jÃ¡ estÃ¡ cheia.");
+
+  const selected = usable.slice(0, capacity);
+  const searches = selected.map(spotifyTrackToSearchQuery);
+
+  const concurrency = getResolveConcurrency();
+
+  const willStartNow = !state.current && state.player.state.status === AudioPlayerStatus.Idle;
+  const baseRequestedAt = Date.now();
+
+  const results = await mapWithConcurrency(
+    searches,
+    concurrency,
+    async (q) => {
+      if (!q || !String(q).trim()) throw new Error("Spotify track sem tÃ­tulo.");
+      const resolved = await resolveTrack(q);
+      return { ok: true, track: resolved, q };
+    },
+    {
+      onProgress: (done) => {
+        try {
+          onProgress?.({
+            processed: done,
+            total: searches.length,
+            playlistName
+          });
+        } catch {}
+      }
+    }
+  );
+
+  const addedTracks = [];
+  for (let i = 0; i < results.length; i += 1) {
+    const r = results[i];
+    if (!r?.ok || !r?.track) {
+      continue;
+    }
+    const fullTrack = {
+      ...r.track,
+      requestedById,
+      requestedAt: baseRequestedAt + i
+    };
+    addedTracks.push(fullTrack);
+  }
+
+  if (addedTracks.length === 0) {
+    throw new Error("NÃ£o consegui encontrar essas mÃºsicas em nenhuma fonte (SoundCloud/YouTube).");
+  }
+
+  state.queue.push(...addedTracks);
+  if (state.queue.length > maxQueue) state.queue.length = maxQueue;
+
+  if (!state.current && state.player.state.status === AudioPlayerStatus.Idle) {
+    await playNext(state, { throwOnFailure: false });
+    if (suppressAutoAnnounce && willStartNow) {
+      state.lastAnnouncedKey = makeTrackKey(state.current);
+    }
+  }
+
+  return {
+    kind: "spotify_playlist",
+    playlistName,
+    playlistUrl: String(info.url ?? playlistUrl ?? "").trim() || playlistUrl,
+    totalTracks: usable.length,
+    considered: searches.length,
+    added: addedTracks.length,
+    failed: searches.length - addedTracks.length,
+    truncated: usable.length > selected.length,
+    startedNow: willStartNow && Boolean(state.current)
+  };
 }
 
 async function resolveTrack(query) {
@@ -588,30 +847,58 @@ export async function enqueueTrack({
 }) {
   const state = ensureState(guildId);
   await ensureConnected(state, voiceChannel);
+  return await enqueueTrackInState(state, { textChannel, query, requestedById, suppressAutoAnnounce });
+}
 
-  if (textChannel?.id) state.announceChannelId = textChannel.id;
-  if (textChannel?.client) state.client = textChannel.client;
+export async function enqueueFromQuery({
+  guildId,
+  voiceChannel,
+  textChannel,
+  query,
+  requestedById,
+  suppressAutoAnnounce = false,
+  onProgress
+}) {
+  const state = ensureState(guildId);
+  await ensureConnected(state, voiceChannel);
 
-  const track = await resolveTrack(query);
-  const fullTrack = {
-    ...track,
-    requestedById,
-    requestedAt: Date.now()
-  };
+  const raw = String(query ?? "").trim();
+  if (!raw) throw new Error("Informe um nome ou link da mÃºsica.");
 
-  const willStartNow = !state.current && state.player.state.status === AudioPlayerStatus.Idle;
+  let normalized = raw;
+  if (normalized.startsWith("http")) {
+    normalized = await normalizeKnownShortLinks(normalized);
+  }
 
-  state.queue.push(fullTrack);
-  if (state.queue.length > 100) state.queue.length = 100;
+  const entity = parseSpotifyEntity(normalized);
+  if (entity) {
+    normalized = `https://open.spotify.com/${entity.type}/${entity.id}`;
+  }
 
-  if (!state.current && state.player.state.status === AudioPlayerStatus.Idle) {
-    await playNext(state, { throwOnFailure: true });
-    if (suppressAutoAnnounce && willStartNow) {
-      state.lastAnnouncedKey = makeTrackKey(state.current);
+  if (entity?.type === "playlist") {
+    try {
+      return await enqueueSpotifyPlaylistInState(state, {
+        textChannel,
+        playlistUrl: normalized,
+        requestedById,
+        suppressAutoAnnounce,
+        onProgress
+      });
+    } catch (error) {
+      const msg = String(error?.message ?? "");
+      if (msg.toLowerCase().includes("spotify data is missing")) {
+        throw new Error(
+          "Para adicionar playlists do Spotify, configure o token do Spotify no bot (play-dl). " +
+            "Opções: criar `.data/spotify.data` via `node -e \"import('play-dl').then(m => (m.default ?? m).authorization())\"` " +
+            "ou definir `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN` (e opcional `SPOTIFY_MARKET`) no `.env`."
+        );
+      }
+      throw error;
     }
   }
 
-  return fullTrack;
+  const track = await enqueueTrackInState(state, { textChannel, query: normalized, requestedById, suppressAutoAnnounce });
+  return { kind: "single", track };
 }
 
 export function pause(guildId) {
